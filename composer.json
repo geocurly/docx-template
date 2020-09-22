@@ -1,0 +1,28 @@
+{
+    "name": "geocurly/docx-template",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Aleksandr.Blizorukov",
+            "email": "geocurly@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "DocxTemplate\\": "src/DocxTemplate"
+        }
+    },
+    "require": {
+        "php": "^7.4",
+        "ext-zip": "*",
+        "ext-dom": "*",
+        "guzzlehttp/psr7": "^1.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.3",
+        "geocurly/easy-benchmark": "^0.1.1",
+        "symfony/var-dumper": "^5.1"
+    }
+}
