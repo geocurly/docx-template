@@ -11,7 +11,7 @@ class LexerTest extends TestCase
     /**
      * @covers \DocxTemplate\Lexer\Lexer::parse
      */
-    public function testParse(): void
+    public function testSimpleParse(): void
     {
         $lexer = new Lexer($this->getSimpleSource());
         $this->assertSame(
@@ -25,6 +25,9 @@ class LexerTest extends TestCase
                         ],
                         'easy' => [
                             [18, 11],
+                        ],
+                        'tags' => [
+                            [0, 24] // There is more chars due stripped tags
                         ]
                     ]
                 ],
@@ -41,9 +44,6 @@ class LexerTest extends TestCase
         );
     }
 
-    /**
-     * @return SourceInterface
-     */
     private function getSimpleSource(): SourceInterface
     {
         return new class implements SourceInterface {
@@ -57,7 +57,12 @@ class LexerTest extends TestCase
                 yield "easy" => stream_for(<<<'DOCX'
                     Another text with ${variable}
                     DOCX);
+
+                yield "tags" => stream_for(<<<'DOCX'
+                    ${<tags>variable</tags>}
+                    DOCX);
             }
         };
     }
+
 }
