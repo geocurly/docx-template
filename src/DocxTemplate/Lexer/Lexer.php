@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace DocxTemplate\Lexer;
 
 use DocxTemplate\Lexer\Contract\SourceInterface;
-use function GuzzleHttp\Psr7\stream_for;
+use DocxTemplate\Lexer\Exception\InvalidSourceException;
+use DocxTemplate\Lexer\Exception\LexerException;
+use DocxTemplate\Lexer\Exception\SyntaxError;
+use DocxTemplate\Lexer\Reader\StreamReader;
+use DocxTemplate\Lexer\Reader\StringReader;
 
 class Lexer
 {
@@ -22,16 +26,17 @@ class Lexer
     /**
      * Parse Docx document to find all defined tokens
      * @return array
+     * @throws LexerException
+     * @throws InvalidSourceException
+     * @throws SyntaxError
      */
     public function parse(): array
     {
         foreach ($this->source->getStreams() as $file => $stream) {
             $reader = new StreamReader($stream);
-            while (!$reader->eof()) {
-                $macro = $reader->findAndReadBetween('${', '}');
-                if ($macro === null) {
-                    continue 2;
-                }
+            $position = 0;
+            while (true) {
+                $macro = Macro::find($reader, $position, $file);
 
                 [$content, $start, $length] = $macro;
                 $nested = $this->nested($content);
@@ -61,8 +66,9 @@ class Lexer
      */
     private function macro(string $parent): ?array
     {
-        $reader = new StreamReader(stream_for($parent));
-        $macro = $reader->findAndReadBetween('${', '}' ,0);
+        $reader = new StringReader($parent);
+        $macro = $reader->betweenSequences('${', '}' ,0);
+        dd($macro);
         if ($macro === null) {
             return null;
         }
@@ -84,13 +90,15 @@ class Lexer
 
     private function nested(string $parent): ?array
     {
-        $beginning = trim($parent[0] === '<' ? strip_tags($parent)[0] : $parent[0]);
-        if ($beginning === '$') {
+        $reader = new StringReader($parent);
+        $found = $reader->find('$', 1);
+        if ($found !== null) {
             // There is start of new nested macro
             return $this->macro($parent);
         }
 
-        if ($beginning === '`') {
+        $found = $reader->find('`', 1);
+        if ($found !== null) {
             // There is start of new string variable
             return $this->string($parent);
         }
