@@ -63,16 +63,44 @@ abstract class AbstractReader implements ReaderInterface
     }
 
     /** @inheritDoc */
-    public function firstNotEmpty(array $needles, int $startPosition = 0): ?array
+    public function nextNotEmpty(int $startPosition = 0): ?array
     {
         $first = $this->read($startPosition, 1);
         if ($first === null) {
             return null;
         }
 
-        $empty = [" ", "\t", "\n", "\r", "\0", "\x0B"];
+        if (in_array($first, self::EMPTY_CHARS, true)) {
+            $found = $this->nextNotEmpty($startPosition + 1);
+        } elseif ($first === '<') {
+            $position = $startPosition + 1;
+            while (true) {
+                $found = $this->nextNotEmpty($position);
+                if ($found === null || $found[0] === '>') {
+                    break;
+                }
+
+                $position = $found[1] + 1;
+            }
+
+            $found = $this->nextNotEmpty($found[1] + 1);
+        } else {
+            $found = [$first, $startPosition, 1];
+        }
+
+        return $found;
+    }
+
+    /** @inheritDoc */
+    public function firstNotEmpty(array $needles, int $startPosition = 0): ?array
+    {
+        $next = $this->nextNotEmpty($startPosition);
+        if ($next === null) {
+            return null;
+        }
+
         $firstChars = array_map(fn(string $needle) => $needle[0], $needles);
-        if (!in_array($first, $empty, true) && !in_array($first, $firstChars, true)) {
+        if (!in_array($next[0], $firstChars, true)) {
             return null;
         }
 

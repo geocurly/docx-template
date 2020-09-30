@@ -39,6 +39,11 @@ class StringReader extends AbstractReader
     /** @inheritDoc */
     public function read(int $startPosition, int $bytes): ?string
     {
-        return substr($this->content, $startPosition, $bytes);
+        $content = substr($this->content, $startPosition, $bytes);
+        if ($content === false) {
+            return null;
+        }
+
+        return $content;
     }
 }

@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace DocxTemplate\Lexer;
 
 use DocxTemplate\Lexer\Contract\SourceInterface;
-use DocxTemplate\Lexer\Exception\InvalidSourceException;
-use DocxTemplate\Lexer\Exception\LexerException;
-use DocxTemplate\Lexer\Exception\SyntaxError;
 use DocxTemplate\Lexer\Reader\StreamReader;
 use DocxTemplate\Lexer\Reader\StringReader;
+use DocxTemplate\Lexer\Token\Scope;
 
 class Lexer
 {
@@ -26,9 +24,6 @@ class Lexer
     /**
      * Parse Docx document to find all defined tokens
      * @return array
-     * @throws LexerException
-     * @throws InvalidSourceException
-     * @throws SyntaxError
      */
     public function parse(): array
     {
@@ -36,23 +31,7 @@ class Lexer
             $reader = new StreamReader($stream);
             $position = 0;
             while (true) {
-                $macro = Macro::find($reader, $position, $file);
-
-                [$content, $start, $length] = $macro;
-                $nested = $this->nested($content);
-                if ($nested !== null) {
-                    continue 2;
-                }
-
-                $content = trim(preg_replace('/\s+/', ' ', strip_tags($content)));
-                if (isset($this->tokens[$content]['files'])) {
-                    $this->tokens[$content]['files'][$file][] = [$start, $length];
-                } else {
-                    $this->tokens[$content] = [
-                        'type' => self::TYPE_SIMPLE_VARIABLE,
-                        'files' => [$file => [[$start, $length]]],
-                    ];
-                }
+                $scope = Scope::parse($reader, $position);
             }
         }
 

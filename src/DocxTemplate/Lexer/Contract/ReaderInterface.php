@@ -6,6 +6,8 @@ namespace DocxTemplate\Lexer\Contract;
 
 interface ReaderInterface
 {
+    public const EMPTY_CHARS = [" ", "\t", "\n", "\r", "\0", "\x0B"];
+
     /**
      * Find sequence of chars and return found position
      *
@@ -26,6 +28,18 @@ interface ReaderInterface
      * @return array|null
      */
     public function findAny(array $needles, int $startPosition = 0): ?array;
+
+    /**
+     * Get next not empty char
+     *
+     * @param int $startPosition
+     * @return array|null = [
+     *      $char,
+     *      $start,
+     *      $length
+     * ]
+     */
+    public function nextNotEmpty(int $startPosition = 0): ?array;
 
     /**
      * Get sequence if it first after $startPosition

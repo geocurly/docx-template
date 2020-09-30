@@ -30,7 +30,7 @@ class StreamReader extends AbstractReader
     protected function findChar(string $char, int $from): ?int
     {
         $offset = $from;
-        foreach ($this->readStreamChunk($offset) as $content) {
+        foreach ($this->readChunk($offset) as $content) {
             $position = strpos($content, $char, 0);
             if ($position === false) {
                 $offset += $this->chunkSize;
@@ -48,9 +48,14 @@ class StreamReader extends AbstractReader
      * @param int $position
      * @return iterable
      */
-    private function readStreamChunk(int $position): iterable
+    private function readChunk(int $position): iterable
     {
-        $this->stream->seek($position);
+        try {
+            $this->stream->seek($position);
+        } catch (\RuntimeException $exception) {
+            return;
+        }
+
         while(!$this->stream->eof()) {
             yield $this->stream->read($this->chunkSize);
         }
@@ -60,7 +65,7 @@ class StreamReader extends AbstractReader
     protected function findAnyChar(array $chars, int $startPosition): ?array
     {
         $offset = $startPosition;
-        foreach ($this->readStreamChunk($offset) as $content) {
+        foreach ($this->readChunk($offset) as $content) {
             $subst = strpbrk($content, implode($chars));
             if ($subst === false) {
                 $offset += $this->chunkSize;
@@ -76,7 +81,12 @@ class StreamReader extends AbstractReader
     /** @inheritDoc */
     public function read(int $from, int $bytes): ?string
     {
-        $this->stream->seek($from);
+        try {
+            $this->stream->seek($from);
+        } catch (\RuntimeException $exception) {
+            return null;
+        }
+
         return $this->stream->read($bytes);
     }
 }

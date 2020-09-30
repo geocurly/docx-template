@@ -9,7 +9,7 @@ $zip = new class implements \DocxTemplate\Lexer\Contract\SourceInterface {
     {
         yield "nested" => \GuzzleHttp\Psr7\stream_for(
             <<<'DOCX'
-            $<asd>{  ${some} ? ${<tag>nested `var`</tag>} : `$var in string`}    
+             asdas   $<asd>{  ${some} ? ${<tag>nested `var`</tag>} : `$var in string`}    
             DOCX
         );
     }

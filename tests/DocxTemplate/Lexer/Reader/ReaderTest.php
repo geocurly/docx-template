@@ -178,6 +178,51 @@ class ReaderTest extends TestCase
     }
 
     /**
+     * @covers \DocxTemplate\Lexer\Reader\AbstractReader::firstNotAny
+     * @dataProvider nextNotEmptyDataProvider
+     *
+     * @param string $content
+     * @param array $args
+     * @param array|null $expect
+     * @param string $message
+     */
+    public function testNextNotEmpty(string $content, array $args, ?array $expect, string $message): void
+    {
+        foreach ($this->reader($content) as $reader) {
+            $this->assertSame(
+                $expect,
+                $reader->nextNotEmpty(...$args),
+                "Try to $message with " . get_class($reader)
+            );
+        }
+    }
+
+    public function nextNotEmptyDataProvider(): array
+    {
+        return [
+            [
+                ' `macro` }',
+                [0],
+                ['`', 1, 1],
+                "get next not empty char for ' `macro` }'"
+            ],
+            [
+                "   \n    macro` }",
+                [3],
+                ['m', 8, 1],
+                "get next not empty char for ' \"   \\n    macro` }\" }'"
+            ],
+            [
+                " $  \n  \t  \${}` }",
+                [3],
+                ['$', 10, 1],
+                "get next not empty char for ' $  \\n  \\t  \${}` }'"
+            ],
+        ];
+    }
+
+
+    /**
      * @param string $content
      * @return iterable|ReaderInterface[]
      * @throws \DocxTemplate\Lexer\Exception\InvalidSourceException
