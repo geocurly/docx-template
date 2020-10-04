@@ -33,7 +33,7 @@ class StringReader extends AbstractReader
             return null;
         }
 
-        return [$subst[0], strpos($content, $subst)];
+        return [$subst[0], $startPosition + strpos($content, $subst)];
     }
 
     /** @inheritDoc */

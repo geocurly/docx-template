@@ -29,7 +29,6 @@ class TokenParser
     /**
      * Make nested token
      *
-     * @param ReaderInterface $reader
      * @param int $position
      * @return TokenInterface|null
      * @throws SyntaxError
@@ -54,12 +53,56 @@ class TokenParser
     /**
      * Make string token
      *
-     * @param int $position
+     * @param int $start
      * @return TokenInterface|null
+     * @throws SyntaxError
      */
-    public function string(int $position): ?TokenInterface
+    public function string(int $start): ?TokenInterface
     {
+        $open = $this->reader->find(Str::BRACE, $start);
+        if ($open === null) {
+            return null;
+        }
 
+        $last = array_sum($open);
+        $nested = [];
+        while (true) {
+            $nestedOrClose = $this->reader->findAny([Str::BRACE, Scope::OPEN], $last);
+            if ($nestedOrClose === null) {
+                throw new SyntaxError("Unclosed string");
+            }
+
+            if ($nestedOrClose[0] === Str::BRACE) {
+                $string = new TokenPosition(
+                    $this->source,
+                    $open[0],
+                    $nestedOrClose[2] + $nestedOrClose[1] - $open[0]
+                );
+
+                break;
+            }
+
+            if ($nestedOrClose[0] === Scope::OPEN) {
+                $scope = $this->scope($nestedOrClose[1]);
+
+                if ($scope === null) {
+                    throw new SyntaxError("Unresolved scope");
+                }
+
+                $last = $scope->getPosition()->getEnd();
+                $nested[] = $scope;
+                continue;
+            }
+
+            throw new SyntaxError("Unknown nested start");
+        }
+
+        $content = $this->reader->read($string->getStart(), $string->getLength());
+        return new Str(
+            substr($content, 1, -1),
+            $string,
+            ...$nested
+        );
     }
 
     public function scope(int $position): ?TokenInterface
@@ -70,35 +113,60 @@ class TokenParser
         }
 
         $lastPosition = array_sum($open);
-        $nested = $this->nested($lastPosition) ?? $this->name($lastPosition);
-        if ($nested === null) {
+        $first = $this->nested($lastPosition) ?? $this->name($lastPosition);
+        if ($first === null) {
             throw new SyntaxError("Couldn't resolve nested construction in scope.");
         }
 
-        $next = $this->ternary($nested) ?? $nested;
-        $filter = $this->filter($next);
-
-        $lastPosition = ($filter ?? $next)->getPosition()->getEnd();
-
-        $close = $this->reader->find(Scope::CLOSE, $lastPosition);
-        if ($close === null) {
-            throw new SyntaxError("Couldn't find end of scope.");
+        $ternary = $this->ternary($first);
+        if ($ternary !== null) {
+            $next = $ternary;
+        } else {
+            $next = $first;
         }
 
-        $scopePosition = new TokenPosition($this->source, $open[0], $close[0] + $close[1] - $open[0]);
+        $nested[] = $next;
+        $nextChar = $this->reader->nextNotEmpty($next->getPosition()->getEnd());
+        while (true) {
+            if ($nextChar === null) {
+                throw new SyntaxError("Couldn't find end of scope.");
+            }
+
+            if ($nextChar[0] === Scope::CLOSE) {
+                $closePosition = $nextChar[1] + $nextChar[2];
+                break;
+            }
+
+            if ($ternary !== null) {
+                throw new SyntaxError("Ternary operator must be single construction in scope.");
+            }
+
+            $next = $this->nested($nextChar[1]) ?? $this->name($nextChar[1]);
+            if ($next === null) {
+                throw new SyntaxError("Couldn't resolve nested construction in scope.");
+            }
+
+            $nested[] = $next;
+            $nextChar = $this->reader->nextNotEmpty($next->getPosition()->getEnd());
+        }
+
+        $scopePosition = new TokenPosition($this->source, $open[0], $closePosition - $open[0]);
         return new Scope(
-            $this->reader->read($scopePosition->getStart(), $scopePosition->getLength()),
+            $this->reader->read(
+                $open[0] + $open[1],
+                $scopePosition->getEnd() - ($open[0] + $open[1]) - 1
+            ),
             $scopePosition,
-            ...array_filter([$next, $filter])
+            ...$nested
         );
     }
 
     /**
      * Make ternary token
      *
-     * @param ReaderInterface $reader
      * @param TokenInterface $if condition token
      * @return TokenInterface|null
+     * @throws SyntaxError
      */
     public function ternary(TokenInterface $if): ?TokenInterface
     {
@@ -127,7 +195,15 @@ class TokenParser
             throw new SyntaxError('Could\'t resolve "else" condition.');
         }
 
-        return new Ternary(new TokenPosition(), $if, $then, $else);
+        $ifPos = $if->getPosition();
+        $elsePos = $else->getPosition();
+        return new Ternary(
+            '',
+            new TokenPosition($this->source, $ifPos->getStart(), $elsePos->getEnd() - $ifPos->getStart() + 1),
+            $if,
+            $then,
+            $else
+        );
     }
 
     /**
@@ -156,16 +232,17 @@ class TokenParser
         }
 
         $namePosition = new TokenPosition($this->source, $start[1], $end[1] + $end[2] - $start[1] - 1);
-        $name = strip_tags($this->reader->read($namePosition->getStart(), $namePosition->getLength()));
+        $content = $this->reader->read($namePosition->getStart(), $namePosition->getLength());
+        $name = strip_tags($content);
         if (preg_match('/^[\w_-]+$/', $name) !== 1) {
             throw new SyntaxError("Token name contains unavailable characters: $name");
         }
 
-        return new Name($name, $namePosition);
+        return new Name($content, $namePosition);
     }
 
     public function filter(TokenInterface $target): ?TokenInterface
     {
-
+        return null;
     }
 }

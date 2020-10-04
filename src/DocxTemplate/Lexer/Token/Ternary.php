@@ -16,8 +16,10 @@ class Ternary implements TokenInterface
     private TokenInterface $if;
     private TokenInterface $then;
     private TokenInterface $else;
+    private string $name;
 
     public function __construct(
+        string $name,
         TokenPosition $position,
         TokenInterface $if,
         TokenInterface $then,
@@ -27,10 +29,16 @@ class Ternary implements TokenInterface
         $this->if = $if;
         $this->then = $then;
         $this->else = $else;
+        $this->name = $name;
     }
 
     public function getPosition(): TokenPosition
     {
         return $this->position;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 }

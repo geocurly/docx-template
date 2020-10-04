@@ -12,17 +12,23 @@ class Str implements TokenInterface
     public const BRACE = "`";
 
     private TokenPosition $position;
-    /** @var TokenInterface[] $needles needle tokens */
-    private array $needles;
+    private array $nested;
+    private string $name;
 
-    public function __construct(TokenPosition $position, ...$needles)
+    public function __construct(string $name, TokenPosition $position, TokenInterface ...$nested)
     {
         $this->position = $position;
-        $this->needles = $needles;
+        $this->nested = $nested;
+        $this->name = $name;
     }
 
     public function getPosition(): TokenPosition
     {
         return $this->position;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 }

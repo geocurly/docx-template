@@ -41,7 +41,11 @@ class TokenPosition
      */
     public function getEnd(): int
     {
-        return $this->getStart() + $this->getLength() - 1;
+        if ($this->getLength() === 0) {
+            return $this->getStart();
+        }
+
+        return $this->getStart() + $this->getLength();
     }
 
     /**

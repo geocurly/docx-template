@@ -13,14 +13,13 @@ class Scope implements TokenInterface
     public const CLOSE = '}';
 
     private TokenPosition $position;
-    /** @var TokenInterface[] $needles needle tokens */
-    private array $needles;
+    private array $nested;
     private string $name;
 
-    public function __construct(string $name, TokenPosition $position, TokenInterface ...$needles)
+    public function __construct(string $name, TokenPosition $position, TokenInterface ...$nested)
     {
         $this->position = $position;
-        $this->needles = $needles;
+        $this->nested = $nested;
         $this->name = $name;
     }
 
