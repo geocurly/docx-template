@@ -151,14 +151,12 @@ class TokenParser
         }
 
         $scopePosition = new TokenPosition($this->source, $open[0], $closePosition - $open[0]);
-        return new Scope(
-            $this->reader->read(
-                $open[0] + $open[1],
-                $scopePosition->getEnd() - ($open[0] + $open[1]) - 1
-            ),
-            $scopePosition,
-            ...$nested
+        $name = $this->reader->read(
+            $open[0] + $open[1],
+            $scopePosition->getEnd() - ($open[0] + $open[1]) - 1
         );
+
+        return new Scope(trim($name), $scopePosition, ...$nested);
     }
 
     /**
@@ -189,7 +187,7 @@ class TokenParser
             throw new SyntaxError('Could\'t find ":" in ternary operator.');
         }
 
-        $position = $thenChar[1] + $thenChar[2];
+        $position = $elseChar[1] + $elseChar[2];
         $else = $this->nested($position) ?? $this->name($position);
         if ($else === null) {
             throw new SyntaxError('Could\'t resolve "else" condition.');
@@ -197,9 +195,15 @@ class TokenParser
 
         $ifPos = $if->getPosition();
         $elsePos = $else->getPosition();
+        $ternaryPos = new TokenPosition(
+            $this->source,
+            $ifPos->getStart(),
+            $elsePos->getEnd() - $ifPos->getStart()
+        );
+
         return new Ternary(
-            '',
-            new TokenPosition($this->source, $ifPos->getStart(), $elsePos->getEnd() - $ifPos->getStart() + 1),
+            $this->reader->read($ternaryPos->getStart(), $ternaryPos->getLength()),
+            $ternaryPos,
             $if,
             $then,
             $else
