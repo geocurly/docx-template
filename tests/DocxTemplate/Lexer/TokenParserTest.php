@@ -90,6 +90,18 @@ class TokenParserTest extends TestCase
     {
         return [
             [
+                'ifThen ?: else }',
+                $if = new Name('ifThen', $this->pos(0, 6)),
+                new Ternary(
+                    'ifThen ?: else',
+                    $this->pos(0, 14),
+                    $if,
+                    $if,
+                    new Name('else', $this->pos(10, 4))
+                ),
+                "find ternary in 'ifThen ?: else }'"
+            ],
+            [
                 'if ? if : else }',
                 $if = new Name('if', $this->pos(0, 2)),
                 new Ternary(

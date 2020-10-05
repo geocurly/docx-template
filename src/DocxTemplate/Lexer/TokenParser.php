@@ -175,16 +175,22 @@ class TokenParser
         }
 
         $position = $thenChar[1] + $thenChar[2];
-        // ${ $if ? `string` ...} or ${ $if ? ${scope} ... } or ${ $if ? name ... }
-        $then = $this->nested($position) ?? $this->name($position);
-        if ($then === null) {
-            throw new SyntaxError('Could\'t resolve "then" condition.');
-        }
+        $elseChar = $this->reader->firstNotEmpty([Ternary::ELSE_CHAR], $position);
+        if ($elseChar !== null) {
+            // There is ?:
+            $then = $if;
+        } else {
+            // ${ $if ? `string` ...} or ${ $if ? ${scope} ... } or ${ $if ? name ... }
+            $then = $this->nested($position) ?? $this->name($position);
+            if ($then === null) {
+                throw new SyntaxError('Could\'t resolve "then" condition.');
+            }
 
-        // $if ? $then ...
-        $elseChar = $this->reader->firstNotEmpty([Ternary::ELSE_CHAR], $then->getPosition()->getEnd());
-        if ($elseChar === null) {
-            throw new SyntaxError('Could\'t find ":" in ternary operator.');
+            // $if ? $then ...
+            $elseChar = $this->reader->firstNotEmpty([Ternary::ELSE_CHAR], $then->getPosition()->getEnd());
+            if ($elseChar === null) {
+                throw new SyntaxError('Could\'t find ":" in ternary operator.');
+            }
         }
 
         $position = $elseChar[1] + $elseChar[2];
