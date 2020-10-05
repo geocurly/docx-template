@@ -102,6 +102,18 @@ class TokenParserTest extends TestCase
                 "find ternary in 'if ? if : else }'"
             ],
             [
+                'i<test-tag>f ?</test-tag> if : e<bold>ls</bold>e }',
+                $if = new Name('i<test-tag>f', $this->pos(0, 12)),
+                new Ternary(
+                    'i<test-tag>f ?</test-tag> if : e<bold>ls</bold>e',
+                    $this->pos(0, 48),
+                    $if,
+                    new Name('if', $this->pos(26, 2)),
+                    new Name('e<bold>ls</bold>e', $this->pos(31, 17))
+                ),
+                "find ternary in 'i<test-tag>f ?</test-tag> if : e<bold>ls</bold>e }'"
+            ],
+            [
                 '`if ${var}` ? `then ${    `ternary` ? bar : `else ${nested}`}` : ``',
                 $if = new Str(
                     'if ${var}',
