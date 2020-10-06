@@ -7,6 +7,7 @@ namespace DocxTemplate\Lexer;
 use DocxTemplate\Lexer\Contract\ReaderInterface;
 use DocxTemplate\Lexer\Contract\TokenInterface;
 use DocxTemplate\Lexer\Exception\SyntaxError;
+use DocxTemplate\Lexer\Token\Call;
 use DocxTemplate\Lexer\Token\Filter;
 use DocxTemplate\Lexer\Token\Image;
 use DocxTemplate\Lexer\Token\Name;
@@ -232,7 +233,7 @@ class TokenParser
         $end = $this->reader->findAny(
             array_merge(
                 ReaderInterface::EMPTY_CHARS,
-                [Scope::CLOSE, Image::DELIMITER, Filter::PIPE]
+                [Scope::CLOSE, Image::DELIMITER, Filter::PIPE, Call::ARGS_OPEN]
             ),
             $start[1] + $start[2]
         );
@@ -241,14 +242,50 @@ class TokenParser
             throw new SyntaxError("Couldn't find end of the name");
         }
 
-        $namePosition = new TokenPosition($this->source, $start[1], $end[1] + $end[2] - $start[1] - 1);
-        $content = $this->reader->read($namePosition->getStart(), $namePosition->getLength());
+
+        [$startName, $lengthName] = [$start[1], $end[1] + $end[2] - $start[1] - 1];
+        $content = $this->reader->read($startName, $lengthName);
         $name = strip_tags($content);
         if (preg_match('/^[\w_-]+$/', $name) !== 1) {
             throw new SyntaxError("Token name contains unavailable characters: $name");
         }
 
-        return new Name($content, $namePosition);
+        if ($end[0] !== Call::ARGS_OPEN) {
+            $namePosition = new TokenPosition($this->source, $startName, $lengthName);
+            return new Name($content, $namePosition);
+        }
+
+        $next = $this->string(array_sum($end));
+        if ($next === null) {
+            throw new SyntaxError("Unknown call argument");
+        } else {
+            $args[] = $next;
+        }
+
+        while (true) {
+            $char = $this->reader->nextNotEmpty($next->getPosition()->getEnd());
+            if ($char[0] === Call::COMMA) {
+                $next = $this->string($char[1] + $char[2]);
+                if ($next === null) {
+                    throw new SyntaxError("Unknown call argument");
+                } else {
+                    $args[] = $next;
+                }
+            } elseif ($char[0] === Call::ARGS_CLOSE) {
+                $end = $char;
+                break;
+            } else {
+                throw new SyntaxError("Invalid call arguments");
+            }
+        }
+
+        $lengthName = $end[1] + $end[2] - $startName;
+        $namePosition = new TokenPosition($this->source, $startName, $lengthName);
+        return new Call(
+            $this->reader->read($startName, $lengthName),
+            $namePosition,
+            ...$args
+        );
     }
 
     public function filter(TokenInterface $target): ?TokenInterface
