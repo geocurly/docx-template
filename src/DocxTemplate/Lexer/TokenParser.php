@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace DocxTemplate\Lexer;
 
 use DocxTemplate\Lexer\Contract\ReaderInterface;
-use DocxTemplate\Lexer\Contract\TokenInterface;
+use DocxTemplate\Lexer\Contract\Token\CallableInterface;
+use DocxTemplate\Lexer\Contract\Token\TokenInterface;
 use DocxTemplate\Lexer\Exception\SyntaxError;
 use DocxTemplate\Lexer\Token\Call;
 use DocxTemplate\Lexer\Token\Filter;
@@ -220,7 +221,7 @@ class TokenParser
     /**
      * Parse simple name token
      * @param int $position
-     * @return TokenInterface|null
+     * @return TokenInterface|CallableInterface|null
      * @throws SyntaxError
      */
     public function name(int $position): ?TokenInterface
@@ -265,7 +266,7 @@ class TokenParser
         while (true) {
             $char = $this->reader->nextNotEmpty($next->getPosition()->getEnd());
             if ($char[0] === Call::COMMA) {
-                $next = $this->string($char[1] + $char[2]);
+                $next = $this->nested($char[1] + $char[2]);
                 if ($next === null) {
                     throw new SyntaxError("Unknown call argument");
                 } else {
@@ -288,8 +289,39 @@ class TokenParser
         );
     }
 
-    public function filter(TokenInterface $target): ?TokenInterface
+    public function filter(TokenInterface $target): ?Filter
     {
-        return null;
+        $filter = $this->filterElement($target);
+        if ($filter === null) {
+            return null;
+        }
+
+        $next = $this->filter($filter);
+        if ($next !== null) {
+            $filter->addNext($next);
+        }
+
+        return $filter;
+    }
+
+    private function filterElement(TokenInterface $target): ?Filter
+    {
+        $position = $target->getPosition();
+        $pipe = $this->reader->nextNotEmpty($position->getEnd());
+        // There is may be end of scope
+        if ($pipe === null || $pipe[0] === Scope::CLOSE) {
+            return null;
+        }
+
+        if ($pipe[0] !== Filter::PIPE) {
+            throw new SyntaxError("Unexpected filter operator");
+        }
+
+        $name = $this->name($pipe[1] + $pipe[2]);
+        if ($name === null) {
+            throw new SyntaxError("Couldn't parse filter");
+        }
+
+        return new Filter($name);
     }
 }

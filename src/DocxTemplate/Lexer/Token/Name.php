@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer\Token;
 
-use DocxTemplate\Lexer\Contract\TokenInterface;
+use DocxTemplate\Lexer\Contract\Token\TokenInterface;
 use DocxTemplate\Lexer\Token\Position\TokenPosition;
 
 class Name implements TokenInterface

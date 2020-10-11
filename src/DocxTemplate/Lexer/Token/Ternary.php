@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer\Token;
 
-use DocxTemplate\Lexer\Contract\TokenInterface;
+use DocxTemplate\Lexer\Contract\Token\TokenInterface;
 use DocxTemplate\Lexer\Token\Position\TokenPosition;
 
 class Ternary implements TokenInterface
@@ -32,11 +32,13 @@ class Ternary implements TokenInterface
         $this->name = $name;
     }
 
+    /** @inheritDoc */
     public function getPosition(): TokenPosition
     {
         return $this->position;
     }
 
+    /** @inheritDoc */
     public function getName(): string
     {
         return $this->name;

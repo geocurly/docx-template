@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer\Token;
 
-use DocxTemplate\Lexer\Contract\TokenInterface;
+use DocxTemplate\Lexer\Contract\Token\CallableInterface;
+use DocxTemplate\Lexer\Contract\Token\TokenInterface;
 use DocxTemplate\Lexer\Token\Position\TokenPosition;
 
-class Call extends Name
+class Call extends Name implements CallableInterface
 {
     public const ARGS_OPEN = '(';
     public const ARGS_CLOSE = ')';
@@ -18,5 +19,11 @@ class Call extends Name
     {
         parent::__construct($name, $position);
         $this->args = $args;
+    }
+
+    /** @inheritDoc */
+    public function getArgs(): array
+    {
+        return $this->args;
     }
 }
