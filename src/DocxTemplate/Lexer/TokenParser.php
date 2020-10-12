@@ -11,6 +11,7 @@ use DocxTemplate\Lexer\Exception\SyntaxError;
 use DocxTemplate\Lexer\Token\Call;
 use DocxTemplate\Lexer\Token\Filter;
 use DocxTemplate\Lexer\Token\Image;
+use DocxTemplate\Lexer\Token\ImageSize;
 use DocxTemplate\Lexer\Token\Name;
 use DocxTemplate\Lexer\Token\Position\TokenPosition;
 use DocxTemplate\Lexer\Token\Scope;
@@ -234,7 +235,7 @@ class TokenParser
         $end = $this->reader->findAny(
             array_merge(
                 ReaderInterface::EMPTY_CHARS,
-                [Scope::CLOSE, Image::DELIMITER, Filter::PIPE, Call::ARGS_OPEN]
+                [Scope::CLOSE, Image::DELIMITER, Filter::PIPE, Call::ARGS_OPEN, Image::DELIMITER]
             ),
             $start[1] + $start[2]
         );
@@ -323,5 +324,73 @@ class TokenParser
         }
 
         return new Filter($name);
+    }
+
+    /**
+     * ${search-image-pattern}
+     * ${search-image-pattern:[width]:[height]:[ratio]}
+     * ${search-image-pattern:[width]x[height]}
+     * ${search-image-pattern:size=[width]x[height]}
+     * ${search-image-pattern:width=[width]:height=[height]:ratio=false}
+     *
+     * Where:
+     * [width] and [height] can be just numbers or numbers with measure,
+     *         which supported by Word (cm, mm, in, pt, pc, px, %, em, ex)
+     * [ratio] uses only for false, - or f to turn off respect aspect ration of image.
+     *         By default template image size uses as ‘container’ size.
+     *
+     * @param int $position
+     *
+     * @return Image|null
+     */
+    public function image(int $position): ?TokenInterface
+    {
+        $name = $this->name($position);
+        if ($name === null) {
+            return null;
+        }
+
+        if ($name instanceof Call) {
+            throw new SyntaxError("Image couldn't have an argument.");
+        }
+
+        $next = $this->reader->nextNotEmpty($name->getPosition()->getEnd());
+        if ($next === null) {
+            throw new SyntaxError("Unclosed image");
+        }
+
+        if ($next[0] === Scope::CLOSE) {
+            // There is image without given size
+            // This same as name token
+            return new $name;
+        }
+
+        if ($next[0] === Image::DELIMITER) {
+            $size = $this->imageSize($next[1] + $next[2]);
+            if ($size === null) {
+                throw new SyntaxError("Unknown image size");
+            }
+        } else {
+            throw new SyntaxError("Unexpected symbol: {$next[0]}");
+        }
+
+        $nameStart = $name->getPosition()->getStart();
+        $pos = new TokenPosition($this->source, $nameStart, $size->getPosition()->getEnd() - $nameStart);
+        return new Image(
+            $this->reader->read($pos->getStart(), $pos->getLength()),
+            $pos,
+            $size
+        );
+    }
+
+    /**
+     * Try to find image size
+     *
+     * @param int $position
+     * @return ImageSize|null
+     */
+    private function imageSize(int $position): ?ImageSize
+    {
+        return null;
     }
 }

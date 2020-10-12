@@ -9,9 +9,11 @@ use DocxTemplate\Lexer\Reader\StreamReader;
 use DocxTemplate\Lexer\Reader\StringReader;
 use DocxTemplate\Lexer\Token\Call;
 use DocxTemplate\Lexer\Token\Filter;
+use DocxTemplate\Lexer\Token\Image;
 use DocxTemplate\Lexer\Token\Name;
 use DocxTemplate\Lexer\Token\Position\TokenPosition;
 use DocxTemplate\Lexer\Token\Scope;
+use DocxTemplate\Lexer\Token\ImageSize;
 use DocxTemplate\Lexer\Token\Str;
 use DocxTemplate\Lexer\Token\Ternary;
 use PHPUnit\Framework\TestCase;
@@ -368,6 +370,45 @@ class TokenParserTest extends TestCase
                     )
                 )->addNext(new Filter(new Name('second_filter', $this->pos(40, 13)))),
                 "find filter in '\${ target | first_filter(`1`, \${var}) | second_filter }'"
+            ]
+        ];
+    }
+
+    /**
+     * @covers       \DocxTemplate\Lexer\TokenParser::image
+     * @dataProvider imageProvider
+     *
+     * @param string $content
+     * @param int $pos
+     * @param TokenInterface|null $expected
+     * @param string $message
+     * @throws Exception\InvalidSourceException
+     * @throws Exception\SyntaxError
+     */
+    public function testImage(string $content, int $pos, ?TokenInterface $expected, string $message): void
+    {
+        foreach ($this->parser($content) as $parser) {
+            $this->assertEquals($expected, $parser->image($pos), "Try to $message.");
+        }
+    }
+
+    public function imageProvider(): array
+    {
+        return [
+            [
+                '${ image:150x140 }',
+                2,
+                new Image(
+                    'image:150x140',
+                    $this->pos(3, 13),
+                    new ImageSize(
+                        '150x140',
+                        $this->pos(9, 7),
+                        '150',
+                        '140'
+                    ),
+                ),
+                "find image in '\${ image:150x140 }'"
             ]
         ];
     }
