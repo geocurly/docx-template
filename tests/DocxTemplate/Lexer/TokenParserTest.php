@@ -396,7 +396,7 @@ class TokenParserTest extends TestCase
     {
         return [
             [
-                '${ image:150x140 }',
+                $tpl ='${ image:150x140 }',
                 2,
                 new Image(
                     'image:150x140',
@@ -408,7 +408,23 @@ class TokenParserTest extends TestCase
                         '140'
                     ),
                 ),
-                "find image in '\${ image:150x140 }'"
+                "find image in '$tpl'"
+            ],
+            [
+                $tpl = '${ image-var:height=140px:width=500px:ratio=false }',
+                2,
+                new Image(
+                    'image-var:height=140px:width=500px:ratio=false',
+                    $this->pos(3, 46),
+                    new ImageSize(
+                        'height=140px:width=500px:ratio=false',
+                        $this->pos(13, 36),
+                        '500px',
+                        '140px',
+                        false
+                    ),
+                ),
+                "find image in '$tpl'"
             ]
         ];
     }
