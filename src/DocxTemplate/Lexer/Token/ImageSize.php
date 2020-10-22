@@ -27,18 +27,25 @@ class ImageSize implements TokenInterface
         self::EM,
     ];
 
+    public const BOOLEAN = [
+        'f' => false,
+        'false' => false,
+        't' => true,
+        'true' => true,
+    ];
+
     private string $name;
     private TokenPosition $position;
     private string $width;
     private string $height;
-    private bool $ratio;
+    private ?bool $ratio;
 
     public function __construct(
         string $name,
         TokenPosition $position,
         string $width,
         string $height,
-        bool $ratio = true
+        ?bool $ratio = null
     ) {
         $this->name = $name;
         $this->position = $position;

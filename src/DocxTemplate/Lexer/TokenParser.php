@@ -389,8 +389,76 @@ class TokenParser
      * @param int $position
      * @return ImageSize|null
      */
-    private function imageSize(int $position): ?ImageSize
+    public function imageSize(int $position): ?ImageSize
     {
-        return null;
+        $end = $this->reader->findAny(array_merge(ReaderInterface::EMPTY_CHARS, [Scope::CLOSE]), $position);
+        if ($end === null) {
+            throw new SyntaxError("Couldn't find the end of image size");
+        }
+
+        $points = implode('|', ImageSize::MEASURES);
+        $boolean = implode('|', array_keys(ImageSize::BOOLEAN));
+        $first = $this->reader->nextNotEmpty($position);
+        switch (true) {
+            // width=[width]:height=[height]:ratio=[ratio]
+            // width=[width]:ratio=[ratio]:height=[height]
+            // width=[width]:height=[height]
+            case $first[0] === 'w';
+                $pattern = [
+                    "(?:width=(?P<w1>\d+(?:$points)?):height=(?P<h1>\d+(?:$points)?)(?::ratio=(?P<r1>$boolean))?)",
+                    "(?:width=(?P<w2>\d+(?:$points)?):ratio=(?P<r2>$boolean)):height=(?P<h2>\d+(?:$points)?)",
+                ];
+                break;
+            // height=[height]:width=[width]:ratio=[ratio]
+            // height=[height]:ratio=[ratio]:width=[width]
+            // height=[height]:width=[width]
+            case $first[0] === 'h';
+                $pattern = [
+                    "(?:height=(?P<h1>\d+(?:$points)?):width=(?P<w1>\d+(?:$points)?)(?::ratio=(?P<r1>$boolean))?)",
+                    "(?:height=(?P<h2>\d+(?:$points)?):ratio=(?P<r2>$boolean)):width=(?P<w2>\d+(?:$points)?)",
+                ];
+                break;
+            // ratio=[ratio]:height=[height]:width=[width]
+            // ratio=[ratio]:width=[width]:height=[height]
+            case $first[0] === 'r';
+                $pattern = [
+                    "(?:ratio=(?P<r1>$boolean):height=(?P<h1>\d+(?:$points)?):width=(?P<w1>\d+(?:$points)?))",
+                    "(?:ratio=(?P<r2>$boolean):width=(?P<w2>\d+(?:$points)?):height=(?P<h2>\d+(?:$points)?))",
+                ];
+                break;
+            // size=[width]x[height] || size=[width]:[height]
+            case $first[0] === 's';
+                $pattern = ["size=(?P<w1>\d+(?:$points)?)(?:x|:)(?P<h1>\d+(?:$points)?)"];
+                break;
+            // [width]x[height] || [width]x[height]:[ratio]
+            // [width]:[height] || [width]:[height]:[ratio]
+            case ctype_digit($first[0]);
+                $pattern = ["(?P<w1>\d+(?:$points)?)(?:x|:)(?P<h1>\d+(?:$points)?)(?::(?P<r1>$boolean))?"];
+                break;
+            default:
+                throw new SyntaxError("Invalid image size");
+        }
+
+        $template = '/^' . implode('|', $pattern) . '$/';
+
+        $size = $this->reader->read($position, $end[1] - $position);
+        if (preg_match($template, $size, $match) !== 1) {
+            throw new SyntaxError('Invalid image size');
+        }
+
+        for ($i = 1; $i <= 2; $i++) {
+            [$width, $height, $ratio] = [$match["w$i"] ?? null, $match["h$i"] ?? null, $match["r$i"] ?? null];
+            if (array_intersect([$width, $height], [null, '']) === []) {
+                break;
+            }
+        }
+
+        return new ImageSize(
+            $size,
+            new TokenPosition($this->source, $position, $end[1] - $position),
+            $width,
+            $height,
+            $ratio === null ? null : ImageSize::BOOLEAN[$ratio]
+        );
     }
 }
