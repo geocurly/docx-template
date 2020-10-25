@@ -17,7 +17,8 @@ class StringReader extends AbstractReader
     protected function findAnyChar(array $chars, int $position): ?array
     {
         $content = substr($this->content, $position);
-        $subst = strpbrk($content, implode($chars));
+        $needles = array_merge($chars, ['<']);
+        $subst = strpbrk($content, implode('', $needles));
         if ($subst === false) {
             return null;
         } else {
@@ -26,7 +27,7 @@ class StringReader extends AbstractReader
 
         // Skip all tags
         if ($subst[0] === '<') {
-            $close = strpos($content, '>', $position);
+            $close = strpos($this->content, '>', $position);
             if ($close === false) {
                 // There is no end of tag
                 return null;

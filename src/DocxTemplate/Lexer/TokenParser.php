@@ -240,7 +240,7 @@ class TokenParser
         [$startName, $lengthName] = [$start[1], $end[1] + $end[2] - $start[1] - 1];
         $content = $this->reader->read($startName, $lengthName);
         $name = strip_tags($content);
-        if (preg_match('/^[\w_-]+$/', $name) !== 1) {
+        if (preg_match('/^\s*[\w_-]+\s*$/', $name) !== 1) {
             throw new SyntaxError("Token name contains unavailable characters: $name");
         }
 
