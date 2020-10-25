@@ -122,7 +122,7 @@ class TokenParser
         }
 
         $nested[] = $next;
-        $nextChar = $this->reader->getNextNotEmpty($next->getPosition()->getEnd());
+        $nextChar = $this->reader->firstNotEmpty($next->getPosition()->getEnd());
         while (true) {
             if ($nextChar === null) {
                 throw new SyntaxError("Couldn't find end of scope.");
@@ -143,7 +143,7 @@ class TokenParser
             }
 
             $nested[] = $next;
-            $nextChar = $this->reader->getNextNotEmpty($next->getPosition()->getEnd());
+            $nextChar = $this->reader->firstNotEmpty($next->getPosition()->getEnd());
         }
 
         $scopePosition = new TokenPosition($open[1],$closePosition - $open[1]);
@@ -219,7 +219,7 @@ class TokenParser
      */
     public function name(int $position): ?TokenInterface
     {
-        $start = $this->reader->getNextNotEmpty($position);
+        $start = $this->reader->firstNotEmpty($position);
         if ($start === null) {
             throw new SyntaxError("Couldn't find start of the name");
         }
@@ -257,7 +257,7 @@ class TokenParser
         }
 
         while (true) {
-            $char = $this->reader->getNextNotEmpty($next->getPosition()->getEnd());
+            $char = $this->reader->firstNotEmpty($next->getPosition()->getEnd());
             if ($char[0] === Call::COMMA) {
                 $next = $this->nested($char[1] + $char[2]);
                 if ($next === null) {
@@ -300,7 +300,7 @@ class TokenParser
     private function filterElement(TokenInterface $target): ?Filter
     {
         $position = $target->getPosition();
-        $pipe = $this->reader->getNextNotEmpty($position->getEnd());
+        $pipe = $this->reader->firstNotEmpty($position->getEnd());
         // There is may be end of scope
         if ($pipe === null || $pipe[0] === Scope::CLOSE) {
             return null;
@@ -346,7 +346,7 @@ class TokenParser
             throw new SyntaxError("Image couldn't have an argument.");
         }
 
-        $next = $this->reader->getNextNotEmpty($name->getPosition()->getEnd());
+        $next = $this->reader->firstNotEmpty($name->getPosition()->getEnd());
         if ($next === null) {
             throw new SyntaxError("Unclosed image");
         }
@@ -390,7 +390,7 @@ class TokenParser
 
         $points = implode('|', ImageSize::MEASURES);
         $boolean = implode('|', array_keys(ImageSize::BOOLEAN));
-        $first = $this->reader->getNextNotEmpty($position);
+        $first = $this->reader->firstNotEmpty($position);
         switch (true) {
             // width=[width]:height=[height]:ratio=[ratio]
             // width=[width]:ratio=[ratio]:height=[height]
