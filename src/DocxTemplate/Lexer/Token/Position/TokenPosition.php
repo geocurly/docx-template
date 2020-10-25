@@ -6,24 +6,13 @@ namespace DocxTemplate\Lexer\Token\Position;
 
 class TokenPosition
 {
-    private string $source;
     private int $start;
     private int $length;
 
-    public function __construct(string $source, int $start, int $length)
+    public function __construct(int $start, int $length)
     {
-        $this->source = $source;
         $this->start = $start;
         $this->length = $length;
-    }
-
-    /**
-     * Get source name in zip
-     * @return string
-     */
-    public function getSourceName(): string
-    {
-        return $this->source;
     }
 
     /**

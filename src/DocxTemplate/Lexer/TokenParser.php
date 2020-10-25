@@ -20,12 +20,10 @@ use DocxTemplate\Lexer\Token\Ternary;
 
 class TokenParser
 {
-    private string $source;
     private ReaderInterface $reader;
 
-    public function __construct(string $source, ReaderInterface $reader)
+    public function __construct(ReaderInterface $reader)
     {
-        $this->source = $source;
         $this->reader = $reader;
     }
 
@@ -38,7 +36,7 @@ class TokenParser
      */
     public function nested(int $position): ?TokenInterface
     {
-        $next = $this->reader->firstNotEmpty([Str::BRACE, Scope::OPEN], $position);
+        $next = $this->reader->firstNotEmpty($position, [Str::BRACE, Scope::OPEN]);
         if ($next === null) {
             return null;
         }
@@ -62,12 +60,12 @@ class TokenParser
      */
     public function string(int $start): ?TokenInterface
     {
-        $open = $this->reader->find(Str::BRACE, $start);
+        $open = $this->reader->findAny([Str::BRACE], $start);
         if ($open === null) {
             return null;
         }
 
-        $last = array_sum($open);
+        $last = $open[1] + $open[2];
         $nested = [];
         while (true) {
             $nestedOrClose = $this->reader->findAny([Str::BRACE, Scope::OPEN], $last);
@@ -76,12 +74,7 @@ class TokenParser
             }
 
             if ($nestedOrClose[0] === Str::BRACE) {
-                $string = new TokenPosition(
-                    $this->source,
-                    $open[0],
-                    $nestedOrClose[2] + $nestedOrClose[1] - $open[0]
-                );
-
+                $string = new TokenPosition($open[1], $nestedOrClose[2] + $nestedOrClose[1] - $open[1]);
                 break;
             }
 
@@ -110,12 +103,12 @@ class TokenParser
 
     public function scope(int $position): ?TokenInterface
     {
-        $open = $this->reader->find(Scope::OPEN, $position);
+        $open = $this->reader->findAny([Scope::OPEN], $position);
         if ($open === null) {
             return null;
         }
 
-        $lastPosition = array_sum($open);
+        $lastPosition = $open[1] + $open[2];
         $first = $this->nested($lastPosition) ?? $this->name($lastPosition);
         if ($first === null) {
             throw new SyntaxError("Couldn't resolve nested construction in scope.");
@@ -129,7 +122,7 @@ class TokenParser
         }
 
         $nested[] = $next;
-        $nextChar = $this->reader->nextNotEmpty($next->getPosition()->getEnd());
+        $nextChar = $this->reader->getNextNotEmpty($next->getPosition()->getEnd());
         while (true) {
             if ($nextChar === null) {
                 throw new SyntaxError("Couldn't find end of scope.");
@@ -150,13 +143,13 @@ class TokenParser
             }
 
             $nested[] = $next;
-            $nextChar = $this->reader->nextNotEmpty($next->getPosition()->getEnd());
+            $nextChar = $this->reader->getNextNotEmpty($next->getPosition()->getEnd());
         }
 
-        $scopePosition = new TokenPosition($this->source, $open[0], $closePosition - $open[0]);
+        $scopePosition = new TokenPosition($open[1],$closePosition - $open[1]);
         $name = $this->reader->read(
-            $open[0] + $open[1],
-            $scopePosition->getEnd() - ($open[0] + $open[1]) - 1
+            $open[1] + $open[2],
+            $scopePosition->getEnd() - ($open[1] + $open[2]) - 1
         );
 
         return new Scope(trim($name), $scopePosition, ...$nested);
@@ -172,13 +165,13 @@ class TokenParser
     public function ternary(TokenInterface $if): ?TokenInterface
     {
         // $if ? ...
-        $thenChar = $this->reader->firstNotEmpty([Ternary::THEN_CHAR], $if->getPosition()->getEnd());
+        $thenChar = $this->reader->firstNotEmpty($if->getPosition()->getEnd(), [Ternary::THEN_CHAR]);
         if ($thenChar === null) {
             return null;
         }
 
         $position = $thenChar[1] + $thenChar[2];
-        $elseChar = $this->reader->firstNotEmpty([Ternary::ELSE_CHAR], $position);
+        $elseChar = $this->reader->firstNotEmpty($position, [Ternary::ELSE_CHAR]);
         if ($elseChar !== null) {
             // There is ?:
             $then = $if;
@@ -190,7 +183,7 @@ class TokenParser
             }
 
             // $if ? $then ...
-            $elseChar = $this->reader->firstNotEmpty([Ternary::ELSE_CHAR], $then->getPosition()->getEnd());
+            $elseChar = $this->reader->firstNotEmpty($then->getPosition()->getEnd(), [Ternary::ELSE_CHAR]);
             if ($elseChar === null) {
                 throw new SyntaxError('Could\'t find ":" in ternary operator.');
             }
@@ -205,7 +198,6 @@ class TokenParser
         $ifPos = $if->getPosition();
         $elsePos = $else->getPosition();
         $ternaryPos = new TokenPosition(
-            $this->source,
             $ifPos->getStart(),
             $elsePos->getEnd() - $ifPos->getStart()
         );
@@ -227,7 +219,7 @@ class TokenParser
      */
     public function name(int $position): ?TokenInterface
     {
-        $start = $this->reader->nextNotEmpty($position);
+        $start = $this->reader->getNextNotEmpty($position);
         if ($start === null) {
             throw new SyntaxError("Couldn't find start of the name");
         }
@@ -253,7 +245,7 @@ class TokenParser
         }
 
         if ($end[0] !== Call::ARGS_OPEN) {
-            $namePosition = new TokenPosition($this->source, $startName, $lengthName);
+            $namePosition = new TokenPosition($startName, $lengthName);
             return new Name($content, $namePosition);
         }
 
@@ -265,7 +257,7 @@ class TokenParser
         }
 
         while (true) {
-            $char = $this->reader->nextNotEmpty($next->getPosition()->getEnd());
+            $char = $this->reader->getNextNotEmpty($next->getPosition()->getEnd());
             if ($char[0] === Call::COMMA) {
                 $next = $this->nested($char[1] + $char[2]);
                 if ($next === null) {
@@ -282,7 +274,7 @@ class TokenParser
         }
 
         $lengthName = $end[1] + $end[2] - $startName;
-        $namePosition = new TokenPosition($this->source, $startName, $lengthName);
+        $namePosition = new TokenPosition($startName, $lengthName);
         return new Call(
             $this->reader->read($startName, $lengthName),
             $namePosition,
@@ -308,7 +300,7 @@ class TokenParser
     private function filterElement(TokenInterface $target): ?Filter
     {
         $position = $target->getPosition();
-        $pipe = $this->reader->nextNotEmpty($position->getEnd());
+        $pipe = $this->reader->getNextNotEmpty($position->getEnd());
         // There is may be end of scope
         if ($pipe === null || $pipe[0] === Scope::CLOSE) {
             return null;
@@ -354,7 +346,7 @@ class TokenParser
             throw new SyntaxError("Image couldn't have an argument.");
         }
 
-        $next = $this->reader->nextNotEmpty($name->getPosition()->getEnd());
+        $next = $this->reader->getNextNotEmpty($name->getPosition()->getEnd());
         if ($next === null) {
             throw new SyntaxError("Unclosed image");
         }
@@ -375,7 +367,7 @@ class TokenParser
         }
 
         $nameStart = $name->getPosition()->getStart();
-        $pos = new TokenPosition($this->source, $nameStart, $size->getPosition()->getEnd() - $nameStart);
+        $pos = new TokenPosition($nameStart, $size->getPosition()->getEnd() - $nameStart);
         return new Image(
             $this->reader->read($pos->getStart(), $pos->getLength()),
             $pos,
@@ -398,7 +390,7 @@ class TokenParser
 
         $points = implode('|', ImageSize::MEASURES);
         $boolean = implode('|', array_keys(ImageSize::BOOLEAN));
-        $first = $this->reader->nextNotEmpty($position);
+        $first = $this->reader->getNextNotEmpty($position);
         switch (true) {
             // width=[width]:height=[height]:ratio=[ratio]
             // width=[width]:ratio=[ratio]:height=[height]
@@ -455,7 +447,7 @@ class TokenParser
 
         return new ImageSize(
             $size,
-            new TokenPosition($this->source, $position, $end[1] - $position),
+            new TokenPosition($position, $end[1] - $position),
             $width,
             $height,
             $ratio === null ? null : ImageSize::BOOLEAN[$ratio]

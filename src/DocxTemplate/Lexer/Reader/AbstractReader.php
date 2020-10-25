@@ -9,39 +9,6 @@ use DocxTemplate\Lexer\Contract\ReaderInterface;
 abstract class AbstractReader implements ReaderInterface
 {
     /** @inheritDoc */
-    public function find(string $needle, int $position = 0): ?array
-    {
-        $length = strlen($needle);
-        if ($length > 1) {
-            $found = $this->findMultiple($needle, $position);
-            if ($found === null) {
-                return null;
-            }
-
-            return [$found[0], $found[1]];
-        }
-
-        $found = $this->findChar($needle, $position);
-
-        if ($found === null) {
-            return null;
-        }
-
-        return [$found, 1];
-    }
-
-    /** @inheritDoc */
-    public function betweenSequences(string $from, string $to, int $position = 0): ?array
-    {
-        [$start, $length] = $this->find($from, $position) ?? [null, null];
-        if ($length === null) {
-            return null;
-        }
-
-        return $this->readBefore($to, $start);
-    }
-
-    /** @inheritDoc */
     public function findAny(array $needles, int $startPosition = 0): ?array
     {
         $chars = [];
@@ -62,8 +29,39 @@ abstract class AbstractReader implements ReaderInterface
         return [$chars[$first[0]], ...$sequence];
     }
 
+    /**
+     * Find sequence of chars and return found position
+     *
+     * @param string $needle
+     * @param int $position
+     * @return array|null = [
+     *      $start,
+     *      $length
+     * ]
+     */
+    private function find(string $needle, int $position = 0): ?array
+    {
+        $length = strlen($needle);
+        if ($length > 1) {
+            $found = $this->findMultiple($needle, $position);
+            if ($found === null) {
+                return null;
+            }
+
+            return [$found[0], $found[1]];
+        }
+
+        $found = $this->findAnyChar([$needle], $position);
+
+        if ($found === null) {
+            return null;
+        }
+
+        return [$found[1], 1];
+    }
+
     /** @inheritDoc */
-    public function nextNotEmpty(int $startPosition = 0): ?array
+    private function getNextNotEmpty(int $startPosition = 0): ?array
     {
         $first = $this->read($startPosition, 1);
         if ($first === null) {
@@ -71,11 +69,11 @@ abstract class AbstractReader implements ReaderInterface
         }
 
         if (in_array($first, self::EMPTY_CHARS, true)) {
-            $found = $this->nextNotEmpty($startPosition + 1);
+            $found = $this->getNextNotEmpty($startPosition + 1);
         } elseif ($first === '<') {
             $position = $startPosition + 1;
             while (true) {
-                $found = $this->nextNotEmpty($position);
+                $found = $this->getNextNotEmpty($position);
                 if ($found === null || $found[0] === '>') {
                     break;
                 }
@@ -83,7 +81,7 @@ abstract class AbstractReader implements ReaderInterface
                 $position = $found[1] + 1;
             }
 
-            $found = $this->nextNotEmpty($found[1] + 1);
+            $found = $this->getNextNotEmpty($found[1] + 1);
         } else {
             $found = [$first, $startPosition, 1];
         }
@@ -92,11 +90,15 @@ abstract class AbstractReader implements ReaderInterface
     }
 
     /** @inheritDoc */
-    public function firstNotEmpty(array $needles, int $startPosition = 0): ?array
+    public function firstNotEmpty(int $position, ?array $needles = null): ?array
     {
-        $next = $this->nextNotEmpty($startPosition);
+        $next = $this->getNextNotEmpty($position);
         if ($next === null) {
             return null;
+        }
+
+        if ($needles === null || $needles === []) {
+            return $next;
         }
 
         $firstChars = array_map(fn(string $needle) => $needle[0], $needles);
@@ -104,12 +106,12 @@ abstract class AbstractReader implements ReaderInterface
             return null;
         }
 
-        $firstAny = $this->findAny($needles, $startPosition);
+        $firstAny = $this->findAny($needles, $position);
         if ($firstAny === null) {
             return null;
         }
 
-        $anyContent = $this->read($startPosition, $firstAny[1] + $firstAny[2]) ?? '';
+        $anyContent = $this->read($position, $firstAny[1] + $firstAny[2]) ?? '';
         if (!trim(strip_tags($anyContent)) === '') {
             return null;
         }
@@ -131,11 +133,11 @@ abstract class AbstractReader implements ReaderInterface
         $positions = [];
         $offset = $position;
         foreach (str_split($multipleNeedle) as $num => $char) {
-            $positions[$num] = $this->findChar($char, $offset);
-            if ($positions[$num] === null) {
+            $found = $this->findAnyChar([$char], $offset);
+            if ($found === null) {
                 return null;
             }
-
+            $positions[$num] = $found[1];
             $offset = $positions[$num] + 1;
         }
 
@@ -150,61 +152,12 @@ abstract class AbstractReader implements ReaderInterface
         return [$positions[0], $realLength];
     }
 
-
-    /**
-     * Read content from $position to $needle string
-     *
-     * @param string $needle
-     * @param int $position
-     * @return array|null = [
-     *      $content,
-     *      $startOfNeedle,
-     *      $length,
-     * ]
-     */
-    private function readBefore(string $needle, int $position): ?array
-    {
-        $length = strlen($needle);
-        if ($length > 1) {
-            [$from, $length] = $this->findMultiple($needle, $position) ?? [null, null];
-            if ($length === null) {
-                return null;
-            }
-
-            // Get first found position
-            $length = $from + $length - $position;
-            return [
-                $this->read($position, $length),
-                $position,
-                $length
-            ];
-        }
-
-        $charPos = $this->findChar($needle, $position);
-        if ($charPos === null) {
-            return null;
-        }
-
-        $length = $charPos - $position + 1;
-        return [$this->read($position, $length), $position, $length];
-    }
-
-
-    /**
-     * Find char in stream from given position
-     *
-     * @param int $startPosition
-     * @param string $char
-     * @return int|null
-     */
-    abstract protected function findChar(string $char, int $startPosition): ?int;
-
     /**
      * Find any char in stream from given position
      *
      * @param array $chars
-     * @param int $startPosition
+     * @param int $position
      * @return array|null
      */
-    abstract protected function findAnyChar(array $chars, int $startPosition): ?array;
+    abstract protected function findAnyChar(array $chars, int $position): ?array;
  }

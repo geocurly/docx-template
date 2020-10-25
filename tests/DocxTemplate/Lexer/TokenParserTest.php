@@ -21,8 +21,6 @@ use function GuzzleHttp\Psr7\stream_for;
 
 class TokenParserTest extends TestCase
 {
-    private const SOURCE_NAME = 'source';
-
     /**
      * @covers       \DocxTemplate\Lexer\TokenParser::name
      * @dataProvider nameDataProvider
@@ -550,12 +548,12 @@ class TokenParserTest extends TestCase
      */
     private function parser(string $content): iterable
     {
-        yield new TokenParser(self::SOURCE_NAME, new StreamReader(stream_for($content)));
-        yield new TokenParser(self::SOURCE_NAME, new StringReader($content));
+        yield new TokenParser(new StreamReader(stream_for($content)));
+        yield new TokenParser(new StringReader($content));
     }
 
     private function pos(int $start, int $length): TokenPosition
     {
-        return new TokenPosition(self::SOURCE_NAME, $start, $length);
+        return new TokenPosition($start, $length);
     }
 }

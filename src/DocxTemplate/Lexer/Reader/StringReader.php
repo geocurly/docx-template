@@ -12,28 +12,36 @@ class StringReader extends AbstractReader
     {
         $this->content = $content;
     }
-    
-    /** @inheritDoc */
-    protected function findChar(string $char, int $startPosition): ?int
-    {
-        $position = strpos($this->content, $char, $startPosition);
-        if ($position === false) {
-            return null;
-        }
-
-        return $position;
-    }
 
     /** @inheritDoc */
-    protected function findAnyChar(array $chars, int $startPosition): ?array
+    protected function findAnyChar(array $chars, int $position): ?array
     {
-        $content = substr($this->content, $startPosition);
+        $content = substr($this->content, $position);
         $subst = strpbrk($content, implode($chars));
         if ($subst === false) {
             return null;
+        } else {
+            $position = $position + strpos($content, $subst);
         }
 
-        return [$subst[0], $startPosition + strpos($content, $subst)];
+        // Skip all tags
+        if ($subst[0] === '<') {
+            $close = strpos($content, '>', $position);
+            if ($close === false) {
+                // There is no end of tag
+                return null;
+            }
+
+            // Continue common search
+            $found = $this->findAnyChar($chars, $close + 1);
+            if ($found === null) {
+                return null;
+            }
+
+            [$subst, $position] = $found;
+        }
+
+        return [$subst[0], $position];
     }
 
     /** @inheritDoc */

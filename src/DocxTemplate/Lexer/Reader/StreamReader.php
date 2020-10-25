@@ -9,8 +9,9 @@ use Psr\Http\Message\StreamInterface;
 
 class StreamReader extends AbstractReader
 {
+    private const CHUNK_SIZE = 1024;
+
     private StreamInterface $stream;
-    private int $chunkSize = 1024;
 
     /**
      * StreamReader constructor.
@@ -27,55 +28,50 @@ class StreamReader extends AbstractReader
     }
 
     /** @inheritDoc */
-    protected function findChar(string $char, int $from): ?int
+    protected function findAnyChar(array $chars, int $position): ?array
     {
-        $offset = $from;
-        foreach ($this->readChunk($offset) as $content) {
-            $position = strpos($content, $char, 0);
-            if ($position === false) {
-                $offset += $this->chunkSize;
-                continue;
-            }
+        $offset = $position;
+        $chars = array_merge($chars, ['<']);
 
-            return $offset + $position;
-        }
-
-        return null;
-    }
-
-    /**
-     * Read portions from stream
-     * @param int $position
-     * @return iterable
-     */
-    private function readChunk(int $position): iterable
-    {
         try {
-            $this->stream->seek($position);
+            $this->stream->seek($offset);
         } catch (\RuntimeException $exception) {
-            return;
+            return null;
         }
 
-        while(!$this->stream->eof()) {
-            yield $this->stream->read($this->chunkSize);
-        }
-    }
-
-    /** @inheritDoc */
-    protected function findAnyChar(array $chars, int $startPosition): ?array
-    {
-        $offset = $startPosition;
-        foreach ($this->readChunk($offset) as $content) {
-            $subst = strpbrk($content, implode($chars));
-            if ($subst === false) {
-                $offset += $this->chunkSize;
-                continue;
+        $content = $this->stream->read(self::CHUNK_SIZE);
+        $subst = strpbrk($content, implode('', $chars));
+        // Try to find in next chunk
+        if ($subst === false) {
+            $offset += self::CHUNK_SIZE;
+            $found = $this->findAnyChar($chars, $offset);
+            if ($found === null) {
+                return null;
             }
 
-            return [$subst[0], $offset + strpos($content, $subst, 0)];
+            [$subst, $offset] = [$found[0], $found[1]];
+        } else {
+            $offset = $offset + strpos($content, $subst, 0);
         }
 
-        return null;
+        // Skip all tags
+        if ($subst[0] === '<') {
+            $close = $this->findAnyChar(['>'], $offset + 1);
+            if ($close === null) {
+                // There is no end of tag
+                return null;
+            }
+
+            // Continue common search
+            $found = $this->findAnyChar($chars, $close[1] + 1);
+            if ($found === null) {
+                return null;
+            }
+
+            [$subst, $offset] = $found;
+        }
+
+        return [$subst[0], $offset];
     }
 
     /** @inheritDoc */

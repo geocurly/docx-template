@@ -9,18 +9,6 @@ interface ReaderInterface
     public const EMPTY_CHARS = [" ", "\t", "\n", "\r", "\0", "\x0B"];
 
     /**
-     * Find sequence of chars and return found position
-     *
-     * @param string $needle
-     * @param int $startPosition
-     * @return array|null = [
-     *      $start,
-     *      $length
-     * ]
-     */
-    public function find(string $needle, int $startPosition = 0): ?array;
-
-    /**
      * Find any of sequences and return found position
      *
      * @param array $needles
@@ -30,38 +18,13 @@ interface ReaderInterface
     public function findAny(array $needles, int $startPosition = 0): ?array;
 
     /**
-     * Get next not empty char
-     *
-     * @param int $startPosition
-     * @return array|null = [
-     *      $char,
-     *      $start,
-     *      $length
-     * ]
-     */
-    public function nextNotEmpty(int $startPosition = 0): ?array;
-
-    /**
      * Get sequence if it first after $startPosition
      *
-     * @param array $needles any character sequence
-     * @param int $startPosition
+     * @param array|null $needles any character sequence
+     * @param int $position
      * @return array|null
      */
-    public function firstNotEmpty(array $needles, int $startPosition = 0): ?array;
-    
-    /**
-     * Find and read content between given strings
-     * @param string $fromString start read from this string
-     * @param string $toString read to this string
-     * @param int $startPosition position in the source
-     * @return array = [
-     *      $content,
-     *      $startOfContent,
-     *      $lengthOfContent,
-     * ]
-     */
-    public function betweenSequences(string $fromString, string $toString, int $startPosition = 0): ?array;
+    public function firstNotEmpty(int $position, ?array $needles = null): ?array;
 
     /**
      * Read bytes from content
