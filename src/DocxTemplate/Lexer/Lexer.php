@@ -25,8 +25,10 @@ class Lexer
     }
 
     /**
-     * Parse content to build AbstractSyntaxTree
+     * Parse content to AbstractSyntaxTree
+     *
      * @return Ast
+     * @throws Exception\SyntaxError
      */
     public function parse(): Ast
     {

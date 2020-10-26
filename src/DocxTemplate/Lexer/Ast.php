@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer;
 
+use ArrayIterator;
 use DocxTemplate\Lexer\Contract\ReaderInterface;
 use DocxTemplate\Lexer\Token\Position\TokenPosition;
 use DocxTemplate\Lexer\Token\Scope;
+use IteratorAggregate;
+use Traversable;
 
-class Ast
+class Ast implements IteratorAggregate
 {
     private ReaderInterface $reader;
     private TokenPosition $previous;
@@ -21,6 +24,12 @@ class Ast
         $this->previous = new TokenPosition(0, 0);
     }
 
+    /**
+     * Build Abstract Syntax Tree
+     *
+     * @return $this
+     * @throws Exception\SyntaxError
+     */
     public function build(): self
     {
         $parser = new TokenParser($this->reader);
@@ -35,5 +44,11 @@ class Ast
         }
 
         return $this;
+    }
+
+    /** @inheritdoc  */
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator($this->scopes);
     }
 }
