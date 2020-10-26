@@ -7,16 +7,14 @@ namespace DocxTemplate\Lexer\Token;
 use DocxTemplate\Lexer\Contract\Token\TokenInterface;
 use DocxTemplate\Lexer\Token\Position\TokenPosition;
 
-class Ternary implements TokenInterface
+final class Ternary extends AbstractToken implements TokenInterface
 {
     public const THEN_CHAR = '?';
     public const ELSE_CHAR = ':';
 
-    private TokenPosition $position;
     private TokenInterface $if;
     private TokenInterface $then;
     private TokenInterface $else;
-    private string $name;
 
     public function __construct(
         string $name,
@@ -25,23 +23,11 @@ class Ternary implements TokenInterface
         TokenInterface $then,
         TokenInterface $else
     ) {
-        $this->position = $position;
+        parent::__construct($name, $position);
+
         $this->if = $if;
         $this->then = $then;
         $this->else = $else;
-        $this->name = $name;
-    }
-
-    /** @inheritDoc */
-    public function getPosition(): TokenPosition
-    {
-        return $this->position;
-    }
-
-    /** @inheritDoc */
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     /**

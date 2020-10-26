@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer\Token;
 
-use DocxTemplate\Lexer\Contract\Token\TokenInterface;
 use DocxTemplate\Lexer\Token\Position\TokenPosition;
 
-class ImageSize implements TokenInterface
+final class ImageSize extends AbstractToken
 {
     public const CM = 'cm';
     public const MM = 'mm';
@@ -34,8 +33,6 @@ class ImageSize implements TokenInterface
         'true' => true,
     ];
 
-    private string $name;
-    private TokenPosition $position;
     private string $width;
     private string $height;
     private ?bool $ratio;
@@ -47,23 +44,10 @@ class ImageSize implements TokenInterface
         string $height,
         ?bool $ratio = null
     ) {
-        $this->name = $name;
-        $this->position = $position;
+        parent::__construct($name, $position);
         $this->width = $width;
         $this->height = $height;
         $this->ratio = $ratio;
-    }
-
-    /** @inheritdoc  */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /** @inheritdoc  */
-    public function getPosition(): TokenPosition
-    {
-        return $this->position;
     }
 
     /**

@@ -8,7 +8,7 @@ use DocxTemplate\Lexer\Contract\Token\CallableInterface;
 use DocxTemplate\Lexer\Contract\Token\TokenInterface;
 use DocxTemplate\Lexer\Token\Position\TokenPosition;
 
-class Filter implements CallableInterface
+final class Filter implements CallableInterface
 {
     public const PIPE = '|';
 
