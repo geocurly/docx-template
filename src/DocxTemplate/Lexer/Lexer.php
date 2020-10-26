@@ -7,12 +7,10 @@ namespace DocxTemplate\Lexer;
 use DocxTemplate\Lexer\Contract\ReaderInterface;
 use DocxTemplate\Lexer\Reader\StreamReader;
 use DocxTemplate\Lexer\Reader\StringReader;
-use DocxTemplate\Lexer\Token\Scope;
 use Psr\Http\Message\StreamInterface;
 
 class Lexer
 {
-    private array $ast = [];
     private ReaderInterface $reader;
 
     public function __construct($source)
@@ -27,24 +25,12 @@ class Lexer
     }
 
     /**
-     * Parse content to find all defined tokens
-     * @return array
+     * Parse content to build AbstractSyntaxTree
+     * @return Ast
      */
-    public function parse(): array
+    public function parse(): Ast
     {
-        $tokens = [];
-        $parser = new TokenParser($this->reader);
-        $position = 0;
-        while (true) {
-            $scope = $parser->scope($position);
-            if ($scope === null) {
-                break;
-            }
-
-            $position = $scope->getPosition()->getEnd();
-            $tokens[] = $scope;
-        }
-
-        return $tokens;
+        $ast = new Ast($this->reader);
+        return $ast->build();
     }
 }

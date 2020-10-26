@@ -43,4 +43,31 @@ class Ternary implements TokenInterface
     {
         return $this->name;
     }
+
+    /**
+     * Get "if" condition
+     * @return TokenInterface
+     */
+    public function getIf(): TokenInterface
+    {
+        return $this->if;
+    }
+
+    /**
+     * Get "then" condition
+     * @return TokenInterface
+     */
+    public function getThen(): TokenInterface
+    {
+        return $this->then;
+    }
+
+    /**
+     * Get "else" condition
+     * @return TokenInterface
+     */
+    public function getElse(): TokenInterface
+    {
+        return $this->else;
+    }
 }

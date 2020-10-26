@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer\Token;
 
+use DocxTemplate\Lexer\Contract\Token\NestedAwareInterface;
 use DocxTemplate\Lexer\Contract\Token\TokenInterface;
 use DocxTemplate\Lexer\Token\Position\TokenPosition;
 
-class Str implements TokenInterface
+class Str implements NestedAwareInterface
 {
     public const BRACE = "`";
 
@@ -32,5 +33,11 @@ class Str implements TokenInterface
     public function getName(): string
     {
         return $this->name;
+    }
+
+    /** @inheritdoc  */
+    public function getNested(): array
+    {
+        return $this->nested;
     }
 }

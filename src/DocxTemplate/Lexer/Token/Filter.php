@@ -52,7 +52,7 @@ class Filter implements CallableInterface
     }
 
     /**
-     * Get next
+     * Get next filter
      * @return Filter|null
      */
     public function getNext(): ?Filter

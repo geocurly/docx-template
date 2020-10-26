@@ -65,4 +65,31 @@ class ImageSize implements TokenInterface
     {
         return $this->position;
     }
+
+    /**
+     * Image width
+     * @return string
+     */
+    public function getWidth(): string
+    {
+        return $this->width;
+    }
+
+    /**
+     * Image height
+     * @return string
+     */
+    public function getHeight(): string
+    {
+        return $this->height;
+    }
+
+    /**
+     * Is save ratio
+     * @return bool|null
+     */
+    public function getRatio(): ?bool
+    {
+        return $this->ratio;
+    }
 }

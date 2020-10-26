@@ -8,6 +8,7 @@ class TokenPosition
 {
     private int $start;
     private int $length;
+    private ?TokenPosition $next = null;
 
     public function __construct(int $start, int $length)
     {
@@ -44,5 +45,25 @@ class TokenPosition
     public function getLength(): int
     {
         return $this->length;
+    }
+
+    /**
+     * Bind with next position
+     * @param TokenPosition $next
+     * @return $this
+     */
+    public function bind(TokenPosition $next): self
+    {
+        $this->next = $next;
+        return $this;
+    }
+
+    /**
+     * Get next position
+     * @return TokenPosition|null
+     */
+    public function next(): ?TokenPosition
+    {
+        return $this->next;
     }
 }

@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer\Token;
 
+use DocxTemplate\Lexer\Contract\Token\NestedAwareInterface;
 use DocxTemplate\Lexer\Contract\Token\TokenInterface;
 use DocxTemplate\Lexer\Token\Position\TokenPosition;
 
-class Scope implements TokenInterface
+class Scope implements NestedAwareInterface
 {
     public const OPEN = '${';
     public const CLOSE = '}';
@@ -33,5 +34,11 @@ class Scope implements TokenInterface
     public function getName(): string
     {
         return $this->name;
+    }
+
+    /** @inheritdoc  */
+    public function getNested(): array
+    {
+        return $this->nested;
     }
 }

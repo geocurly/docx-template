@@ -33,4 +33,13 @@ class Image implements TokenInterface
     {
         return $this->position;
     }
+
+    /**
+     * Get image size
+     * @return ImageSize|null
+     */
+    public function getSize(): ?ImageSize
+    {
+        return $this->size;
+    }
 }
