@@ -29,7 +29,6 @@ abstract class Parser implements AstParser
     protected const PARAMS_DELIMITER = ',';
     protected const COND_THEN = '?';
     protected const COND_ELSE = ':';
-    protected const SPACE = ' ';
 
     private ReaderInterface $reader;
     private int $offset;

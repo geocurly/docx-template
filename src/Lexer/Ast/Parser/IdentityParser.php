@@ -23,7 +23,7 @@ class IdentityParser extends Parser
         }
 
         $end = $this->findAnyOrEmpty(
-            [self::BLOCK_END, self::IMAGE_SIZE_DELIMITER, self::FILTER_PIPE, self::PARAMS_CLOSE],
+            [self::BLOCK_END, self::IMAGE_SIZE_DELIMITER, self::FILTER_PIPE, self::PARAMS_OPEN],
             $start->getEnd()
         );
 

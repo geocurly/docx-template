@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Lexer\Ast\Parser;
 
+use DocxTemplate\Lexer\Ast\Node\Block;
+use DocxTemplate\Lexer\Ast\Node\Call;
 use DocxTemplate\Lexer\Ast\Node\Identity;
+use DocxTemplate\Lexer\Ast\Node\Str;
 use DocxTemplate\Lexer\Ast\Parser\IdentityParser;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
 use DocxTemplate\Lexer\Exception\InvalidSourceException;
@@ -64,6 +67,32 @@ class IdentityParserTest extends TestCase
                 0,
                 new Identity('one_two', $this->pos(18, 20)),
             ],
+            [
+                ' call(`1`, `2`) ',
+                0,
+                new Call(
+                    new Identity('call', $this->pos(1, 4)),
+                    $this->pos(1, 14),
+                    new Str($this->pos(6, 3)),
+                    new Str($this->pos(11, 3))
+                ),
+            ],
+            [
+                ' call(`nested ${nested}`, `simple`) ',
+                0,
+                new Call(
+                    new Identity('call', $this->pos(1, 4)),
+                    $this->pos(1, 34),
+                    new Str(
+                        $this->pos(6, 18),
+                        new Block(
+                            $this->pos(14, 9),
+                            new Identity('nested', $this->pos(16, 6))
+                        )
+                    ),
+                    new Str($this->pos(26, 8))
+                ),
+            ]
         ];
     }
 }
