@@ -20,14 +20,14 @@ class ImageParserTest extends TestCase
 
     /**
      * @covers       \DocxTemplate\Lexer\Ast\Parser\ImageParser::image
-     * @dataProvider imageProvider
+     * @dataProvider positiveProvider
      *
      * @param string $content
      * @param int $pos
      * @param AstNode|null $expected
      * @throws InvalidSourceException|SyntaxError
      */
-    public function testImagePositive(string $content, int $pos, ?AstNode $expected): void
+    public function testParsePositive(string $content, int $pos, ?AstNode $expected): void
     {
         foreach ($this->reader($content) as $reader) {
             $this->assertEquals(
@@ -38,7 +38,7 @@ class ImageParserTest extends TestCase
         }
     }
 
-    public function imageProvider(): array
+    public function positiveProvider(): array
     {
         return [
             [

@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace DocxTemplate\Lexer;
 
 use DocxTemplate\Lexer\Contract\Token\TokenInterface;
-use DocxTemplate\Lexer\Reader\StreamReader;
-use DocxTemplate\Lexer\Reader\StringReader;
 use DocxTemplate\Lexer\Token\Call;
 use DocxTemplate\Lexer\Token\Filter;
 use DocxTemplate\Lexer\Token\Image;
@@ -17,7 +15,6 @@ use DocxTemplate\Lexer\Token\ImageSize;
 use DocxTemplate\Lexer\Token\Str;
 use DocxTemplate\Lexer\Token\Ternary;
 use PHPUnit\Framework\TestCase;
-use function GuzzleHttp\Psr7\stream_for;
 
 class TokenParserTest extends TestCase
 {
