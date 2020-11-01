@@ -20,11 +20,10 @@ interface ReaderInterface
     /**
      * Get sequence if it first after $startPosition
      *
-     * @param array|null $needles any character sequence
      * @param int $position
      * @return array|null
      */
-    public function firstNotEmpty(int $position, ?array $needles = null): ?array;
+    public function firstNotEmpty(int $position): ?array;
 
     /**
      * Read bytes from content

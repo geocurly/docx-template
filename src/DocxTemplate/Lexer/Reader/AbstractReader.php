@@ -61,7 +61,7 @@ abstract class AbstractReader implements ReaderInterface
     }
 
     /** @inheritDoc */
-    private function getNextNotEmpty(int $startPosition = 0): ?array
+    public function firstNotEmpty(int $startPosition = 0): ?array
     {
         $first = $this->read($startPosition, 1);
         if ($first === null) {
@@ -69,11 +69,11 @@ abstract class AbstractReader implements ReaderInterface
         }
 
         if (in_array($first, self::EMPTY_CHARS, true)) {
-            $found = $this->getNextNotEmpty($startPosition + 1);
+            $found = $this->firstNotEmpty($startPosition + 1);
         } elseif ($first === '<') {
             $position = $startPosition + 1;
             while (true) {
-                $found = $this->getNextNotEmpty($position);
+                $found = $this->firstNotEmpty($position);
                 if ($found === null || $found[0] === '>') {
                     break;
                 }
@@ -81,42 +81,12 @@ abstract class AbstractReader implements ReaderInterface
                 $position = $found[1] + 1;
             }
 
-            $found = $this->getNextNotEmpty($found[1] + 1);
+            $found = $this->firstNotEmpty($found[1] + 1);
         } else {
             $found = [$first, $startPosition, 1];
         }
 
         return $found;
-    }
-
-    /** @inheritDoc */
-    public function firstNotEmpty(int $position, ?array $needles = null): ?array
-    {
-        $next = $this->getNextNotEmpty($position);
-        if ($next === null) {
-            return null;
-        }
-
-        if ($needles === null || $needles === []) {
-            return $next;
-        }
-
-        $firstChars = array_map(fn(string $needle) => $needle[0], $needles);
-        if (!in_array($next[0], $firstChars, true)) {
-            return null;
-        }
-
-        $firstAny = $this->findAny($needles, $position);
-        if ($firstAny === null) {
-            return null;
-        }
-
-        $anyContent = $this->read($position, $firstAny[1] + $firstAny[2]) ?? '';
-        if (!trim(strip_tags($anyContent)) === '') {
-            return null;
-        }
-
-        return $firstAny;
     }
 
     /**

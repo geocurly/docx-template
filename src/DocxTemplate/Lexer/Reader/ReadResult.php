@@ -2,22 +2,31 @@
 
 declare(strict_types=1);
 
-namespace DocxTemplate\Lexer\Token\Position;
+namespace DocxTemplate\Lexer\Reader;
 
-class TokenPosition
+class ReadResult
 {
+    private string $found;
     private int $start;
     private int $length;
-    private ?TokenPosition $next = null;
 
-    public function __construct(int $start, int $length)
+    public function __construct(string $found, int $start, int $length)
     {
+        $this->found = $found;
         $this->start = $start;
         $this->length = $length;
     }
 
     /**
-     * Get start of token
+     * @return string
+     */
+    public function getFound(): string
+    {
+        return $this->found;
+    }
+
+    /**
+     * Get start of node
      * @return int
      */
     public function getStart(): int
@@ -26,7 +35,7 @@ class TokenPosition
     }
 
     /**
-     * Get end of token
+     * Get end of node
      * @return int
      */
     public function getEnd(): int
@@ -39,31 +48,11 @@ class TokenPosition
     }
 
     /**
-     * Get token length
+     * Get node length
      * @return int
      */
     public function getLength(): int
     {
         return $this->length;
-    }
-
-    /**
-     * Bind with next position
-     * @param TokenPosition $next
-     * @return $this
-     */
-    public function bind(TokenPosition $next): self
-    {
-        $this->next = $next;
-        return $this;
-    }
-
-    /**
-     * Get next position
-     * @return TokenPosition|null
-     */
-    public function next(): ?TokenPosition
-    {
-        return $this->next;
     }
 }

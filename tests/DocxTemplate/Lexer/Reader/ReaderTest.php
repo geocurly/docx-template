@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DocxTemplate\Lexer\Reader;
 
 use DocxTemplate\Lexer\Contract\ReaderInterface;
+use DocxTemplate\Lexer\Exception\InvalidSourceException;
 use PHPUnit\Framework\TestCase;
 use function GuzzleHttp\Psr7\stream_for;
 
@@ -12,20 +13,21 @@ class ReaderTest extends TestCase
 {
     /**
      * @dataProvider findAnySequenceDataProvider
-     * @covers \DocxTemplate\Lexer\Reader\AbstractReader::findAny
+     * @covers       \DocxTemplate\Lexer\Reader\AbstractReader::findAny
      *
      * @param string $content
      * @param array $args
      * @param array|null $expect
-     * @param string $message
+     * @throws InvalidSourceException
      */
-    public function testFindAnySequence(string $content, array $args, ?array $expect, string $message): void
+    public function testFindAnySequence(string $content, array $args, ?array $expect): void
     {
+        $given = '"' . implode(',', $args[0]) . '"';
         foreach ($this->reader($content) as $reader) {
             $this->assertSame(
                 $expect,
                 $reader->findAny(...$args),
-                "Try to $message with " . get_class($reader)
+                "Try to first of given $given with " . get_class($reader)
             );
         }
     }
@@ -34,31 +36,31 @@ class ReaderTest extends TestCase
     {
         $content = 'There is `<tags>$<tags>{some<tags>}';
         return [
-            [$content, [['${', '}']], ['${', 16, 8], 'find first of given strings: "${", "}"'],
-            [$content, [['$', '`$']], ['`$', 9, 8], 'find first of given string: "$", "`$"'],
-            [$content, [['?', '}']], ['}', 34, 1], 'find first of given string: "?", "}"'],
-            [$content, [['${', '}'], 20], ['}', 34, 1], 'find first of given strings: "${", "}" from 20 bytes'],
-            [$content, [['$', '`$'], 20], null, 'find first of given string: "$", "`$" from 20 bytes'],
-            [$content, [['?', '}'], 20], ['}', 34, 1], 'find first of given string: "?", "}" from 20 bytes'],
+            [$content, [['${', '}']], ['${', 16, 8]],
+            [$content, [['$', '`$']], ['`$', 9, 8]],
+            [$content, [['?', '}']], ['}', 34, 1]],
+            [$content, [['${', '}'], 20], ['}', 34, 1]],
+            [$content, [['$', '`$'], 20], null],
+            [$content, [['?', '}'], 20], ['}', 34, 1]],
         ];
     }
 
     /**
-     * @covers \DocxTemplate\Lexer\Reader\AbstractReader::firstNotEmpty
+     * @covers       \DocxTemplate\Lexer\Reader\AbstractReader::firstNotEmpty
      * @dataProvider firstNotEmptyDataProvider
      *
      * @param string $content
-     * @param array $args
+     * @param int $pos
      * @param array|null $expect
-     * @param string $message
+     * @throws InvalidSourceException
      */
-    public function testFirstNotEmpty(string $content, array $args, ?array $expect, string $message): void
+    public function testFirstNotEmpty(string $content, int $pos, ?array $expect): void
     {
         foreach ($this->reader($content) as $reader) {
             $this->assertSame(
                 $expect,
-                $reader->firstNotEmpty(...$args),
-                "Try to $message with " . get_class($reader)
+                $reader->firstNotEmpty($pos),
+                "Try to get next not empty char in '$content' from $pos with " . get_class($reader)
             );
         }
     }
@@ -66,54 +68,9 @@ class ReaderTest extends TestCase
     public function firstNotEmptyDataProvider(): array
     {
         return [
-            [
-                '${ `macro` }',
-                [0, ['`', ':']],
-                null,
-                'find next strings "`", ":"'
-            ],
-            [
-                '  ${ `macro`}',
-                [0, ['${', '`']],
-                ['${', 2, 2],
-                'find next strings "${", "`"'
-            ],
-            [
-                " \n \r \$macro1 ?: \$macro2",
-                [0, ['$', ':', '?']],
-                ['$', 5, 1],
-                'find next strings "$", ":", "?"'
-            ],
-            [
-                "\t `\${nested} variable` \n \r \$macro1 ?: \$macro2",
-                [0, ['$', ':', '?', '`']],
-                ['`', 2, 1],
-                'find next strings "$", ":", "?", "`"',
-            ],
-            [
-                "\t     \n? `\$then` : `\$else`",
-                [0, ['?']],
-                ['?', 7, 1],
-                'find next string "?"',
-            ],
-            [
-                ' `macro` }',
-                [0],
-                ['`', 1, 1],
-                "get next not empty char for ' `macro` }'"
-            ],
-            [
-                "   \n    macro` }",
-                [3],
-                ['m', 8, 1],
-                "get next not empty char for ' \"   \\n    macro` }\" }'"
-            ],
-            [
-                " $  \n  \t  \${}` }",
-                [3],
-                ['$', 10, 1],
-                "get next not empty char for ' $  \\n  \\t  \${}` }'"
-            ],
+            [' `macro` }', 0, ['`', 1, 1],],
+            ["   \n    macro` }", 3, ['m', 8, 1]],
+            [" $  \n  \t  \${}` }", 3, ['$', 10, 1]],
         ];
     }
 
@@ -121,7 +78,7 @@ class ReaderTest extends TestCase
     /**
      * @param string $content
      * @return iterable|ReaderInterface[]
-     * @throws \DocxTemplate\Lexer\Exception\InvalidSourceException
+     * @throws InvalidSourceException
      */
     private function reader(string $content): iterable
     {

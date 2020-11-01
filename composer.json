@@ -2,6 +2,7 @@
     "name": "geocurly/docx-template",
     "type": "library",
     "license": "MIT",
+    "description": "",
     "authors": [
         {
             "name": "Aleksandr.Blizorukov",
@@ -12,6 +13,11 @@
     "autoload": {
         "psr-4": {
             "DocxTemplate\\": "src/DocxTemplate"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DocxTemplate\\Tests\\": "tests/"
         }
     },
     "require": {

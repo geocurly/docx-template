@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer;
 
+use DocxTemplate\Lexer\Ast\Ast;
 use DocxTemplate\Lexer\Contract\ReaderInterface;
 use DocxTemplate\Lexer\Reader\StreamReader;
 use DocxTemplate\Lexer\Reader\StringReader;

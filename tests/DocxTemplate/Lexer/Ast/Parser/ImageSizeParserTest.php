@@ -6,11 +6,11 @@ namespace DocxTemplate\Lexer\Ast\Parser;
 
 use DocxTemplate\Lexer\Ast\Node\ImageSize;
 use DocxTemplate\Lexer\Ast\NodePosition;
+use DocxTemplate\Lexer\Contract\ReaderInterface;
 use DocxTemplate\Lexer\Exception\InvalidSourceException;
 use DocxTemplate\Lexer\Exception\SyntaxError;
 use DocxTemplate\Lexer\Reader\StreamReader;
 use DocxTemplate\Lexer\Reader\StringReader;
-use DocxTemplate\Lexer\TokenParser;
 use PHPUnit\Framework\TestCase;
 use function GuzzleHttp\Psr7\stream_for;
 
@@ -33,7 +33,7 @@ class ImageSizeParserTest extends TestCase
         foreach (self::reader($content) as $reader) {
             self::assertEquals(
                 $size,
-                (new ImageSizeParser())->parse($reader, $pos),
+                (new ImageSizeParser($reader, $pos))->parse(),
                 "Try to find image size in \"$content\"."
             );
         }
@@ -135,7 +135,7 @@ class ImageSizeParserTest extends TestCase
     {
         $this->expectException($exception);
         foreach (self::reader($content) as $reader) {
-            (new ImageSizeParser())->parse($reader, $pos);
+            (new ImageSizeParser($reader, $pos))->parse();
         }
     }
 
@@ -151,7 +151,7 @@ class ImageSizeParserTest extends TestCase
 
     /**
      * @param string $content
-     * @return TokenParser[]
+     * @return ReaderInterface[]
      * @throws InvalidSourceException
      */
     protected static function reader(string $content): iterable

@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace DocxTemplate\Lexer;
+namespace DocxTemplate\Lexer\Ast;
 
 use ArrayIterator;
+use DocxTemplate\Lexer\Ast\Parser\BlockParser;
 use DocxTemplate\Lexer\Contract\ReaderInterface;
+use DocxTemplate\Lexer\Exception\SyntaxError;
 use DocxTemplate\Lexer\Token\Position\TokenPosition;
-use DocxTemplate\Lexer\Token\Scope;
 use IteratorAggregate;
 use Traversable;
 
@@ -15,8 +16,7 @@ class Ast implements IteratorAggregate
 {
     private ReaderInterface $reader;
     private TokenPosition $previous;
-    /** @var Scope[] */
-    private array $scopes = [];
+    private array $blocks = [];
 
     public function __construct(ReaderInterface $reader)
     {
@@ -28,19 +28,20 @@ class Ast implements IteratorAggregate
      * Build Abstract Syntax Tree
      *
      * @return $this
-     * @throws Exception\SyntaxError
+     * @throws SyntaxError
      */
     public function build(): self
     {
-        $parser = new TokenParser($this->reader);
+        $position = 0;
         while (true) {
-            $scope = $parser->scope($this->previous->getEnd());
-            if ($scope === null) {
+            $parser = new BlockParser($this->reader, $position);
+            $block = $parser->parse();
+            if ($block === null) {
                 break;
             }
 
-            $this->previous = $scope->getPosition();
-            $this->scopes[] = $scope;
+            $position = $block->getPosition()->getEnd();
+            $this->blocks[] = $block;
         }
 
         return $this;
@@ -49,6 +50,6 @@ class Ast implements IteratorAggregate
     /** @inheritdoc  */
     public function getIterator(): Traversable
     {
-        return new ArrayIterator($this->scopes);
+        return new ArrayIterator($this->blocks);
     }
 }
