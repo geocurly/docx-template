@@ -8,20 +8,18 @@ use ArrayIterator;
 use DocxTemplate\Lexer\Ast\Parser\BlockParser;
 use DocxTemplate\Lexer\Contract\ReaderInterface;
 use DocxTemplate\Lexer\Exception\SyntaxError;
-use DocxTemplate\Lexer\Token\Position\TokenPosition;
 use IteratorAggregate;
 use Traversable;
 
 class Ast implements IteratorAggregate
 {
     private ReaderInterface $reader;
-    private TokenPosition $previous;
+
     private array $blocks = [];
 
     public function __construct(ReaderInterface $reader)
     {
         $this->reader = $reader;
-        $this->previous = new TokenPosition(0, 0);
     }
 
     /**

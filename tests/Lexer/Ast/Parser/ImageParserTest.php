@@ -7,18 +7,17 @@ namespace DocxTemplate\Tests\Lexer\Ast\Parser;
 use DocxTemplate\Lexer\Ast\Node\Identity;
 use DocxTemplate\Lexer\Ast\Node\Image;
 use DocxTemplate\Lexer\Ast\Node\ImageSize;
-use DocxTemplate\Lexer\Ast\NodePosition;
+use DocxTemplate\Lexer\Ast\Parser\ImageParser;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
-use DocxTemplate\Lexer\Contract\ReaderInterface;
 use DocxTemplate\Lexer\Exception\InvalidSourceException;
 use DocxTemplate\Lexer\Exception\SyntaxError;
-use DocxTemplate\Lexer\Reader\StreamReader;
-use DocxTemplate\Lexer\Reader\StringReader;
+use DocxTemplate\Tests\Lexer\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
-use function GuzzleHttp\Psr7\stream_for;
 
 class ImageParserTest extends TestCase
 {
+    use ReaderTrait;
+
     /**
      * @covers       \DocxTemplate\Lexer\Ast\Parser\ImageParser::image
      * @dataProvider imageProvider
@@ -59,28 +58,5 @@ class ImageParserTest extends TestCase
                 ),
             ]
         ];
-    }
-
-    /**
-     * @param string $content
-     * @return ReaderInterface[]
-     * @throws InvalidSourceException
-     */
-    protected static function reader(string $content): iterable
-    {
-        yield new StreamReader(stream_for($content));
-        yield new StringReader($content);
-    }
-
-    /**
-     * Make a node position mock
-     *
-     * @param int $start
-     * @param int $length
-     * @return NodePosition
-     */
-    protected static function pos(int $start, int $length): NodePosition
-    {
-        return new NodePosition($start, $length);
     }
 }

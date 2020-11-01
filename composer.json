@@ -12,7 +12,7 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "DocxTemplate\\": "src/DocxTemplate"
+            "DocxTemplate\\": "src/"
         }
     },
     "autoload-dev": {

@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-namespace DocxTemplate\Lexer\Reader;
+namespace DocxTemplate\Tests\Lexer\Reader;
 
-use DocxTemplate\Lexer\Contract\ReaderInterface;
 use DocxTemplate\Lexer\Exception\InvalidSourceException;
+use DocxTemplate\Tests\Lexer\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
-use function GuzzleHttp\Psr7\stream_for;
 
 class ReaderTest extends TestCase
 {
+    use ReaderTrait;
+
     /**
      * @dataProvider findAnySequenceDataProvider
      * @covers       \DocxTemplate\Lexer\Reader\AbstractReader::findAny
@@ -72,17 +73,5 @@ class ReaderTest extends TestCase
             ["   \n    macro` }", 3, ['m', 8, 1]],
             [" $  \n  \t  \${}` }", 3, ['$', 10, 1]],
         ];
-    }
-
-
-    /**
-     * @param string $content
-     * @return iterable|ReaderInterface[]
-     * @throws InvalidSourceException
-     */
-    private function reader(string $content): iterable
-    {
-        yield new StreamReader(stream_for($content));
-        yield new StringReader($content);
     }
 }
