@@ -53,6 +53,6 @@ class StringReader extends AbstractReader
             return null;
         }
 
-        return $content;
+        return strip_tags($content);
     }
 }

@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer\Ast\Parser;
 
+use DocxTemplate\Lexer\Ast\Node\Identity;
 use DocxTemplate\Lexer\Ast\Node\ImageSize;
 use DocxTemplate\Lexer\Ast\NodePosition;
+use DocxTemplate\Lexer\Ast\Parser\Exception\EndNotFoundException;
+use DocxTemplate\Lexer\Ast\Parser\Exception\InvalidImageSizeException;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
-use DocxTemplate\Lexer\Exception\SyntaxError;
+use DocxTemplate\Lexer\Contract\ReaderInterface;
 
 class ImageSizeParser extends Parser
 {
@@ -36,13 +39,27 @@ class ImageSizeParser extends Parser
         'true' => true,
     ];
 
+
+    private Identity $identity;
+
+    public function __construct(ReaderInterface $reader, Identity $identity)
+    {
+        parent::__construct($reader, $identity->getPosition()->getEnd());
+        $this->identity = $identity;
+    }
+
     /** @inheritdoc  */
     public function parse(): ?AstNode
     {
-        $offset = $this->getOffset();
+        $next = $this->firstNotEmpty($this->getOffset());
+        if ($next->getFound() !== self::IMAGE_SIZE_DELIMITER) {
+            return null;
+        }
+
+        $offset = $next->getEnd();
         $end = $this->findAnyOrEmpty([self::BLOCK_END], $offset);
         if ($end === null) {
-            throw new SyntaxError("Couldn't find the end of image size");
+            throw new EndNotFoundException("Couldn't find the end of image size");
         }
 
         $points = implode('|', self::MEASURES);
@@ -85,15 +102,15 @@ class ImageSizeParser extends Parser
                 $pattern = ["(?P<w1>\d+(?:$points)?)(?:x|:)(?P<h1>\d+(?:$points)?)(?::(?P<r1>$boolean))?"];
                 break;
             default:
-                throw new SyntaxError("Invalid image size");
+                throw new InvalidImageSizeException("Invalid image size");
         }
 
         $template = '/^' . implode('|', $pattern) . '$/';
 
         $sizePos = new NodePosition($offset, $end->getStart() - $offset);
         $size = $this->read($sizePos->getStart(), $sizePos->getLength());
-        if (preg_match($template, strip_tags($size), $match) !== 1) {
-            throw new SyntaxError('Invalid image size');
+        if (preg_match($template, $size, $match) !== 1) {
+            throw new InvalidImageSizeException('Invalid image size');
         }
 
         for ($i = 1; $i <= 2; $i++) {

@@ -83,6 +83,6 @@ class StreamReader extends AbstractReader
             return null;
         }
 
-        return $this->stream->read($bytes);
+        return strip_tags($this->stream->read($bytes));
     }
 }

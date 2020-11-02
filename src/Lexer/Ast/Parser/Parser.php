@@ -127,13 +127,13 @@ abstract class Parser implements AstParser
     /**
      * Parse ImageSize node
      *
-     * @param int $offset
+     * @param Identity $identity
      * @return AstNode|ImageSize|null
      * @throws SyntaxError
      */
-    final protected function imageSize(int $offset): ?ImageSize
+    final protected function imageSize(Identity $identity): ?ImageSize
     {
-        return (new ImageSizeParser($this->reader, $offset))->parse();
+        return (new ImageSizeParser($this->reader, $identity))->parse();
     }
 
     /**

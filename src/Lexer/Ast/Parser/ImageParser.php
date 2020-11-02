@@ -6,8 +6,9 @@ namespace DocxTemplate\Lexer\Ast\Parser;
 
 use DocxTemplate\Lexer\Ast\Node\Call;
 use DocxTemplate\Lexer\Ast\Node\Image;
+use DocxTemplate\Lexer\Ast\Parser\Exception\EndNotFoundException;
+use DocxTemplate\Lexer\Ast\Parser\Exception\UnsupportedArgumentException;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
-use DocxTemplate\Lexer\Exception\SyntaxError;
 
 class ImageParser extends Parser
 {
@@ -21,29 +22,21 @@ class ImageParser extends Parser
         }
 
         if ($id instanceof Call) {
-            throw new SyntaxError("Image couldn't have an argument.");
+            throw new UnsupportedArgumentException("Image couldn't have any argument.");
+        }
+
+        $size = $this->imageSize($id);
+        if ($size !== null) {
+            return new Image($id, $size);
         }
 
         $next = $this->firstNotEmpty($id->getPosition()->getEnd());
-        if ($next === null) {
-            throw new SyntaxError("Unclosed image");
+        if ($next->getFound() !== self::BLOCK_END) {
+            throw new EndNotFoundException('');
         }
 
-        if ($next->getFound() === self::BLOCK_END) {
-            // There is an image without given size
-            // This same as Identity node
-            return new $id;
-        }
-
-        if ($next->getFound() === self::IMAGE_SIZE_DELIMITER) {
-            $size = $this->imageSize($next->getEnd());
-            if ($size === null) {
-                throw new SyntaxError("Unknown image size");
-            }
-        } else {
-            throw new SyntaxError("Unexpected image delimiter: {$next->getFound()}");
-        }
-
-        return new Image($id, $size);
+        // There is an image without given size
+        // This same as Identity node
+        return new $id;
     }
 }
