@@ -11,6 +11,7 @@ use DocxTemplate\Lexer\Ast\Parser\Exception\ElementNotFoundException;
 use DocxTemplate\Lexer\Ast\Parser\Exception\EndNotFoundException;
 use DocxTemplate\Lexer\Ast\Parser\Exception\UnexpectedCharactersException;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
+use DocxTemplate\Lexer\Contract\ReaderInterface;
 use DocxTemplate\Lexer\Exception\SyntaxError;
 
 class IdentityParser extends Parser
@@ -49,7 +50,14 @@ class IdentityParser extends Parser
 
         $idPos = new NodePosition($start->getStart(), $end->getEnd() - $start->getStart() - 1);
         $content = $this->read($idPos->getStart(), $idPos->getLength());
-        if (preg_match('/^\s*[\w_-]+\s*$/', $content) !== 1) {
+        $template = implode(
+            '|',
+            array_map(
+                fn($char) => preg_quote($char, '/'),
+                array_merge(self::SPECIAL_CHARS, ReaderInterface::EMPTY_CHARS)
+            )
+        );
+        if (preg_match("/^$template$/", $content) === 1) {
             throw new UnexpectedCharactersException(
                 $content,
                 "Identity contains unexpected characters"
@@ -87,7 +95,6 @@ class IdentityParser extends Parser
                 $end = $char;
                 break;
             } else {
-                dd($next->getPosition()->getEnd());
                 throw new UnexpectedCharactersException(
                     $this->read($idPos->getStart(), $idPos->getLength() + 20)
                 );

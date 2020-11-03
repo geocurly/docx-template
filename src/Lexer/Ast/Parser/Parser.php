@@ -29,7 +29,21 @@ abstract class Parser implements AstParser
     protected const PARAMS_DELIMITER = ',';
     protected const COND_THEN = '?';
     protected const COND_ELSE = ':';
+    protected const SCOPE_START = '{';
     protected const SPACE = ' ';
+
+    protected const SPECIAL_CHARS = [
+        self::BLOCK_END,
+        self::SCOPE_START,
+        self::STR_BRACE,
+        self::IMAGE_SIZE_DELIMITER,
+        self::FILTER_PIPE,
+        self::PARAMS_DELIMITER,
+        self::PARAMS_OPEN,
+        self::PARAMS_CLOSE,
+        self::COND_THEN,
+        self::COND_ELSE
+    ];
 
     private ReaderInterface $reader;
     private int $offset;

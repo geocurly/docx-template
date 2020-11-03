@@ -10,6 +10,8 @@ use DocxTemplate\Lexer\Ast\Node\Identity;
 use DocxTemplate\Lexer\Ast\Node\Image;
 use DocxTemplate\Lexer\Ast\Node\ImageSize;
 use DocxTemplate\Lexer\Ast\Node\Str;
+use DocxTemplate\Lexer\Ast\Parser\Exception\EndNotFoundException;
+use DocxTemplate\Lexer\Ast\Parser\Exception\UnexpectedCharactersException;
 use DocxTemplate\Lexer\Ast\Parser\IdentityParser;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
 use DocxTemplate\Lexer\Exception\InvalidSourceException;
@@ -96,7 +98,36 @@ class IdentityParserTest extends TestCase
                     ),
                     new Str($this->pos(26, 8))
                 ),
-            ]
+            ],
+            ['${ \void }', 3, $id('\void', 3, 5)],
+            ['${ \\\s^123px }', 3, $id('\\\s^123px', 3, 9)]
+        ];
+    }
+
+    /**
+     * @covers \DocxTemplate\Lexer\Ast\Parser\IdentityParser::parse
+     *
+     * @dataProvider negativeProvider
+     *
+     * @param string $content
+     * @param int $pos
+     * @param string $expected
+     */
+    public function testParseNegative(string $content, int $pos, string $expected): void
+    {
+        $this->expectException($expected);
+        foreach ($this->reader($content) as $reader) {
+            (new IdentityParser($reader, $pos))->parse();
+        }
+    }
+
+    public function negativeProvider(): array
+    {
+        return [
+            ['${identity', 3, EndNotFoundException::class],
+            ['   ', 0, SyntaxError::class],
+            ['${ {identity} }', 3, UnexpectedCharactersException::class],
+            ['${ ident`ity }', 3, UnexpectedCharactersException::class],
         ];
     }
 }
