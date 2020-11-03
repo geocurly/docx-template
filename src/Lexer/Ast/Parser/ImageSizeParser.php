@@ -59,7 +59,7 @@ class ImageSizeParser extends Parser
         $offset = $next->getEnd();
         $end = $this->findAnyOrEmpty([self::BLOCK_END], $offset);
         if ($end === null) {
-            throw new EndNotFoundException("Couldn't find the end of image size");
+            throw new EndNotFoundException($this->getPreview(20));
         }
 
         $points = implode('|', self::MEASURES);
@@ -102,7 +102,7 @@ class ImageSizeParser extends Parser
                 $pattern = ["(?P<w1>\d+(?:$points)?)(?:x|:)(?P<h1>\d+(?:$points)?)(?::(?P<r1>$boolean))?"];
                 break;
             default:
-                throw new InvalidImageSizeException("Invalid image size");
+                throw new InvalidImageSizeException($this->getPreview(20));
         }
 
         $template = '/^' . implode('|', $pattern) . '$/';
@@ -110,7 +110,7 @@ class ImageSizeParser extends Parser
         $sizePos = new NodePosition($offset, $end->getStart() - $offset);
         $size = $this->read($sizePos->getStart(), $sizePos->getLength());
         if (preg_match($template, $size, $match) !== 1) {
-            throw new InvalidImageSizeException('Invalid image size');
+            throw new InvalidImageSizeException($this->getPreview(20));
         }
 
         for ($i = 1; $i <= 2; $i++) {
@@ -126,5 +126,16 @@ class ImageSizeParser extends Parser
             $height,
             $ratio === null ? null : self::BOOLEAN[$ratio]
         );
+    }
+
+    /**
+     * Get content for preview
+     * @param int $end
+     * @return string
+     */
+    private function getPreview(int $end): string
+    {
+        $pos = $this->identity->getPosition();
+        return $this->read($pos->getStart(), $pos->getEnd() + $end);
     }
 }

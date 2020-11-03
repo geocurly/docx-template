@@ -22,7 +22,10 @@ class ImageParser extends Parser
         }
 
         if ($id instanceof Call) {
-            throw new UnsupportedArgumentException("Image couldn't have any argument.");
+            throw new UnsupportedArgumentException(
+                $this->read($id->getPosition()->getStart(), $id->getPosition()->getLength()),
+                "Image couldn't have any arguments"
+            );
         }
 
         $size = $this->imageSize($id);
@@ -32,7 +35,9 @@ class ImageParser extends Parser
 
         $next = $this->firstNotEmpty($id->getPosition()->getEnd());
         if ($next->getFound() !== self::BLOCK_END) {
-            throw new EndNotFoundException('');
+            throw new EndNotFoundException(
+                $this->read($id->getPosition()->getStart(), $id->getPosition()->getLength())
+            );
         }
 
         // There is an image without given size

@@ -107,7 +107,7 @@ abstract class Parser implements AstParser
      * @return AstNode|Identity|null
      * @throws SyntaxError
      */
-    final protected function identity(int $offset): ?Identity
+    final protected function identity(int $offset): ?AstNode
     {
         return (new IdentityParser($this->reader, $offset))->parse();
     }
