@@ -6,8 +6,8 @@ namespace DocxTemplate\Lexer\Ast\Parser;
 
 use DocxTemplate\Lexer\Ast\Node\Str;
 use DocxTemplate\Lexer\Ast\NodePosition;
+use DocxTemplate\Lexer\Ast\Parser\Exception\EndNotFoundException;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
-use DocxTemplate\Lexer\Exception\SyntaxError;
 
 class StrParser extends Parser
 {
@@ -15,8 +15,8 @@ class StrParser extends Parser
     public function parse(): ?AstNode
     {
         $offset = $this->getOffset();
-        $open = $this->findAny([self::STR_BRACE], $offset);
-        if ($open === null) {
+        $open = $this->firstNotEmpty($offset);
+        if ($open === null || $open->getFound() !== self::STR_BRACE) {
             return null;
         }
 
@@ -25,7 +25,9 @@ class StrParser extends Parser
         while (true) {
             $nestedOrClose = $this->findAny([self::STR_BRACE, self::BLOCK_START], $last);
             if ($nestedOrClose === null) {
-                throw new SyntaxError("Unclosed string");
+                throw new EndNotFoundException(
+                    $this->read($open->getEnd(), $last + 20)
+                );
             }
 
             if ($nestedOrClose->getFound() === self::STR_BRACE) {
@@ -34,18 +36,11 @@ class StrParser extends Parser
             }
 
             if ($nestedOrClose->getFound() === self::BLOCK_START) {
-                $scope = $this->block($nestedOrClose->getStart());
-
-                if ($scope === null) {
-                    throw new SyntaxError("Unresolved block");
-                }
-
-                $last = $scope->getPosition()->getEnd();
-                $nested[] = $scope;
+                $block = $this->block($nestedOrClose->getStart());
+                $last = $block->getPosition()->getEnd();
+                $nested[] = $block;
                 continue;
             }
-
-            throw new SyntaxError("Unknown start of nested node");
         }
 
         return new Str($string, ...$nested);
