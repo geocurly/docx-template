@@ -63,7 +63,7 @@ abstract class AbstractReader implements ReaderInterface
     /** @inheritDoc */
     public function firstNotEmpty(int $startPosition = 0): ?array
     {
-        $first = $this->read($startPosition, 1);
+        $first = $this->readRaw($startPosition, 1);
         if ($first === null) {
             return null;
         }
@@ -113,13 +113,18 @@ abstract class AbstractReader implements ReaderInterface
 
         // Some word processor may add any tags between chars. Check it
         $realLength = $positions[$num] - $positions[0] + 1;
-        $content = $this->read($positions[0], $realLength);
 
-        if ($positions === [] || $content === false || strip_tags($content) !== $multipleNeedle) {
+        if ($positions === [] || $this->read($positions[0], $realLength) !== $multipleNeedle) {
             return null;
         }
 
         return [$positions[0], $realLength];
+    }
+
+    /** @inheritdoc  */
+    public function read(int $startPosition, int $bytes): ?string
+    {
+        return strip_tags($this->readRaw($startPosition, $bytes));
     }
 
     /**
@@ -130,4 +135,13 @@ abstract class AbstractReader implements ReaderInterface
      * @return array|null
      */
     abstract protected function findAnyChar(array $chars, int $position): ?array;
+
+    /**
+     * Read raw content
+     *
+     * @param int $start
+     * @param $bytes
+     * @return string|null
+     */
+    abstract protected function readRaw(int $start, int $bytes): ?string;
  }

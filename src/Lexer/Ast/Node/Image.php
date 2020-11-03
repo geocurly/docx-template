@@ -14,8 +14,13 @@ class Image extends Node
     public function __construct(Identity $identity, ?ImageSize $size)
     {
         $start = $identity->getPosition()->getStart();
-        $length = $identity->getPosition()->getLength() + ($size === null ? 0 :$size->getPosition()->getLength());
-        parent::__construct(new NodePosition($start, $length));
+        if ($start !== null) {
+            $end = $size->getPosition()->getEnd();
+        } else {
+            $end = $identity->getPosition()->getEnd();
+        }
+
+        parent::__construct(new NodePosition($start, $end - $start));
 
         $this->identity = $identity;
         $this->size = $size;

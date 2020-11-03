@@ -46,13 +46,13 @@ class StringReader extends AbstractReader
     }
 
     /** @inheritDoc */
-    public function read(int $startPosition, int $bytes): ?string
+    protected function readRaw(int $startPosition, int $bytes): ?string
     {
         $content = substr($this->content, $startPosition, $bytes);
         if ($content === false) {
             return null;
         }
 
-        return strip_tags($content);
+        return $content;
     }
 }

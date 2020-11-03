@@ -34,7 +34,10 @@ class ImageParser extends Parser
         }
 
         $next = $this->firstNotEmpty($id->getPosition()->getEnd());
-        if ($next->getFound() !== self::BLOCK_END) {
+        if (!in_array(
+            $next->getFound(),
+            [self::BLOCK_END, self::PARAMS_CLOSE, self::SPACE, self::PARAMS_DELIMITER], true
+        )) {
             throw new EndNotFoundException(
                 $this->read($id->getPosition()->getStart(), $id->getPosition()->getLength())
             );
@@ -42,6 +45,6 @@ class ImageParser extends Parser
 
         // There is an image without given size
         // This same as Identity node
-        return new $id;
+        return $id;
     }
 }

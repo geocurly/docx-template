@@ -75,7 +75,7 @@ class StreamReader extends AbstractReader
     }
 
     /** @inheritDoc */
-    public function read(int $from, int $bytes): ?string
+    public function readRaw(int $from, int $bytes): ?string
     {
         try {
             $this->stream->seek($from);
@@ -83,6 +83,6 @@ class StreamReader extends AbstractReader
             return null;
         }
 
-        return strip_tags($this->stream->read($bytes));
+        return $this->stream->read($bytes);
     }
 }

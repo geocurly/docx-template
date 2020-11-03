@@ -57,7 +57,7 @@ class ImageSizeParser extends Parser
         }
 
         $offset = $next->getEnd();
-        $end = $this->findAnyOrEmpty([self::BLOCK_END], $offset);
+        $end = $this->findAnyOrEmpty([self::BLOCK_END, self::PARAMS_CLOSE], $offset);
         if ($end === null) {
             throw new EndNotFoundException($this->getPreview(20));
         }

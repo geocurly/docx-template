@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace DocxTemplate\Lexer\Exception;
 
 
-abstract class SyntaxError extends LexerException
+class SyntaxError extends LexerException
 {
     private string $preview;
 

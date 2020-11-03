@@ -29,6 +29,7 @@ abstract class Parser implements AstParser
     protected const PARAMS_DELIMITER = ',';
     protected const COND_THEN = '?';
     protected const COND_ELSE = ':';
+    protected const SPACE = ' ';
 
     private ReaderInterface $reader;
     private int $offset;
@@ -119,7 +120,7 @@ abstract class Parser implements AstParser
      * @return AstNode|Image|null
      * @throws SyntaxError
      */
-    final protected function image(int $offset): ?Image
+    final protected function image(int $offset): ?AstNode
     {
         return (new ImageParser($this->reader, $offset))->parse();
     }

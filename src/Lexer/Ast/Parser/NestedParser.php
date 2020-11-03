@@ -18,17 +18,17 @@ class NestedParser extends Parser
         }
 
         switch ($next->getFound()) {
-            case self::BLOCK_START:
+            case self::BLOCK_START[0]:
                 // ${...something
-                $nested = $this->block($offset);
+                $nested = $this->block($next->getStart());
                 break;
             case self::STR_BRACE;
                 // `...something
-                $nested = $this->string($offset);
+                $nested = $this->string($next->getStart());
                 break;
             default:
-                // Some identity
-                $nested = $this->identity($offset);
+                // Some image or identity
+                $nested = $this->image($next->getStart());
                 break;
         }
 

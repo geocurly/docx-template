@@ -76,6 +76,11 @@ class ReaderTest extends TestCase
             [' `macro` }', 0, ['`', 1, 1],],
             ["   \n    macro` }", 3, ['m', 8, 1]],
             [" $  \n  \t  \${}` }", 3, ['$', 10, 1]],
+            [
+                "<simple-variable> one_<bold>two</bold> <style>| simple-name \n</style>}</simple-variable>",
+                0,
+                ['o', 18, 1]
+            ]
         ];
     }
 
