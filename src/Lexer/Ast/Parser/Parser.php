@@ -250,7 +250,7 @@ abstract class Parser implements AstParser
      * @return AstNode|Expression|null
      * @throws SyntaxError
      */
-    final protected function expression(AstNode $left): ?Expression
+    final private function expression(AstNode $left): ?Expression
     {
         return (new ExpressionParser($this->reader, $left))->parse();
     }
