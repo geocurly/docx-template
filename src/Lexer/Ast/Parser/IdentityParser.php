@@ -11,7 +11,7 @@ use DocxTemplate\Lexer\Ast\Parser\Exception\ElementNotFoundException;
 use DocxTemplate\Lexer\Ast\Parser\Exception\EndNotFoundException;
 use DocxTemplate\Lexer\Ast\Parser\Exception\UnexpectedCharactersException;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
-use DocxTemplate\Lexer\Contract\ReaderInterface;
+use DocxTemplate\Lexer\Contract\Reader;
 use DocxTemplate\Lexer\Exception\SyntaxError;
 
 class IdentityParser extends Parser
@@ -54,7 +54,7 @@ class IdentityParser extends Parser
             '|',
             array_map(
                 fn($char) => preg_quote($char, '/'),
-                array_merge(self::SPECIAL_CHARS, ReaderInterface::EMPTY_CHARS)
+                array_merge(self::SPECIAL_CHARS, Reader::EMPTY_CHARS)
             )
         );
         if (preg_match("/^$template$/", $content) === 1) {

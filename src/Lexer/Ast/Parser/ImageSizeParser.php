@@ -10,7 +10,7 @@ use DocxTemplate\Lexer\Ast\NodePosition;
 use DocxTemplate\Lexer\Ast\Parser\Exception\EndNotFoundException;
 use DocxTemplate\Lexer\Ast\Parser\Exception\InvalidImageSizeException;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
-use DocxTemplate\Lexer\Contract\ReaderInterface;
+use DocxTemplate\Lexer\Contract\Reader;
 
 class ImageSizeParser extends Parser
 {
@@ -42,7 +42,7 @@ class ImageSizeParser extends Parser
 
     private AstNode $identity;
 
-    public function __construct(ReaderInterface $reader, AstNode $identity)
+    public function __construct(Reader $reader, AstNode $identity)
     {
         parent::__construct($reader, $identity->getPosition()->getEnd());
         $this->identity = $identity;

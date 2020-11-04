@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer\Contract;
 
-interface ReaderInterface
+interface Reader
 {
     public const EMPTY_CHARS = [" ", "\t", "\n", "\r", "\0", "\x0B"];
 
@@ -12,18 +12,18 @@ interface ReaderInterface
      * Find any of sequences and return found position
      *
      * @param array $needles
-     * @param int $startPosition
+     * @param int $offset
      * @return array|null
      */
-    public function findAny(array $needles, int $startPosition = 0): ?array;
+    public function findAny(array $needles, int $offset = 0): ?array;
 
     /**
      * Get sequence if it first after $startPosition
      *
-     * @param int $position
+     * @param int $offset
      * @return array|null
      */
-    public function firstNotEmpty(int $position): ?array;
+    public function firstNotEmpty(int $offset): ?array;
 
     /**
      * Read bytes from content

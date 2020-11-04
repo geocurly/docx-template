@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer\Reader;
 
-use DocxTemplate\Lexer\Contract\ReaderInterface;
+use DocxTemplate\Lexer\Contract\Reader;
 
-abstract class AbstractReader implements ReaderInterface
+abstract class AbstractReader implements Reader
 {
     /** @inheritDoc */
-    public function findAny(array $needles, int $startPosition = 0): ?array
+    public function findAny(array $needles, int $offset = 0): ?array
     {
         $chars = [];
         foreach ($needles as $needle) {
             $chars[$needle[0]] = $needle;
         }
 
-        $first = $this->findAnyChar(array_keys($chars), $startPosition);
+        $first = $this->findAnyChar(array_keys($chars), $offset);
         if ($first === null) {
             return null;
         }
@@ -61,17 +61,17 @@ abstract class AbstractReader implements ReaderInterface
     }
 
     /** @inheritDoc */
-    public function firstNotEmpty(int $startPosition = 0): ?array
+    public function firstNotEmpty(int $startOffset = 0): ?array
     {
-        $first = $this->readRaw($startPosition, 1);
+        $first = $this->readRaw($startOffset, 1);
         if ($first === null) {
             return null;
         }
 
         if (in_array($first, self::EMPTY_CHARS, true)) {
-            $found = $this->firstNotEmpty($startPosition + 1);
+            $found = $this->firstNotEmpty($startOffset + 1);
         } elseif ($first === '<') {
-            $position = $startPosition + 1;
+            $position = $startOffset + 1;
             while (true) {
                 $found = $this->firstNotEmpty($position);
                 if ($found === null || $found[0] === '>') {
@@ -83,7 +83,7 @@ abstract class AbstractReader implements ReaderInterface
 
             $found = $this->firstNotEmpty($found[1] + 1);
         } else {
-            $found = [$first, $startPosition, 1];
+            $found = [$first, $startOffset, 1];
         }
 
         return $found;

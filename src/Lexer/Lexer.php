@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace DocxTemplate\Lexer;
 
 use DocxTemplate\Lexer\Ast\Ast;
-use DocxTemplate\Lexer\Contract\ReaderInterface;
+use DocxTemplate\Lexer\Contract\Reader;
 use DocxTemplate\Lexer\Reader\StreamReader;
 use DocxTemplate\Lexer\Reader\StringReader;
 use Psr\Http\Message\StreamInterface;
 
 class Lexer
 {
-    private ReaderInterface $reader;
+    private Reader $reader;
 
     public function __construct($source)
     {

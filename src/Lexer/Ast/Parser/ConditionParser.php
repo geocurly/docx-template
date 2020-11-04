@@ -5,17 +5,16 @@ declare(strict_types=1);
 namespace DocxTemplate\Lexer\Ast\Parser;
 
 use DocxTemplate\Lexer\Ast\Node\Condition;
-use DocxTemplate\Lexer\Ast\Node\FilterExpression;
 use DocxTemplate\Lexer\Ast\Parser\Exception\InvalidImageSizeException;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
-use DocxTemplate\Lexer\Contract\ReaderInterface;
+use DocxTemplate\Lexer\Contract\Reader;
 use DocxTemplate\Lexer\Exception\SyntaxError;
 
 class ConditionParser extends Parser
 {
     private AstNode $if;
 
-    public function __construct(ReaderInterface $reader, AstNode $if)
+    public function __construct(Reader $reader, AstNode $if)
     {
         parent::__construct($reader, $if->getPosition()->getEnd());
         $this->if = $if;

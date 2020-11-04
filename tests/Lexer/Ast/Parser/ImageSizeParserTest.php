@@ -144,16 +144,12 @@ class ImageSizeParserTest extends TestCase
 
     public function negativeProvider(): array
     {
-        $id = function (string $id, int $from, int $length) {
-            return new Identity($id, $this->pos($from, $length));
-        };
-
         return [
-            ['${ image:150ufx792 }', $id('image', 3, 5), InvalidImageSizeException::class],
-            ['${ image:bad-image-size }', $id('image', 3, 5), InvalidImageSizeException::class],
-            ['${ image:width=150px:width=560:height=29 }', $id('image', 3, 5), InvalidImageSizeException::class],
-            ['${ image:ratio=f:width=1px:height=2:ratio=true }', $id('image', 3, 5), InvalidImageSizeException::class],
-            ['${ image:150ufx792', $id('image', 3, 5), EndNotFoundException::class],
+            ['${ image:150ufx792 }', self::id('image', 3, 5), InvalidImageSizeException::class],
+            ['${ image:bad-image-size }', self::id('image', 3, 5), InvalidImageSizeException::class],
+            ['${ image:width=150px:width=560:height=29 }', self::id('image', 3, 5), InvalidImageSizeException::class],
+            ['${ image:ratio=f:width=1px:height=2:ratio=true }', self::id('image', 3, 5), InvalidImageSizeException::class],
+            ['${ image:150ufx792', self::id('image', 3, 5), EndNotFoundException::class],
         ];
     }
 }

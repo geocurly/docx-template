@@ -7,14 +7,14 @@ namespace DocxTemplate\Lexer\Ast\Parser;
 use DocxTemplate\Lexer\Ast\Node\FilterExpression;
 use DocxTemplate\Lexer\Ast\Parser\Exception\ElementNotFoundException;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
-use DocxTemplate\Lexer\Contract\ReaderInterface;
+use DocxTemplate\Lexer\Contract\Reader;
 use DocxTemplate\Lexer\Exception\SyntaxError;
 
 class ExpressionParser extends Parser
 {
     private AstNode $left;
 
-    public function __construct(ReaderInterface $reader, AstNode $left)
+    public function __construct(Reader $reader, AstNode $left)
     {
         parent::__construct($reader, $left->getPosition()->getEnd());
         $this->left = $left;

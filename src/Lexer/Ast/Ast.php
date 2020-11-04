@@ -6,18 +6,18 @@ namespace DocxTemplate\Lexer\Ast;
 
 use ArrayIterator;
 use DocxTemplate\Lexer\Ast\Parser\BlockParser;
-use DocxTemplate\Lexer\Contract\ReaderInterface;
+use DocxTemplate\Lexer\Contract\Reader;
 use DocxTemplate\Lexer\Exception\SyntaxError;
 use IteratorAggregate;
 use Traversable;
 
 class Ast implements IteratorAggregate
 {
-    private ReaderInterface $reader;
+    private Reader $reader;
 
     private array $blocks = [];
 
-    public function __construct(ReaderInterface $reader)
+    public function __construct(Reader $reader)
     {
         $this->reader = $reader;
     }

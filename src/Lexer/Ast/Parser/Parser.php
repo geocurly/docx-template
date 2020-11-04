@@ -14,7 +14,7 @@ use DocxTemplate\Lexer\Ast\Node\ImageSize;
 use DocxTemplate\Lexer\Ast\Node\Str;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
 use DocxTemplate\Lexer\Contract\Ast\AstParser;
-use DocxTemplate\Lexer\Contract\ReaderInterface;
+use DocxTemplate\Lexer\Contract\Reader;
 use DocxTemplate\Lexer\Exception\SyntaxError;
 use DocxTemplate\Lexer\Reader\ReadResult;
 
@@ -46,10 +46,10 @@ abstract class Parser implements AstParser
         self::COND_ELSE
     ];
 
-    private ReaderInterface $reader;
+    private Reader $reader;
     private int $offset;
 
-    public function __construct(ReaderInterface $reader, int $offset)
+    public function __construct(Reader $reader, int $offset)
     {
         $this->reader = $reader;
         $this->offset = $offset;
@@ -82,7 +82,7 @@ abstract class Parser implements AstParser
     final protected function findAnyOrEmpty(array $needle, int $offset): ?ReadResult
     {
         return $this->findAny(
-            array_merge(ReaderInterface::EMPTY_CHARS, $needle),
+            array_merge(Reader::EMPTY_CHARS, $needle),
             $offset
         );
     }

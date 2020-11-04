@@ -9,7 +9,7 @@ use DocxTemplate\Lexer\Ast\NodePosition;
 interface AstNode
 {
     /**
-     * Get node position at given content
+     * Get NodePosition
      * @return NodePosition
      */
     public function getPosition(): NodePosition;
