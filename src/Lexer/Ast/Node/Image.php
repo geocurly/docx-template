@@ -9,7 +9,7 @@ use DocxTemplate\Lexer\Contract\Ast\AstNode;
 
 class Image extends Node
 {
-    private Identity $identity;
+    private AstNode $identity;
     private ?ImageSize $size;
 
     public function __construct(AstNode $identity, ?ImageSize $size)

@@ -51,7 +51,7 @@ trait AstNodeTrait
         );
     }
 
-    protected static function image(Identity $id, ImageSize $size): Image
+    protected static function image(AstNode $id, ImageSize $size): Image
     {
         return new Image($id, $size);
     }
