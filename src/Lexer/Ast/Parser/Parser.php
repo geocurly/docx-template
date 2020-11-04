@@ -96,12 +96,7 @@ abstract class Parser implements AstParser
      */
     final protected function findAny(array $needle, int $offset): ?ReadResult
     {
-        $found = $this->reader->findAny($needle, $offset);
-        if ($found === null) {
-            return null;
-        }
-
-        return new ReadResult(...$found);
+        return $this->reader->findAny($needle, $offset);
     }
 
     /**
@@ -160,8 +155,7 @@ abstract class Parser implements AstParser
      */
     final protected function firstNotEmpty(int $offset): ?ReadResult
     {
-        $found = $this->reader->firstNotEmpty($offset);
-        return $found === null ? null : new ReadResult(...$found);
+        return $this->reader->firstNotEmpty($offset);
     }
 
     /**

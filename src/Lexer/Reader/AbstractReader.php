@@ -9,7 +9,7 @@ use DocxTemplate\Lexer\Contract\Reader;
 abstract class AbstractReader implements Reader
 {
     /** @inheritDoc */
-    public function findAny(array $needles, int $offset = 0): ?array
+    public function findAny(array $needles, int $offset = 0): ?ReadResult
     {
         $chars = [];
         foreach ($needles as $needle) {
@@ -26,7 +26,7 @@ abstract class AbstractReader implements Reader
             return null;
         }
 
-        return [$chars[$first[0]], ...$sequence];
+        return new ReadResult($chars[$first[0]], ...$sequence);
     }
 
     /**
@@ -61,7 +61,7 @@ abstract class AbstractReader implements Reader
     }
 
     /** @inheritDoc */
-    public function firstNotEmpty(int $startOffset = 0): ?array
+    public function firstNotEmpty(int $startOffset = 0): ?ReadResult
     {
         $first = $this->readRaw($startOffset, 1);
         if ($first === null) {
@@ -74,16 +74,16 @@ abstract class AbstractReader implements Reader
             $position = $startOffset + 1;
             while (true) {
                 $found = $this->firstNotEmpty($position);
-                if ($found === null || $found[0] === '>') {
+                if ($found === null || $found->getFound() === '>') {
                     break;
                 }
 
-                $position = $found[1] + 1;
+                $position = $found->getEnd();
             }
 
-            $found = $this->firstNotEmpty($found[1] + 1);
+            $found = $this->firstNotEmpty($found->getEnd());
         } else {
-            $found = [$first, $startOffset, 1];
+            $found = new ReadResult($first, $startOffset, 1);
         }
 
         return $found;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DocxTemplate\Tests\Lexer\Reader;
 
 use DocxTemplate\Lexer\Exception\InvalidSourceException;
+use DocxTemplate\Lexer\Reader\ReadResult;
 use DocxTemplate\Tests\Lexer\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -27,8 +28,8 @@ class ReaderTest extends TestCase
     {
         $given = '"' . implode(',', $args[0]) . '"';
         foreach ($this->reader($content) as $reader) {
-            $this->assertSame(
-                $expect,
+            $this->assertEquals(
+                $expect === null ? null : new ReadResult(...$expect),
                 $reader->findAny(...$args),
                 "Try to first of given $given with " . get_class($reader)
             );
@@ -62,8 +63,8 @@ class ReaderTest extends TestCase
     public function testFirstNotEmpty(string $content, int $pos, ?array $expect): void
     {
         foreach ($this->reader($content) as $reader) {
-            $this->assertSame(
-                $expect,
+            $this->assertEquals(
+                new ReadResult(...$expect),
                 $reader->firstNotEmpty($pos),
                 "Try to get next not empty char in '$content' from $pos with " . get_class($reader)
             );
