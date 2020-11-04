@@ -13,33 +13,18 @@ class NestedParser extends Parser
     {
         $offset = $this->getOffset();
         $next = $this->firstNotEmpty($offset);
-        if ($next === null) {
-            return null;
-        }
 
-        switch ($next->getFound()) {
-            case self::BLOCK_START[0]:
-                // ${...something
-                $nested = $this->block($next->getStart());
-                break;
-            case self::STR_BRACE;
-                // `...something
-                $nested = $this->string($next->getStart());
-                break;
-            default:
-                // Some image or identity
-                $nested = $this->image($next->getStart());
-                break;
+        $container = $this->container($next->getStart());
+        if ($container !== null) {
+            $nested = $container;
+        } else {
+            // Some image or identity
+            $identity = $this->identity($next->getStart());
+            $nested = $this->image($identity) ?? $identity;
         }
 
         // There is may be some expression:
         // ${ `it is a string` | filter-expression(`filter-param`)
-        $expression = $this->expression($nested);
-        while ($expression !== null) {
-            $nested = $expression;
-            $expression = $this->expression($nested);
-        }
-
-        return $nested;
+        return $this->expressionChain($nested) ?? $nested;
     }
 }

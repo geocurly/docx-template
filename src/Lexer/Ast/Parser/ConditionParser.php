@@ -6,6 +6,7 @@ namespace DocxTemplate\Lexer\Ast\Parser;
 
 use DocxTemplate\Lexer\Ast\Node\Condition;
 use DocxTemplate\Lexer\Ast\Node\FilterExpression;
+use DocxTemplate\Lexer\Ast\Parser\Exception\InvalidImageSizeException;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
 use DocxTemplate\Lexer\Contract\ReaderInterface;
 use DocxTemplate\Lexer\Exception\SyntaxError;
@@ -36,14 +37,9 @@ class ConditionParser extends Parser
             $then = $if;
         } else {
             // ${ $if ? `string` ...} or ${ $if ? ${block} ... } or ${ $if ? name ... }
-            $then = $this->nested($thenChar->getEnd());
+            $then = $this->then($thenChar->getEnd());
             if ($then === null) {
                 throw new SyntaxError('Could\'t resolve "then" condition');
-            } elseif ($then instanceof FilterExpression) {
-                throw new SyntaxError(
-                    "Filter expression doesn't support inside condition." .
-                    "Please wrap it like '\${ var | filter }'"
-                );
             }
 
             // $if ? $then ...
@@ -56,13 +52,40 @@ class ConditionParser extends Parser
         $else = $this->nested($elseChar->getEnd());
         if ($else === null) {
             throw new SyntaxError('Could\'t resolve "else" condition.');
-        } elseif ($then instanceof FilterExpression) {
-            throw new SyntaxError(
-                "Filter expression doesn't support inside condition." .
-                "Please wrap it like '\${ var | filter }'"
-            );
         }
 
         return new Condition($if, $then, $else);
+    }
+
+    /**
+     * Get then node
+     *
+     * @param int $offset
+     * @return AstNode|null
+     * @throws SyntaxError
+     */
+    private function then(int $offset): ?AstNode
+    {
+        $next = $this->firstNotEmpty($offset);
+
+        $container = $this->container($next->getStart());
+        if ($container !== null) {
+            $nested = $container;
+        } else {
+            // Some image or identity
+            $identity = $this->identity($next->getStart());
+            // There is may char ":" in 2 cases:
+            // 1 ) next token is ImageSize
+            // 2 ) next char is a special char of ternary token ( if ? then : else )
+            try {
+                $nested = $this->image($identity) ?? $identity;
+            } catch (InvalidImageSizeException $e) {
+                $nested = $identity;
+            }
+        }
+
+        // There is may be some expression:
+        // ${ `it is a string` | filter-expression(`filter-param`)
+        return $this->expressionChain($nested) ?? $nested;
     }
 }

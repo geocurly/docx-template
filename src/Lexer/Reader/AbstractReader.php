@@ -124,7 +124,8 @@ abstract class AbstractReader implements ReaderInterface
     /** @inheritdoc  */
     public function read(int $startPosition, int $bytes): ?string
     {
-        return strip_tags($this->readRaw($startPosition, $bytes));
+        $read = $this->readRaw($startPosition, $bytes);
+        return $read === null ? null : strip_tags($read);
     }
 
     /**

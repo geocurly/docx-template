@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DocxTemplate\Lexer\Ast\Parser;
 
 use DocxTemplate\Lexer\Ast\Node\Block;
+use DocxTemplate\Lexer\Ast\Node\Call;
 use DocxTemplate\Lexer\Ast\Node\Condition;
 use DocxTemplate\Lexer\Ast\Node\Expression;
 use DocxTemplate\Lexer\Ast\Node\Identity;
@@ -104,6 +105,54 @@ abstract class Parser implements AstParser
     }
 
     /**
+     * Chain of expressions
+     *
+     * @param AstNode $left
+     * @return Expression|null
+     * @throws SyntaxError
+     */
+    final protected function expressionChain(AstNode $left): ?Expression
+    {
+        $expr = $this->expression($left);
+        if ($expr === null) {
+            return null;
+        }
+
+        while ($expr !== null) {
+            $left = $expr;
+            $expr = $this->expression($left);
+        }
+
+        return $left;
+    }
+
+    /**
+     * Get some container
+     * @param int $offset
+     * @return AstNode|null
+     */
+    final protected function container(int $offset): ?AstNode
+    {
+        $next = $this->firstNotEmpty($offset);
+        if ($next === null) {
+            return null;
+        }
+
+        switch ($next->getFound()) {
+            case self::BLOCK_START[0]:
+                // ${...something
+                return $this->block($next->getStart());
+                break;
+            case self::STR_BRACE;
+                // `...something
+                return $this->string($next->getStart());
+                break;
+            default:
+                return null;
+        }
+    }
+
+    /**
      * Find first not empty char
      *
      * @param int $offset
@@ -130,23 +179,24 @@ abstract class Parser implements AstParser
     /**
      * Parse Image node
      *
-     * @param int $offset
+     * @param AstNode $id
      * @return AstNode|Image|null
      * @throws SyntaxError
      */
-    final protected function image(int $offset): ?AstNode
+    final protected function image(AstNode $id): ?Image
     {
-        return (new ImageParser($this->reader, $offset))->parse();
+        $size = $this->imageSize($id);
+        return $size === null ? null : new Image($id, $size);
     }
 
     /**
      * Parse ImageSize node
      *
-     * @param Identity $identity
+     * @param AstNode $identity
      * @return AstNode|ImageSize|null
      * @throws SyntaxError
      */
-    final protected function imageSize(Identity $identity): ?ImageSize
+    final protected function imageSize(AstNode $identity): ?ImageSize
     {
         return (new ImageSizeParser($this->reader, $identity))->parse();
     }

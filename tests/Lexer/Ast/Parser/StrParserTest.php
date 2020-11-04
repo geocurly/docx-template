@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Lexer\Ast\Parser;
 
-use DocxTemplate\Lexer\Ast\Node\Block;
-use DocxTemplate\Lexer\Ast\Node\Identity;
-use DocxTemplate\Lexer\Ast\Node\Str;
 use DocxTemplate\Lexer\Ast\Parser\Exception\EndNotFoundException;
 use DocxTemplate\Lexer\Ast\Parser\StrParser;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
 use DocxTemplate\Lexer\Exception\InvalidSourceException;
 use DocxTemplate\Lexer\Exception\SyntaxError;
+use DocxTemplate\Tests\Lexer\Common\AstNodeTrait;
 use DocxTemplate\Tests\Lexer\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
 
 class StrParserTest extends TestCase
 {
     use ReaderTrait;
+    use AstNodeTrait;
 
     /**
-     * @covers       \DocxTemplate\Lexer\Ast\Parser\StrParser::image
+     * @covers       \DocxTemplate\Lexer\Ast\Parser\StrParser::parse
      * @dataProvider positiveProvider
      *
      * @param string $content
@@ -41,51 +40,47 @@ class StrParserTest extends TestCase
 
     public function positiveProvider(): array
     {
-        $str = function ($from, $length, ...$nested) {
-            return new Str($this->pos($from, $length), ...$nested);
-        };
-
         return [
-            ['${ `string` }', 2, $str(3, 8)],
+            ['${ `string` }', 2, self::str(3, 8)],
             [
                 '<zip>`there is a <bold>zip</bold>`</zip>',
                 0,
-                $str(5, 29)
+                self::str(5, 29)
             ],
             [
                 '`string ${nested} string`',
                 0,
-                $str(
+                self::str(
                     0,
                     25,
-                    new Block(
-                        $this->pos(8, 9),
-                        new Identity('nested', $this->pos(10, 6))
-                    )
+                    self::block(8, 9, self::id('nested', 10, 6))
                 ),
             ],
             [
-                $content = '`string ${nested} string ${`<tag>${nested2</tag>34}</br>` zip}`',
+                '`string ${nested} string ${`<tag>${nested2</tag>34}</br>` zip}`',
                 0,
-                $str(
+                self::str(
                     0,
                     63,
-                    new Block(
-                        $this->pos(8, 9),
-                        new Identity('nested', $this->pos(10, 6))
-                    ),
-                    new Block(
-                        $this->pos(25, 37),
-                        $str(
+                    self::block(8, 9, self::id('nested', 10, 6)),
+                    self::block(
+                        25,
+                        37,
+                        self::str(
                             27,
                             30,
-                            new Block(
-                                $this->pos(33, 18),
-                                new Identity('nested234', $this->pos(35, 15))
-                            ),
+                            self::block(
+                                33,
+                                18,
+                                self::id(
+                                    'nested234',
+                                    35,
+                                    15
+                                )
+                            )
                         ),
-                        new Identity('zip', $this->pos(58, 3))
-                    )
+                        self::id('zip', 58, 3)
+                    ),
                 ),
             ],
         ];
@@ -93,7 +88,7 @@ class StrParserTest extends TestCase
 
     /**
      * @dataProvider negativeProvider
-     * @covers \DocxTemplate\Lexer\Ast\Parser\StrParser::image
+     * @covers \DocxTemplate\Lexer\Ast\Parser\StrParser::parse
      *
      * @param string $content
      * @param int $pos

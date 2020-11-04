@@ -40,9 +40,9 @@ class ImageSizeParser extends Parser
     ];
 
 
-    private Identity $identity;
+    private AstNode $identity;
 
-    public function __construct(ReaderInterface $reader, Identity $identity)
+    public function __construct(ReaderInterface $reader, AstNode $identity)
     {
         parent::__construct($reader, $identity->getPosition()->getEnd());
         $this->identity = $identity;
@@ -56,12 +56,13 @@ class ImageSizeParser extends Parser
             return null;
         }
 
-        $offset = $next->getEnd();
-        $end = $this->findAnyOrEmpty([self::BLOCK_END, self::PARAMS_CLOSE], $offset);
+        $offset = $this->firstNotEmpty($next->getEnd())->getStart();
+        $end = $this->findAnyOrEmpty([self::BLOCK_END, self::PARAMS_CLOSE, self::PARAMS_DELIMITER], $offset);
         if ($end === null) {
             throw new EndNotFoundException($this->getPreview(20));
         }
 
+        // TODO parse without regex
         $points = implode('|', self::MEASURES);
         $boolean = implode('|', array_keys(self::BOOLEAN));
         $first = $this->firstNotEmpty($offset);
@@ -102,7 +103,7 @@ class ImageSizeParser extends Parser
                 $pattern = ["(?P<w1>\d+(?:$points)?)(?:x|:)(?P<h1>\d+(?:$points)?)(?::(?P<r1>$boolean))?"];
                 break;
             default:
-                throw new InvalidImageSizeException($this->getPreview(20));
+                throw new InvalidImageSizeException('', $this->getPreview(20));
         }
 
         $template = '/^' . implode('|', $pattern) . '$/';

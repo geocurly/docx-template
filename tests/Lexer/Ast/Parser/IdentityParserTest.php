@@ -4,24 +4,20 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Lexer\Ast\Parser;
 
-use DocxTemplate\Lexer\Ast\Node\Block;
-use DocxTemplate\Lexer\Ast\Node\Call;
-use DocxTemplate\Lexer\Ast\Node\Identity;
-use DocxTemplate\Lexer\Ast\Node\Image;
-use DocxTemplate\Lexer\Ast\Node\ImageSize;
-use DocxTemplate\Lexer\Ast\Node\Str;
 use DocxTemplate\Lexer\Ast\Parser\Exception\EndNotFoundException;
 use DocxTemplate\Lexer\Ast\Parser\Exception\UnexpectedCharactersException;
 use DocxTemplate\Lexer\Ast\Parser\IdentityParser;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
 use DocxTemplate\Lexer\Exception\InvalidSourceException;
 use DocxTemplate\Lexer\Exception\SyntaxError;
+use DocxTemplate\Tests\Lexer\Common\AstNodeTrait;
 use DocxTemplate\Tests\Lexer\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
 
 class IdentityParserTest extends TestCase
 {
     use ReaderTrait;
+    use AstNodeTrait;
 
     /**
      * @covers       \DocxTemplate\Lexer\Ast\Parser\IdentityParser::parse
@@ -45,62 +41,55 @@ class IdentityParserTest extends TestCase
 
     public function positiveProvider(): array
     {
-        $id = function ($name, $from, $length) {
-            return new Identity($name, $this->pos($from, $length));
-        };
-
         return [
-            [' simple-name }', 0, $id('simple-name', 1, 11)],
-            ["      simple-name \n}", 4, $id('simple-name', 6, 11)],
-            [" one_two | simple-name \n}", 0, $id('one_two', 1, 7)],
-            [" one_two | simple-name \n}", 10, $id('simple-name', 11, 11),],
-            ["<simple-variable> one_<bold>two</bold> <style>|", 0, $id('one_two', 18, 20)],
+            [' simple-name }', 0, self::id('simple-name', 1, 11)],
+            ["      simple-name \n}", 4, self::id('simple-name', 6, 11)],
+            [" one_two | simple-name \n}", 0, self::id('one_two', 1, 7)],
+            [" one_two | simple-name \n}", 10, self::id('simple-name', 11, 11),],
+            ["<simple-variable> one_<bold>two</bold> <style>|", 0, self::id('one_two', 18, 20)],
             [
                 ' call(`1`, `2`) ',
                 0,
-                new Call(
-                    $id('call', 1, 4),
-                    $this->pos(1, 14),
-                    new Str($this->pos(6, 3)),
-                    new Str($this->pos(11, 3))
+                self::call(
+                    self::id('call', 1, 4),
+                    1,
+                    14,
+                    self::str(6, 3),
+                    self::str(11, 3)
                 ),
             ],
             [
                 ' call(var, `2`, ${var}, image:150x150) ',
                 0,
-                new Call(
-                    $id('call', 1, 4),
-                    $this->pos(1, 37),
-                    $id('var', 6, 3),
-                    new Str($this->pos(11, 3)),
-                    new Block(
-                        $this->pos(16, 6),
-                        $id('var', 18, 3)
-                    ),
-                    new Image(
-                        $id('image', 24, 5),
-                        new ImageSize($this->pos(30, 7), '150', '150')
+                self::call(
+                    self::id('call', 1, 4),
+                    1, 37,
+                    self::id('var', 6, 3),
+                    self::str(11, 3),
+                    self::block(16, 6, self::id('var', 18, 3)),
+                    self::image(
+                        self::id('image', 24, 5),
+                        self::imageSize(30, 7, '150', '150')
                     )
                 ),
             ],
             [
                 ' call(`nested ${nested}`, `simple`) ',
                 0,
-                new Call(
-                    $id('call', 1, 4),
-                    $this->pos(1, 34),
-                    new Str(
-                        $this->pos(6, 18),
-                        new Block(
-                            $this->pos(14, 9),
-                            $id('nested', 16, 6)
-                        )
+                self::call(
+                    self::id('call', 1, 4),
+                    1,
+                    34,
+                    self::str(
+                        6,
+                        18,
+                        self::block(14, 9, self::id('nested', 16, 6))
                     ),
-                    new Str($this->pos(26, 8))
+                    self::str(26, 8)
                 ),
             ],
-            ['${ \void }', 3, $id('\void', 3, 5)],
-            ['${ \\\s^123px }', 3, $id('\\\s^123px', 3, 9)]
+            ['${ \void }', 3, self::id('\void', 3, 5)],
+            ['${ \\\s^123px }', 3, self::id('\\\s^123px', 3, 9)]
         ];
     }
 
