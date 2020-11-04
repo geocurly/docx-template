@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace DocxTemplate\Lexer\Ast\Node;
 
 use DocxTemplate\Lexer\Ast\NodePosition;
-use DocxTemplate\Lexer\Contract\Ast\AstNode;
+use DocxTemplate\Lexer\Contract\Ast\Identity as IdentityInterface;
 
-class Image extends Node
+class Image extends Node implements IdentityInterface
 {
-    private AstNode $identity;
+    private IdentityInterface $identity;
     private ?ImageSize $size;
 
-    public function __construct(AstNode $identity, ?ImageSize $size)
+    public function __construct(IdentityInterface $identity, ?ImageSize $size)
     {
         $start = $identity->getPosition()->getStart();
         if ($start !== null) {
@@ -25,5 +25,11 @@ class Image extends Node
 
         $this->identity = $identity;
         $this->size = $size;
+    }
+
+    /** @inheritdoc  */
+    public function getId(): string
+    {
+        return $this->identity->getId();
     }
 }

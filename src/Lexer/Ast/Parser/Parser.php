@@ -14,6 +14,7 @@ use DocxTemplate\Lexer\Ast\Node\ImageSize;
 use DocxTemplate\Lexer\Ast\Node\Str;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
 use DocxTemplate\Lexer\Contract\Ast\AstParser;
+use DocxTemplate\Lexer\Contract\Ast\Identity as IdentityInterface;
 use DocxTemplate\Lexer\Contract\Reader;
 use DocxTemplate\Lexer\Exception\SyntaxError;
 use DocxTemplate\Lexer\Reader\ReadResult;
@@ -173,11 +174,11 @@ abstract class Parser implements AstParser
     /**
      * Parse Image node
      *
-     * @param AstNode $id
+     * @param IdentityInterface $id
      * @return AstNode|Image|null
      * @throws SyntaxError
      */
-    final protected function image(AstNode $id): ?Image
+    final protected function image(IdentityInterface $id): ?Image
     {
         $size = $this->imageSize($id);
         return $size === null ? null : new Image($id, $size);
@@ -186,11 +187,11 @@ abstract class Parser implements AstParser
     /**
      * Parse ImageSize node
      *
-     * @param AstNode $identity
+     * @param IdentityInterface $identity
      * @return AstNode|ImageSize|null
      * @throws SyntaxError
      */
-    final protected function imageSize(AstNode $identity): ?ImageSize
+    final protected function imageSize(IdentityInterface $identity): ?ImageSize
     {
         return (new ImageSizeParser($this->reader, $identity))->parse();
     }
