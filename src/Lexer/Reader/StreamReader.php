@@ -83,6 +83,7 @@ class StreamReader extends AbstractReader
             return null;
         }
 
-        return $this->stream->read($bytes);
+        $read = $this->stream->read($bytes);
+        return $read === '' ? null : $read;
     }
 }

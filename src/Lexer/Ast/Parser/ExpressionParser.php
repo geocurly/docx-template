@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DocxTemplate\Lexer\Ast\Parser;
 
 use DocxTemplate\Lexer\Ast\Node\FilterExpression;
+use DocxTemplate\Lexer\Ast\Parser\Exception\ElementNotFoundException;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
 use DocxTemplate\Lexer\Contract\ReaderInterface;
 use DocxTemplate\Lexer\Exception\SyntaxError;
@@ -29,7 +30,7 @@ class ExpressionParser extends Parser
 
         $right = $this->identity($pipe->getEnd());
         if ($right === null) {
-            throw new SyntaxError("Couldn't parse filter");
+            throw new ElementNotFoundException($this->read($this->getOffset(), $pipe->getEnd() + 20));
         }
 
         return new FilterExpression($this->left, $right);

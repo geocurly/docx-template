@@ -4,16 +4,6 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer;
 
-use DocxTemplate\Lexer\Contract\Token\TokenInterface;
-use DocxTemplate\Lexer\Token\Call;
-use DocxTemplate\Lexer\Token\Filter;
-use DocxTemplate\Lexer\Token\Image;
-use DocxTemplate\Lexer\Token\Name;
-use DocxTemplate\Lexer\Token\Position\TokenPosition;
-use DocxTemplate\Lexer\Token\Scope;
-use DocxTemplate\Lexer\Token\ImageSize;
-use DocxTemplate\Lexer\Token\Str;
-use DocxTemplate\Lexer\Token\Ternary;
 use PHPUnit\Framework\TestCase;
 
 class TokenParserTest extends TestCase
@@ -115,63 +105,6 @@ class TokenParserTest extends TestCase
                     new Str('', $this->pos(65, 2))
                 ),
                 "find ternary in '`if \${var}` ? `then \${   `ternary` ? bar : `else \${nested}`}` : ``'"
-            ]
-        ];
-    }
-
-    /**
-     * @covers \DocxTemplate\Lexer\TokenParser::filter
-     * @dataProvider filterProvider
-     *
-     * @param string $content
-     * @param TokenInterface $target
-     * @param TokenInterface $expected
-     * @param string $message
-     */
-    public function testFilter(string $content, TokenInterface $target, TokenInterface $expected, string $message): void
-    {
-        foreach ($this->parser($content) as $parser) {
-            $this->assertEquals($expected, $parser->filter($target), "Try to $message.");
-        }
-    }
-
-    public function filterProvider(): array
-    {
-        return [
-            [
-                '${ target | filter }',
-                new Name('target', $this->pos(3, 6)),
-                new Filter(new Name('filter', $this->pos(12, 6))),
-                "find filter in '\${ target | filter }'"
-            ],
-            [
-                '${ target(`1`) | filter }',
-                new Call(
-                    'target(`1`)',
-                    $this->pos(3, 11),
-                    new Str('1', $this->pos(10, 3))
-                ),
-                new Filter(new Name('filter', $this->pos(17, 6))),
-                "find filter in '\${ target(`1`) | filter }'"
-            ],
-            [
-                '${ target | first_filter(`1`, ${var}) | second_filter }',
-                new Name('target', $this->pos(3, 6)),
-                (
-                    new Filter(
-                        new Call(
-                            'first_filter(`1`, ${var})',
-                            $this->pos(12, 25),
-                            new Str('1', $this->pos(25, 3)),
-                            new Scope(
-                                'var',
-                                $this->pos(30, 6),
-                                new Name('var', $this->pos(32, 3))
-                            )
-                        ),
-                    )
-                )->addNext(new Filter(new Name('second_filter', $this->pos(40, 13)))),
-                "find filter in '\${ target | first_filter(`1`, \${var}) | second_filter }'"
             ]
         ];
     }

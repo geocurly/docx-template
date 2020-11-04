@@ -21,7 +21,7 @@ class ImageParserTest extends TestCase
     use ReaderTrait;
 
     /**
-     * @covers       \DocxTemplate\Lexer\Ast\Parser\ImageParser::image
+     * @covers       \DocxTemplate\Lexer\Ast\Parser\ImageParser::parse
      * @dataProvider positiveProvider
      *
      * @param string $content
@@ -69,7 +69,7 @@ class ImageParserTest extends TestCase
 
     /**
      * @dataProvider negativeProvider
-     * @covers \DocxTemplate\Lexer\Ast\Parser\ImageParser::image
+     * @covers \DocxTemplate\Lexer\Ast\Parser\ImageParser::parse
      *
      * @param string $content
      * @param int $pos

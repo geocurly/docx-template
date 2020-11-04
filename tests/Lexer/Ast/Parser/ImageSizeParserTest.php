@@ -21,8 +21,7 @@ class ImageSizeParserTest extends TestCase
     /**
      * @dataProvider positiveProvider
      *
-     * @covers       \DocxTemplate\Lexer\Ast\Parser\ImageSizeParser
-     * @covers       \DocxTemplate\Lexer\Ast\Node\ImageSize
+     * @covers       \DocxTemplate\Lexer\Ast\Parser\ImageSizeParser::parse
      *
      * @param string $content
      * @param Identity $id
@@ -129,7 +128,7 @@ class ImageSizeParserTest extends TestCase
     /**
      * @dataProvider negativeProvider
      *
-     * @covers       \DocxTemplate\Lexer\Ast\Parser\ImageSizeParser
+     * @covers       \DocxTemplate\Lexer\Ast\Parser\ImageSizeParser::parse
      *
      * @param string $content
      * @param Identity $identity

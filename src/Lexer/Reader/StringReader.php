@@ -49,7 +49,7 @@ class StringReader extends AbstractReader
     protected function readRaw(int $startPosition, int $bytes): ?string
     {
         $content = substr($this->content, $startPosition, $bytes);
-        if ($content === false) {
+        if ($content === false || $content === '') {
             return null;
         }
 

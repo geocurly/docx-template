@@ -24,7 +24,7 @@ class IdentityParserTest extends TestCase
     use ReaderTrait;
 
     /**
-     * @covers       \DocxTemplate\Lexer\Ast\Parser\IdentityParser::image
+     * @covers       \DocxTemplate\Lexer\Ast\Parser\IdentityParser::parse
      * @dataProvider positiveProvider
      *
      * @param string $content
