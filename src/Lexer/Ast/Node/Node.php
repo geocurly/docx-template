@@ -7,7 +7,7 @@ namespace DocxTemplate\Lexer\Ast\Node;
 use DocxTemplate\Lexer\Ast\NodePosition;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
 
-class Node implements AstNode
+abstract class Node implements AstNode
 {
     private NodePosition $position;
 

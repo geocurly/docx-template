@@ -33,7 +33,7 @@ class Call extends Node implements IdentityInterface
             'type' => $this->getType(),
             'position' => $this->getPosition()->toArray(),
             'identity' => $this->identity->toArray(),
-            'params' => $this->params->toArray(),
+            'params' => array_map(fn(AstNode $node) => $node->toArray(), $this->params)
         ];
     }
 }
