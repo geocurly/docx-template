@@ -26,4 +26,14 @@ class Identity extends Node implements IdentityInterface
     {
         return $this->id;
     }
+
+    /** @inheritdoc  */
+    public function toArray(): array
+    {
+        return [
+            'type' => $this->getType(),
+            'position' => $this->getPosition()->toArray(),
+            'id' => $this->getId(),
+        ];
+    }
 }

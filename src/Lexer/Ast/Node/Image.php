@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DocxTemplate\Lexer\Ast\Node;
 
 use DocxTemplate\Lexer\Ast\NodePosition;
+use DocxTemplate\Lexer\Contract\Ast\AstNode;
 use DocxTemplate\Lexer\Contract\Ast\Identity as IdentityInterface;
 
 class Image extends Node implements IdentityInterface
@@ -31,5 +32,16 @@ class Image extends Node implements IdentityInterface
     public function getId(): string
     {
         return $this->identity->getId();
+    }
+
+    /** @inheritdoc  */
+    public function toArray(): array
+    {
+        return [
+            'type' => $this->getType(),
+            'position' => $this->getPosition()->toArray(),
+            'identity' => $this->identity->toArray(),
+            'size' => $this->size->toArray(),
+        ];
     }
 }

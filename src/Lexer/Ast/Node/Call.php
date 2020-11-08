@@ -25,4 +25,15 @@ class Call extends Node implements IdentityInterface
     {
         return $this->identity->getId();
     }
+
+    /** @inheritdoc  */
+    public function toArray(): array
+    {
+        return [
+            'type' => $this->getType(),
+            'position' => $this->getPosition()->toArray(),
+            'identity' => $this->identity->toArray(),
+            'params' => $this->params->toArray(),
+        ];
+    }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DocxTemplate\Lexer\Ast\Node;
 
 use DocxTemplate\Lexer\Ast\NodePosition;
+use DocxTemplate\Lexer\Contract\Ast\AstNode;
 
 class ImageSize extends Node
 {
@@ -46,5 +47,17 @@ class ImageSize extends Node
     public function isSaveRatio(): ?bool
     {
         return $this->ratio;
+    }
+
+    /** @inheritdoc  */
+    public function toArray(): array
+    {
+        return [
+            'type' => $this->getType(),
+            'position' => $this->getPosition()->toArray(),
+            'width' => $this->getWidth(),
+            'height' => $this->getHeight(),
+            'isSaveRatio' => $this->isSaveRatio(),
+        ];
     }
 }

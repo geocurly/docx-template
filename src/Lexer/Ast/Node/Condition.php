@@ -26,4 +26,16 @@ class Condition extends Node
         $this->then = $then;
         $this->else = $else;
     }
+
+    /** @inheritdoc  */
+    public function toArray(): array
+    {
+        return [
+            'type' => $this->getType(),
+            'position' => $this->getPosition()->toArray(),
+            'if' => $this->if->toArray(),
+            'then' => $this->then->toArray(),
+            'else' => $this->else->toArray(),
+        ];
+    }
 }

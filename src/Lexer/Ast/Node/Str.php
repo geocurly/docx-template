@@ -16,4 +16,14 @@ class Str extends Node
         parent::__construct($position);
         $this->nested = $nested;
     }
+
+    /** @inheritdoc  */
+    public function toArray(): array
+    {
+        return [
+            'type' => $this->getType(),
+            'position' => $this->getPosition()->toArray(),
+            'nested' => array_map(fn(AstNode $node) => $node->toArray(), $this->nested)
+        ];
+    }
 }

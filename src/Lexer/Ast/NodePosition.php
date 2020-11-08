@@ -45,4 +45,16 @@ class NodePosition
     {
         return $this->length;
     }
+
+    /**
+     * Transform to array
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return [
+            'start' => $this->getStart(),
+            'end' => $this->getEnd(),
+        ];
+    }
 }

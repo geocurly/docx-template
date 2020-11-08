@@ -20,4 +20,9 @@ class Node implements AstNode
     {
         return $this->position;
     }
+
+    protected function getType(): string
+    {
+        return substr(static::class, strrpos(static::class, '\\') + 1);
+    }
 }

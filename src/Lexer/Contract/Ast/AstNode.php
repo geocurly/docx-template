@@ -13,4 +13,10 @@ interface AstNode
      * @return NodePosition
      */
     public function getPosition(): NodePosition;
+
+    /**
+     * Transform to array
+     * @return array
+     */
+    public function toArray(): array;
 }
