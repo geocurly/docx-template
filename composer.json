@@ -30,5 +30,10 @@
         "phpunit/phpunit": "^9.3",
         "geocurly/easy-benchmark": "^0.1.1",
         "symfony/var-dumper": "^5.1"
+    },
+    "scripts": {
+        "test": [
+            "./vendor/bin/phpunit"
+        ]
     }
 }
