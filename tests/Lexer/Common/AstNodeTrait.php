@@ -8,6 +8,7 @@ namespace DocxTemplate\Tests\Lexer\Common;
 use DocxTemplate\Lexer\Ast\Node\Block;
 use DocxTemplate\Lexer\Ast\Node\Call;
 use DocxTemplate\Lexer\Ast\Node\Condition;
+use DocxTemplate\Lexer\Ast\Node\EscapedChar;
 use DocxTemplate\Lexer\Ast\Node\FilterExpression;
 use DocxTemplate\Lexer\Ast\Node\Identity;
 use DocxTemplate\Lexer\Ast\Node\Image;
@@ -15,6 +16,7 @@ use DocxTemplate\Lexer\Ast\Node\ImageSize;
 use DocxTemplate\Lexer\Ast\Node\Str;
 use DocxTemplate\Lexer\Ast\NodePosition;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
+use DocxTemplate\Lexer\Contract\Ast\Identity as IdentityInterface;
 
 trait AstNodeTrait
 {
@@ -52,7 +54,7 @@ trait AstNodeTrait
         );
     }
 
-    protected static function image(AstNode $id, ImageSize $size): Image
+    protected static function image(IdentityInterface $id, ImageSize $size): Image
     {
         return new Image($id, $size);
     }
@@ -65,5 +67,10 @@ trait AstNodeTrait
     protected static function cond(AstNode $if, AstNode $then, AstNode $else): Condition
     {
         return new Condition($if, $then, $else);
+    }
+
+    protected static function escaped(int $from, int $to): EscapedChar
+    {
+        return new EscapedChar(new NodePosition($from, $to));
     }
 }

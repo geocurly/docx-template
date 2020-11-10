@@ -43,6 +43,16 @@ class StrParserTest extends TestCase
         return [
             ['${ `string` }', 2, self::str(3, 8)],
             [
+                '${ `test \`escaped\` string` }',
+                2,
+                self::str(
+                    3,
+                    25,
+                    self::escaped(9, 2),
+                    self::escaped(18, 2),
+                )
+            ],
+            [
                 '<zip>`there is a <bold>zip</bold>`</zip>',
                 0,
                 self::str(5, 29)
