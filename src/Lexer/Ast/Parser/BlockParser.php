@@ -6,6 +6,7 @@ namespace DocxTemplate\Lexer\Ast\Parser;
 
 use DocxTemplate\Lexer\Ast\Node\Block;
 use DocxTemplate\Lexer\Ast\NodePosition;
+use DocxTemplate\Lexer\Ast\Parser\Exception\EndNotFoundException;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
 use DocxTemplate\Lexer\Exception\SyntaxError;
 
@@ -22,7 +23,7 @@ class BlockParser extends Parser
 
         $first = $this->nested($open->getEnd());
         if ($first === null) {
-            throw new SyntaxError("Couldn't resolve nested construction in block.");
+            throw new SyntaxError("Couldn't resolve nested construction in block");
         }
 
         $condition = $this->condition($first);
@@ -32,7 +33,10 @@ class BlockParser extends Parser
         $nextChar = $this->firstNotEmpty($next->getPosition()->getEnd());
         while (true) {
             if ($nextChar === null) {
-                throw new SyntaxError("Couldn't find end of block");
+                throw new EndNotFoundException(
+                    "Couldn't find end of block",
+                    $this->read($open->getStart(), $next->getPosition()->getEnd())
+                );
             }
 
             if ($nextChar->getFound() === self::BLOCK_END) {
@@ -41,7 +45,8 @@ class BlockParser extends Parser
             }
 
             if ($condition !== null) {
-                throw new SyntaxError("Condition must be single construction in block");
+                $preview = $this->read($open->getStart(), $nextChar->getEnd());
+                throw new SyntaxError("Condition must be single construction in block", $preview);
             }
 
             $next = $this->nested($nextChar->getStart());

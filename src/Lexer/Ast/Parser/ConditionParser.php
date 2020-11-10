@@ -38,13 +38,19 @@ class ConditionParser extends Parser
             // ${ $if ? `string` ...} or ${ $if ? ${block} ... } or ${ $if ? name ... }
             $then = $this->then($thenChar->getEnd());
             if ($then === null) {
-                throw new SyntaxError('Could\'t resolve "then" condition');
+                throw new SyntaxError(
+                    "Couldn't resolve 'then' condition",
+                    $this->read($if->getPosition()->getStart(), $thenChar->getEnd() + 10)
+                );
             }
 
             // $if ? $then ...
             $elseChar = $this->firstNotEmpty($then->getPosition()->getEnd());
             if ($elseChar === null || $elseChar->getFound() !== self::COND_ELSE) {
-                throw new SyntaxError('Could\'t find ":" in ternary operator.');
+                throw new SyntaxError(
+                    "Couldn't find ':' in ternary operator",
+                    $this->read($if->getPosition()->getStart(), $then->getPosition()->getEnd() + 10)
+                );
             }
         }
 

@@ -23,10 +23,7 @@ class IdentityParser extends Parser
         
         $start = $this->firstNotEmpty($offset);
         if ($start === null) {
-            throw new SyntaxError(
-                '', // There is nothing to preview
-                "Couldn't find start of the identity"
-            );
+            throw new SyntaxError("Couldn't find start of the identity");
         }
 
         $end = $this->findAnyOrEmpty(
@@ -44,8 +41,8 @@ class IdentityParser extends Parser
 
         if ($end === null) {
             throw new EndNotFoundException(
-                $this->read($start->getStart(), 20),
-                "Couldn't find end of the identity"
+                "Couldn't find end of the identity",
+                $this->read($start->getStart(), 20)
             );
         }
 
@@ -60,10 +57,7 @@ class IdentityParser extends Parser
             )
         );
         if (preg_match("/^$template$/", $content) === 1) {
-            throw new UnexpectedCharactersException(
-                $content,
-                "Identity contains unexpected characters"
-            );
+            throw new UnexpectedCharactersException("Identity contains unexpected characters", $content);
         }
 
         $id = new Identity($content, $idPos);
@@ -73,10 +67,8 @@ class IdentityParser extends Parser
 
         $next = $this->nested($end->getEnd());
         if ($next === null) {
-            throw new ElementNotFoundException(
-                $this->read($idPos->getStart(), $idPos->getLength() + 20),
-                "There is no any parameters were found"
-            );
+            $preview = $this->read($idPos->getStart(), $idPos->getLength() + 20);
+            throw new ElementNotFoundException("Unknown call arguments", $preview);
         } else {
             $params[] = $next;
         }
@@ -86,10 +78,8 @@ class IdentityParser extends Parser
             if ($char->getFound() === self::PARAMS_DELIMITER) {
                 $next = $this->nested($char->getEnd());
                 if ($next === null) {
-                    throw new ElementNotFoundException(
-                        $this->read($idPos->getStart(), $idPos->getLength() + 20),
-                        "There is no any parameters were found"
-                    );
+                    $preview = $this->read($idPos->getStart(), $idPos->getLength() + 20);
+                    throw new ElementNotFoundException("Unknown call arguments", $preview);
                 } else {
                     $params[] = $next;
                 }
@@ -98,6 +88,7 @@ class IdentityParser extends Parser
                 break;
             } else {
                 throw new UnexpectedCharactersException(
+                    "Unexpected characters were found",
                     $this->read($idPos->getStart(), $idPos->getLength() + 20)
                 );
             }

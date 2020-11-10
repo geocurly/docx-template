@@ -26,6 +26,7 @@ class StrParser extends Parser
             $nestedOrClose = $this->findAny([self::STR_BRACE, self::BLOCK_START], $last);
             if ($nestedOrClose === null) {
                 throw new EndNotFoundException(
+                    "Couldn't find the end of element",
                     $this->read($open->getEnd(), $last + 20)
                 );
             }

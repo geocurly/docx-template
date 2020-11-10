@@ -7,17 +7,13 @@ namespace DocxTemplate\Lexer\Exception;
 
 class SyntaxError extends LexerException
 {
-    private string $preview;
-
-    public function __construct(string $preview, string $message = null)
+    public function __construct(string $message, string $preview = '')
     {
-        parent::__construct($message ?? $this->message);
-        $this->preview = $preview;
-    }
+        if ($preview !== '') {
+            $message = "$message : '...$preview...'";
+        }
 
-    public function getPreview(): string
-    {
-        return $this->preview;
+        parent::__construct($message);
     }
 }
 
