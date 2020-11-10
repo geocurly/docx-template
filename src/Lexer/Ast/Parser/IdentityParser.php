@@ -36,6 +36,8 @@ class IdentityParser extends Parser
                 self::FILTER_PIPE,
                 self::PARAMS_OPEN,
                 self::PARAMS_DELIMITER,
+                self::COND_THEN,
+                self::COND_ELSE,
             ],
             $start->getEnd()
         );
