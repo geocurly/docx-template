@@ -13,7 +13,7 @@ abstract class AbstractReader implements Reader
     {
         $chars = [];
         foreach ($needles as $needle) {
-            $chars[$needle[0]] = $needle;
+            $chars[$needle[0]][] = $needle;
         }
 
         $first = $this->findAnyChar(array_keys($chars), $offset);
@@ -21,12 +21,19 @@ abstract class AbstractReader implements Reader
             return null;
         }
 
-        $sequence = $this->find($chars[$first[0]], $first[1]);
+        $sequence = null;
+        foreach ($chars[$first[0]] as $needle) {
+            $sequence = $this->find($needle, $first[1]);
+            if ($sequence !== null) {
+                break;
+            }
+        }
+
         if ($sequence === null) {
             return null;
         }
 
-        return new ReadResult($chars[$first[0]], ...$sequence);
+        return new ReadResult($needle, ...$sequence);
     }
 
     /**

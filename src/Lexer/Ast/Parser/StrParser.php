@@ -24,7 +24,16 @@ class StrParser extends Parser
         $last = $open->getEnd();
         $nested = [];
         while (true) {
-            $nestedOrClose = $this->findAny([self::STR_BRACE_ESCAPED, self::STR_BRACE, self::BLOCK_START], $last);
+            $nestedOrClose = $this->findAny(
+                [
+                    self::STR_BRACE_ESCAPED,
+                    self::STR_BRACE,
+                    self::BLOCK_START_ESCAPED,
+                    self::BLOCK_START,
+                ],
+                $last
+            );
+
             if ($nestedOrClose === null) {
                 throw new EndNotFoundException(
                     "Couldn't find the end of element",
@@ -44,7 +53,7 @@ class StrParser extends Parser
                 break;
             }
 
-            if ($nestedOrClose->getFound() === self::BLOCK_START) {
+            if (in_array($nestedOrClose->getFound(), [self::BLOCK_START_ESCAPED, self::BLOCK_START], true)) {
                 $block = $this->block($nestedOrClose->getStart());
                 $last = $block->getPosition()->getEnd();
                 $nested[] = $block;

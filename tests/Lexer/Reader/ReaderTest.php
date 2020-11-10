@@ -47,6 +47,8 @@ class ReaderTest extends TestCase
             [$content, [['$', '`$'], 20], null],
             [$content, [['?', '}'], 20], ['}', 34, 1]],
             ['image<w:t>:size</w:t>', [[':'], 0], [':', 10, 1]],
+            ['find \`escaped \${', [['\`', '\${'], 0], ['\`', 5, 2]],
+            ['find \`escaped \${', [['\${', '\`'], 0], ['\`', 5, 2]]
         ];
     }
 
