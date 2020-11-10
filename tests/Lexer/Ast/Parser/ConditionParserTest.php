@@ -90,6 +90,15 @@ class ConditionParserTest extends TestCase
                 ),
             ],
             [
+                '${docx?then:else}',
+                $if = self::id('docx', 2, 4),
+                self::cond(
+                    $if,
+                    self::id('then', 7, 4),
+                    self::id('else', 12, 4)
+                ),
+            ],
+            [
                 'i<test-tag>f ?</test-tag> if : e<bold>ls</bold>e }',
                 $if = self::id('if', 0, 12),
                 self::cond(
