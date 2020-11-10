@@ -66,7 +66,7 @@ class IdentityParserTest extends TestCase
                     1, 37,
                     self::id('var', 6, 3),
                     self::str(11, 3),
-                    self::block(16, 6, false, self::id('var', 18, 3)),
+                    self::block(16, 6, self::id('var', 18, 3)),
                     self::image(
                         self::id('image', 24, 5),
                         self::imageSize(30, 7, '150', '150')
@@ -83,7 +83,7 @@ class IdentityParserTest extends TestCase
                     self::str(
                         6,
                         18,
-                        self::block(14, 9, false, self::id('nested', 16, 6))
+                        self::block(14, 9, self::id('nested', 16, 6))
                     ),
                     self::str(26, 8)
                 ),

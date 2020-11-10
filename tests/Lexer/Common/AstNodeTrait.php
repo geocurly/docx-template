@@ -8,6 +8,7 @@ namespace DocxTemplate\Tests\Lexer\Common;
 use DocxTemplate\Lexer\Ast\Node\Block;
 use DocxTemplate\Lexer\Ast\Node\Call;
 use DocxTemplate\Lexer\Ast\Node\Condition;
+use DocxTemplate\Lexer\Ast\Node\EscapedBlock;
 use DocxTemplate\Lexer\Ast\Node\EscapedChar;
 use DocxTemplate\Lexer\Ast\Node\FilterExpression;
 use DocxTemplate\Lexer\Ast\Node\Identity;
@@ -20,11 +21,18 @@ use DocxTemplate\Lexer\Contract\Ast\Identity as IdentityInterface;
 
 trait AstNodeTrait
 {
-    protected static function block(int $from, int $length, bool $isEscaped, AstNode ...$nested): Block
+    protected static function escapedBlock(int $from, int $length, AstNode ...$nested): Block
+    {
+        return new EscapedBlock(
+            new NodePosition($from, $length),
+            ...$nested
+        );
+    }
+
+    protected static function block(int $from, int $length, AstNode ...$nested): Block
     {
         return new Block(
              new NodePosition($from, $length),
-            $isEscaped,
             ...$nested
         );
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DocxTemplate\Lexer\Ast\Parser;
 
 use DocxTemplate\Lexer\Ast\Node\Block;
+use DocxTemplate\Lexer\Ast\Node\EscapedBlock;
 use DocxTemplate\Lexer\Ast\NodePosition;
 use DocxTemplate\Lexer\Ast\Parser\Exception\EndNotFoundException;
 use DocxTemplate\Lexer\Contract\Ast\AstNode;
@@ -58,10 +59,9 @@ class BlockParser extends Parser
             $nextChar = $this->firstNotEmpty($next->getPosition()->getEnd());
         }
 
-        return new Block(
-            new NodePosition($open->getStart(),$close - $open->getStart()),
-            $open->getFound() === self::BLOCK_START_ESCAPED,
-            ...$nested
-        );
+        $position = new NodePosition($open->getStart(),$close - $open->getStart());
+        return $open->getFound() === self::BLOCK_START_ESCAPED ?
+            new EscapedBlock($position, ...$nested) :
+            new Block($position, ...$nested);
     }
 }

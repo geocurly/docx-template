@@ -40,7 +40,7 @@ class NestedParserTest extends TestCase
     public function positiveProvider(): array
     {
         return [
-            ['${ ${ var } }', 2, self::block(3, 8, false, self::id('var', 6, 3))],
+            ['${ ${ var } }', 2, self::block(3, 8, self::id('var', 6, 3))],
             ['${ `str` } }', 2, self::str(3, 5)],
             ['${ str } }', 2, self::id('str', 3, 3)],
             [
