@@ -22,8 +22,10 @@ use DocxTemplate\Lexer\Reader\ReadResult;
 abstract class Parser implements AstParser
 {
     protected const BLOCK_START = '${';
+    protected const BLOCK_START_ESCAPED = '\${';
     protected const BLOCK_END = '}';
     protected const STR_BRACE = '`';
+    protected const STR_BRACE_ESCAPED = '\`';
     protected const IMAGE_SIZE_DELIMITER = ':';
     protected const FILTER_PIPE = '|';
     protected const PARAMS_OPEN = '(';
@@ -138,11 +140,20 @@ abstract class Parser implements AstParser
             case self::BLOCK_START[0]:
                 // ${...something
                 return $this->block($next->getStart());
-                break;
             case self::STR_BRACE;
                 // `...something
                 return $this->string($next->getStart());
-                break;
+            case self::BLOCK_START_ESCAPED[0];
+                $afterEscaped = $this->read($next->getEnd(), 1);
+                if ($afterEscaped === self::BLOCK_START[0]) {
+                    return $this->block($next->getStart());
+                }
+
+                if ($afterEscaped === self::STR_BRACE[0]) {
+                    return $this->string($next->getStart());
+                }
+
+                return null;
             default:
                 return null;
         }

@@ -18,10 +18,11 @@ use DocxTemplate\Lexer\Contract\Ast\AstNode;
 
 trait AstNodeTrait
 {
-    protected static function block(int $from, int $length, AstNode ...$nested): Block
+    protected static function block(int $from, int $length, bool $isEscaped, AstNode ...$nested): Block
     {
         return new Block(
              new NodePosition($from, $length),
+            $isEscaped,
             ...$nested
         );
     }

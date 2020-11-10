@@ -71,12 +71,14 @@ class ExpressionParserTest extends TestCase
                             self::block(
                                 26,
                                 6,
+                                false,
                                 self::id('var', 28, 3),
                             )
                         ),
                         self::block(
                             38,
                             6,
+                            false,
                             self::id('var', 40, 3)
                         )
                     )

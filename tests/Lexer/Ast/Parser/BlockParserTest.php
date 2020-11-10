@@ -40,13 +40,14 @@ class BlockParserTest extends TestCase
     public function positiveProvider(): array
     {
         return [
-            ['${ var }', 0, self::block(0, 8, self::id('var', 3, 3))],
+            ['${ var }', 0, self::block(0, 8, false, self::id('var', 3, 3))],
             [
                 '${ image(`str`):150x150 | filter }',
                 0,
                 self::block(
                     0,
                     34,
+                    false,
                     self::filter(
                         self::image(
                             self::call(
@@ -67,10 +68,12 @@ class BlockParserTest extends TestCase
                 self::block(
                     0,
                     35,
+                    false,
                     self::filter(
                         self::block(
                             3,
                             21,
+                            false,
                             self::cond(
                                 self::id('if', 6, 2),
                                 self::id('then', 11, 4),
@@ -80,7 +83,36 @@ class BlockParserTest extends TestCase
                         self::id('filter', 27, 6)
                     )
                 )
-            ]
+            ],
+            [
+                '\${ escaped }',
+                0,
+                self::block(
+                    0,
+                    13,
+                    true,
+                    self::id('escaped', 4, 7)
+                )
+            ],
+            [
+                '${ var ? \${ escaped } : `` }',
+                0,
+                self::block(
+                    0,
+                    29,
+                    false,
+                    self::cond(
+                        self::id('var', 3, 3),
+                        self::block(
+                            9,
+                            13,
+                            true,
+                            self::id('escaped', 13, 7)
+                        ),
+                        self::str(25, 2)
+                    )
+                )
+            ],
         ];
     }
 }

@@ -16,7 +16,7 @@ class BlockParser extends Parser
     public function parse(): ?AstNode
     {
         $offset = $this->getOffset();
-        $open = $this->findAny([self::BLOCK_START], $offset);
+        $open = $this->findAny([self::BLOCK_START, self::BLOCK_START_ESCAPED], $offset);
         if ($open === null) {
             return null;
         }
@@ -58,6 +58,10 @@ class BlockParser extends Parser
             $nextChar = $this->firstNotEmpty($next->getPosition()->getEnd());
         }
 
-        return new Block(new NodePosition($open->getStart(),$close - $open->getStart()), ...$nested);
+        return new Block(
+            new NodePosition($open->getStart(),$close - $open->getStart()),
+            $open->getFound() === self::BLOCK_START_ESCAPED,
+            ...$nested
+        );
     }
 }

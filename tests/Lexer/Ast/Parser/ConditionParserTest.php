@@ -63,6 +63,7 @@ class ConditionParserTest extends TestCase
                     self::block(
                         30,
                         12,
+                        false,
                         self::id('var1', 32, 4),
                         self::id('var2', 37, 4),
                     )
@@ -115,6 +116,7 @@ class ConditionParserTest extends TestCase
                     self::block(
                         4,
                         6,
+                        false,
                         self::id('var', 6, 3)
                     )
                 ),
@@ -126,13 +128,19 @@ class ConditionParserTest extends TestCase
                         self::block(
                             20,
                             41,
+                            false,
                             self::cond(
                                 self::str(26, 9),
                                 self::id('bar', 38, 3),
                                 self::str(
                                     44,
                                     16,
-                                    self::block(50, 9, self::id('nested', 52, 6)),
+                                    self::block(
+                                        50,
+                                        9,
+                                        false,
+                                        self::id('nested', 52, 6)
+                                    ),
                                 )
                             )
                         ),

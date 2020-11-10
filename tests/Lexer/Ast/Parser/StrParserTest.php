@@ -53,7 +53,7 @@ class StrParserTest extends TestCase
                 self::str(
                     0,
                     25,
-                    self::block(8, 9, self::id('nested', 10, 6))
+                    self::block(8, 9, false, self::id('nested', 10, 6))
                 ),
             ],
             [
@@ -62,16 +62,18 @@ class StrParserTest extends TestCase
                 self::str(
                     0,
                     63,
-                    self::block(8, 9, self::id('nested', 10, 6)),
+                    self::block(8, 9, false, self::id('nested', 10, 6)),
                     self::block(
                         25,
                         37,
+                        false,
                         self::str(
                             27,
                             30,
                             self::block(
                                 33,
                                 18,
+                                false,
                                 self::id(
                                     'nested234',
                                     35,
