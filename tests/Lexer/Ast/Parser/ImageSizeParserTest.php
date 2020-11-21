@@ -150,6 +150,8 @@ class ImageSizeParserTest extends TestCase
             ['${ image:width=150px:width=560:height=29 }', self::id('image', 3, 5), InvalidImageSizeException::class],
             ['${ image:ratio=f:width=1px:height=2:ratio=true }', self::id('image', 3, 5), InvalidImageSizeException::class],
             ['${ image:150ufx792', self::id('image', 3, 5), EndNotFoundException::class],
+            ['${ image:width=1px:height=29:unknown=true }', self::id('image', 3, 5), InvalidImageSizeException::class],
+            ['${ image:height=1px:width=29:unknown=true }', self::id('image', 3, 5), InvalidImageSizeException::class],
         ];
     }
 }

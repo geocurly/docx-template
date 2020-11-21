@@ -32,6 +32,7 @@ class IdentityParser extends Parser
                 self::IMAGE_SIZE_DELIMITER,
                 self::FILTER_PIPE,
                 self::PARAMS_OPEN,
+                self::PARAMS_CLOSE,
                 self::PARAMS_DELIMITER,
                 self::COND_THEN,
                 self::COND_ELSE,

@@ -48,6 +48,16 @@ class IdentityParserTest extends TestCase
             [" one_two | simple-name \n}", 10, self::id('simple-name', 11, 11),],
             ["<simple-variable> one_<bold>two</bold> <style>|", 0, self::id('one_two', 18, 20)],
             [
+                ' call(var)',
+                0,
+                self::call(
+                    self::id('call', 1, 4),
+                    1,
+                    9,
+                    self::id('var', 6, 3)
+                )
+            ],
+            [
                 ' call(`1`, `2`) ',
                 0,
                 self::call(
