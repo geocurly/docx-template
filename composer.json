@@ -23,7 +23,8 @@
     "require": {
         "php": "^7.4",
         "ext-zip": "*",
-        "ext-dom": "*",
+        "ext-xmlreader": "*",
+        "ext-xmlwriter": "*",
         "guzzlehttp/psr7": "^1.6"
     },
     "require-dev": {
