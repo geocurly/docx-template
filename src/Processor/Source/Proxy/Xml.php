@@ -20,7 +20,7 @@ class Xml
     public function __construct(string $source)
     {
         $this->reader = new XMLReader();
-        if (!$this->reader->open($source)) {
+        if (!@$this->reader->open($source)) {
             throw new ResourceOpenException("Couldn't open xml resource: {$source}");
         }
     }
@@ -34,7 +34,7 @@ class Xml
     public function write(string $output, array $filters = null): iterable
     {
         $writer = new XMLWriter();
-        if (!$writer->openUri($output)) {
+        if (!@$writer->openUri($output)) {
             throw new ResourceOpenException("Couldn't open output resource: {$output}");
         }
 
@@ -46,6 +46,9 @@ class Xml
 
             $this->accept($this->reader, $writer);
         }
+
+        $writer->endDocument();
+        $writer->flush();
     }
 
     /**

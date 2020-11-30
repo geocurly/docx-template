@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace DocxTemplate\Lexer\Ast\Parser;
 
 use DocxTemplate\Lexer\Ast\Node\Block;
-use DocxTemplate\Lexer\Ast\Node\Call;
 use DocxTemplate\Lexer\Ast\Node\Condition;
 use DocxTemplate\Lexer\Ast\Node\Expression;
 use DocxTemplate\Lexer\Ast\Node\Identity;
@@ -262,7 +261,7 @@ abstract class Parser implements AstParser
      * @return AstNode|Expression|null
      * @throws SyntaxError
      */
-    final private function expression(AstNode $left): ?Expression
+    private function expression(AstNode $left): ?Expression
     {
         return (new ExpressionParser($this->reader, $left))->parse();
     }

@@ -21,11 +21,12 @@
         }
     },
     "require": {
-        "php": "^7.4",
+        "php": "^7.4 || 8.0",
         "ext-zip": "*",
         "ext-xmlreader": "*",
         "ext-xmlwriter": "*",
-        "guzzlehttp/psr7": "^1.6"
+        "guzzlehttp/psr7": "^1.6",
+        "maennchen/zipstream-php": "^2.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.3",
