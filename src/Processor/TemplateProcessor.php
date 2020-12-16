@@ -45,15 +45,24 @@ class TemplateProcessor
     }
 
     /**
-     * @param string $name
+     * Start template processing
+     *
+     * @param string $name file to process
      * @param DOMDocument $DOMRelations
      * @return string|StreamInterface
+     * @throws Exception\ResourceOpenException
      */
-    private function process(string $name, DOMDocument $DOMRelations)
+    private function process(string $name, DOMDocument $DOMRelations) /*: string|StreamInterface */
     {
         return $this->docx->get($name);
     }
 
+    /**
+     * Get DOMDocument with docx relations
+     * @param string $relation
+     * @return DOMDocument
+     * @throws Exception\ResourceOpenException
+     */
     private function relations(string $relation): DOMDocument
     {
         $relations = new DOMDocument();
@@ -61,6 +70,11 @@ class TemplateProcessor
         return $relations;
     }
 
+    /**
+     * Get relation files to template processing
+     * @param DOMDocument $DOMRelations
+     * @return iterable
+     */
     private function getRelationFiles(DOMDocument $DOMRelations): iterable
     {
         $relations = $DOMRelations->getElementsByTagName('Relationships')[0];
