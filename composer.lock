@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "76885ce38102d00cf6ef6b9d0b1f0704",
+    "content-hash": "67af8305a69655f854324de68ad3f104",
     "packages": [
         {
             "name": "guzzlehttp/psr7",
@@ -459,44 +459,6 @@
                 }
             ],
             "time": "2020-11-10T18:47:58+00:00"
-        },
-        {
-            "name": "geocurly/easy-benchmark",
-            "version": "0.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/geocurly/easy-benchmark.git",
-                "reference": "ed8bd25e5e44f5c4a5e502799fbbab487dc922c1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/geocurly/easy-benchmark/zipball/ed8bd25e5e44f5c4a5e502799fbbab487dc922c1",
-                "reference": "ed8bd25e5e44f5c4a5e502799fbbab487dc922c1",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.4"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^9.2",
-                "symfony/var-dumper": "^5.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "EasyBenchmark\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Simple benchmark wrapper for your php code",
-            "support": {
-                "issues": "https://github.com/geocurly/easy-benchmark/issues",
-                "source": "https://github.com/geocurly/easy-benchmark/tree/0.1.1"
-            },
-            "time": "2020-08-08T11:32:25+00:00"
         },
         {
             "name": "myclabs/deep-copy",
