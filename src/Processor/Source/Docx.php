@@ -5,51 +5,77 @@ declare(strict_types=1);
 namespace DocxTemplate\Processor\Source;
 
 use DocxTemplate\Processor\Exception\ResourceOpenException;
-use ZipArchive as Zip;
-use ZipStream\Option\Archive;
-use ZipStream\ZipStream;
+use DocxTemplate\Processor\Exception\TemplateException;
+use ZipArchive;
 
 class Docx
 {
-    private string $source;
-    private Zip $zip;
+    private ZipArchive $zip;
+    private array $files = [];
 
     /**
      * Docx constructor.
-     * @param string $source
+     * @param string $source docx file name
      * @throws ResourceOpenException
      */
     public function __construct(string $source)
     {
-        $this->source = $source;
-        $this->zip = new Zip();
-        if ($this->zip->open($source, Zip::CHECKCONS) === false) {
+        $this->zip = new ZipArchive();
+        if ($this->zip->open($source, ZipArchive::CHECKCONS) === false) {
             throw new ResourceOpenException("Couldn't open docx document");
+        }
+
+        for( $i = 0; $i < $this->zip->numFiles; $i++ ) {
+            $name = $this->zip->getNameIndex($i, ZipArchive::FL_UNCHANGED);
+            $this->files[$name] = null;
         }
     }
 
-    public function stream(string $uri): void
+    /**
+     * Get docx relation files
+     * @return iterable
+     * @throws TemplateException
+     */
+    public function getRelations(): iterable
     {
-        try {
-            $output = fopen($uri, 'wr+');
-
-            $options = new Archive();
-            $options->setOutputStream($output);
-            $options->setDeflateLevel(-1);
-
-            $out = new ZipStream('text.docx', $options);
-            for( $i = 0; $i < $this->zip->numFiles; $i++ ) {
-                $name = $this->zip->getNameIndex($i, Zip::FL_UNCHANGED);
-                $out->addFile(
-                    $name,
-                    // TODO there is will be interception for template processing
-                    $this->zip->getFromName($name, 0, Zip::FL_UNCHANGED)
-                );
+        foreach ($this->files ?? [] as $name => $_) {
+            if (strpos($name, 'word/_rels/') === false) {
+                continue;
             }
 
-            $out->finish();
-        } finally {
-            fclose($output);
+            $main = substr($name, 11, -5);
+            if (!array_key_exists("word/$main", $this->files)) {
+                throw new TemplateException("Unknown main part $main for relation $name");
+            }
+
+            yield "word/$main" => $name;
         }
+    }
+
+    /**
+     * Get file content
+     *
+     * @param string $name
+     * @return string
+     * @throws ResourceOpenException
+     */
+    public function get(string $name): string
+    {
+        $file = $this->zip->getFromName($name, 0, ZipArchive::FL_UNCHANGED);
+        if ($file === false) {
+            throw new ResourceOpenException("Couldn't open nested file: $name");
+        }
+
+        unset($this->files[$name]);
+        return $file;
+    }
+
+    public function flush(): iterable
+    {
+        foreach ($this->files as $name => $_) {
+            yield $name => $this->get($name);
+        }
+
+        $this->zip->close();
     }
 }

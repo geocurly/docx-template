@@ -25,6 +25,7 @@
         "ext-zip": "*",
         "ext-xmlreader": "*",
         "ext-xmlwriter": "*",
+        "ext-dom": "*",
         "guzzlehttp/psr7": "^1.6",
         "maennchen/zipstream-php": "^2.1"
     },
