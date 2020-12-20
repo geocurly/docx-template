@@ -4,22 +4,26 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Processor;
 
+use DocxTemplate\Processor\Process\Process;
 use DocxTemplate\Processor\Source\Docx;
-use DOMDocument;
+use DocxTemplate\Processor\Source\Relations;
 use Psr\Http\Message\StreamInterface;
 
 class TemplateProcessor
 {
     private Docx $docx;
+    private BindStore $store;
 
     /**
      * TemplateProcessor constructor.
      * @param string $source
+     * @param BindStore $store
      * @throws Exception\ResourceOpenException
      */
-    public function __construct(string $source)
+    public function __construct(string $source, BindStore $store)
     {
         $this->docx = new Docx($source);
+        $this->store = $store;
     }
 
     /**
@@ -31,14 +35,13 @@ class TemplateProcessor
     public function run(): iterable
     {
         foreach ($this->docx->getRelations() as $main => $relations) {
-            $DOMRelations = $this->relations($relations);
-            yield $main => $this->process($main, $DOMRelations);
+            yield $main => $this->process($main, $relations);
 
-            foreach ($this->getRelationFiles($DOMRelations) as $file) {
-                yield $file => $this->process($file, $DOMRelations);
+            foreach ($relations->getFiles() as $file) {
+                yield $file => $this->process($file, $relations);
             }
 
-            yield $relations => $DOMRelations->saveXML();
+            yield $relations->getName() => $relations->getXml();
         }
 
         yield from $this->docx->flush();
@@ -48,47 +51,12 @@ class TemplateProcessor
      * Start template processing
      *
      * @param string $name file to process
-     * @param DOMDocument $DOMRelations
+     * @param Relations $relations
      * @return string|StreamInterface
      * @throws Exception\ResourceOpenException
      */
-    private function process(string $name, DOMDocument $DOMRelations) /*: string|StreamInterface */
+    private function process(string $name, Relations $relations) /*: string|StreamInterface */
     {
-        return $this->docx->get($name);
-    }
-
-    /**
-     * Get DOMDocument with docx relations
-     * @param string $relation
-     * @return DOMDocument
-     * @throws Exception\ResourceOpenException
-     */
-    private function relations(string $relation): DOMDocument
-    {
-        $relations = new DOMDocument();
-        $relations->loadXML($this->docx->get($relation));
-        return $relations;
-    }
-
-    /**
-     * Get relation files to template processing
-     * @param DOMDocument $DOMRelations
-     * @return iterable
-     */
-    private function getRelationFiles(DOMDocument $DOMRelations): iterable
-    {
-        $relations = $DOMRelations->getElementsByTagName('Relationships')[0];
-        $relations = $relations === null ? [] : $relations->childNodes;
-        foreach ($relations as $relation) {
-            if (!$relation->hasAttributes()) {
-                continue;
-            }
-
-            /** try to find footer or header */
-            $type = substr($relation->getAttribute('Type'), -20);
-            if (in_array($type, ['relationships/footer', 'relationships/header'])) {
-                yield "word/{$relation->getAttribute('Target')}";
-            }
-        }
+        return (new Process($this->store))->run($this->docx->get($name));
     }
 }

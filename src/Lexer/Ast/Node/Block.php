@@ -11,12 +11,18 @@ class Block extends Node
 {
     private array $nested;
 
-    public function __construct(
-        NodePosition $position,
-        AstNode ...$nested
-    ) {
+    public function __construct(NodePosition $position, AstNode ...$nested) {
         parent::__construct($position);
         $this->nested = $nested;
+    }
+
+    /**
+     * Get nested nodes
+     * @return AstNode[]
+     */
+    public function nested(): array
+    {
+        return $this->nested;
     }
 
     /** @inheritdoc  */

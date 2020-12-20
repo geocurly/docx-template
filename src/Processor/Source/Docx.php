@@ -48,7 +48,7 @@ class Docx
                 throw new TemplateException("Unknown main part $main for relation $name");
             }
 
-            yield "word/$main" => $name;
+            yield "word/$main" => new Relations($name, $this->get($name));
         }
     }
 
