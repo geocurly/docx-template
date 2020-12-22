@@ -6,22 +6,31 @@ namespace DocxTemplate\Processor\Process;
 
 use DocxTemplate\Lexer\Ast\Node\Block;
 use DocxTemplate\Lexer\Ast\Node\Identity;
-use DocxTemplate\Lexer\Lexer;
+use DocxTemplate\Lexer\Contract\Lexer;
+use DocxTemplate\Lexer\Exception\SyntaxError;
 use DocxTemplate\Processor\BindStore;
 
 class Process
 {
     private BindStore $store;
+    private Lexer $lexer;
 
-    public function __construct(BindStore $store)
+    public function __construct(BindStore $store, Lexer $lexer)
     {
         $this->store = $store;
+        $this->lexer = $lexer;
     }
 
+    /**
+     * Start template processing
+     *
+     * @param string $content
+     * @return string
+     * @throws SyntaxError
+     */
     public function run(string $content): string
     {
-        $lexer = new Lexer($content);
-        foreach ($lexer->parse() as $node) {
+        foreach ($this->lexer->run() as $node) {
             if ($node instanceof Block) {
                 $nodeContent = [];
                 foreach ($node->nested() as $nested) {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Processor;
 
+use DocxTemplate\Lexer\Exception\SyntaxError;
+use DocxTemplate\Lexer\Lexer;
 use DocxTemplate\Processor\Process\Process;
 use DocxTemplate\Processor\Source\Docx;
 use DocxTemplate\Processor\Source\Relations;
@@ -54,9 +56,12 @@ class TemplateProcessor
      * @param Relations $relations
      * @return string|StreamInterface
      * @throws Exception\ResourceOpenException
+     * @throws SyntaxError
      */
     private function process(string $name, Relations $relations) /*: string|StreamInterface */
     {
-        return (new Process($this->store))->run($this->docx->get($name));
+        $content = $this->docx->get($name);
+        $process = new Process($this->store, new Lexer($content));
+        return $process->run($content);
     }
 }

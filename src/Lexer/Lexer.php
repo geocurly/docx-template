@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer;
 
-use DocxTemplate\Lexer\Ast\Ast;
-use DocxTemplate\Lexer\Contract\Reader;
-use DocxTemplate\Lexer\Reader\StreamReader;
-use DocxTemplate\Lexer\Reader\StringReader;
 use Psr\Http\Message\StreamInterface;
+use DocxTemplate\Lexer\{
+    Ast\Ast,
+    Reader\StreamReader,
+    Reader\StringReader,
+    Contract\Lexer as LexerInterface,
+    Contract\Reader
+};
 
-class Lexer
+class Lexer implements LexerInterface
 {
     private Reader $reader;
 
@@ -25,13 +28,8 @@ class Lexer
         }
     }
 
-    /**
-     * Parse content to AbstractSyntaxTree
-     *
-     * @return Ast
-     * @throws Exception\SyntaxError
-     */
-    public function parse(): Ast
+    /** @inheritDoc */
+    public function run(): iterable
     {
         $ast = new Ast($this->reader);
         return $ast->build();
