@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Contract\Processor\Bind;
 
-interface Valuable extends Bind
+interface Bind
 {
     /**
-     * Value of a bind
+     * Identity of a bind
      * @return string
      */
-    public function getValue(): string;
+    public function getId(): string;
 }

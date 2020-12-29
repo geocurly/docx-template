@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DocxTemplate\Processor;
 
 use DocxTemplate\Contract\Lexer\Ast\Identity;
+use DocxTemplate\Contract\Processor\Bind\Filter;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Exception\Processor\TemplateException;
 
@@ -29,6 +30,9 @@ final class BindStore
                 case $bind instanceof Valuable:
                     $type = self::TYPE_VARIABLE;
                     break;
+                case $bind instanceof Filter:
+                    $type = self::TYPE_FILTER;
+                    break;
                 default:
                     throw new TemplateException("Unknown bind type: " . get_class($bind));
             }
@@ -46,5 +50,16 @@ final class BindStore
     public function get(Identity $node): ?Valuable
     {
         return $this->binds[$node->getType()][$node->getId()] ?? null;
+    }
+
+    /**
+     * Get filter bind
+     *
+     * @param string $identity
+     * @return Filter|null
+     */
+    public function getFilter(string $identity): ?Filter
+    {
+        return $this->binds[self::TYPE_FILTER][$identity] ?? null;
     }
 }
