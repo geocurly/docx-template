@@ -6,8 +6,8 @@ namespace DocxTemplate\Processor\Process;
 
 use DocxTemplate\Lexer\Ast\Node\Block;
 use DocxTemplate\Lexer\Ast\Node\Identity;
-use DocxTemplate\Lexer\Contract\Lexer;
-use DocxTemplate\Lexer\Exception\SyntaxError;
+use DocxTemplate\Contract\Lexer\Lexer;
+use DocxTemplate\Exception\Lexer\SyntaxError;
 use DocxTemplate\Processor\BindStore;
 
 class Process
@@ -35,7 +35,7 @@ class Process
                 $nodeContent = [];
                 foreach ($node->nested() as $nested) {
                     if ($nested instanceof Identity) {
-                        $value = $this->store->getVariable($nested->getId());
+                        $value = $this->store->get($nested)->getValue();
                         $nodeContent[] = $value;
                     }
                 }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace DocxTemplate\Lexer\Ast\Node;
 
 use DocxTemplate\Lexer\Ast\NodePosition;
-use DocxTemplate\Lexer\Contract\Ast\AstNode;
-use DocxTemplate\Lexer\Contract\Ast\Identity as IdentityInterface;
+use DocxTemplate\Contract\Lexer\Ast\AstNode;
+use DocxTemplate\Contract\Lexer\Ast\Identity as IdentityInterface;
 
 class Call extends Node implements IdentityInterface
 {

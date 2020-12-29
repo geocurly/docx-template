@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DocxTemplate\Lexer\Exception;
+namespace DocxTemplate\Exception\Lexer;
 
 
 class SyntaxError extends LexerException
@@ -16,4 +16,3 @@ class SyntaxError extends LexerException
         parent::__construct($message);
     }
 }
-

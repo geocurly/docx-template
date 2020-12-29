@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer\Ast\Parser;
 
-use DocxTemplate\Lexer\Contract\Ast\AstNode;
+use DocxTemplate\Contract\Lexer\Ast\AstNode;
 
 class NestedParser extends Parser
 {

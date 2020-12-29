@@ -2,7 +2,7 @@
 
 namespace DocxTemplate\Tests\Lexer;
 
-use DocxTemplate\Lexer\Exception\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxError;
 use DocxTemplate\Lexer\Lexer;
 use DocxTemplate\Tests\Lexer\Common\AstNodeTrait;
 use PHPUnit\Framework\TestCase;

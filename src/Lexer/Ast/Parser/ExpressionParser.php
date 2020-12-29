@@ -6,9 +6,9 @@ namespace DocxTemplate\Lexer\Ast\Parser;
 
 use DocxTemplate\Lexer\Ast\Node\FilterExpression;
 use DocxTemplate\Lexer\Ast\Parser\Exception\ElementNotFoundException;
-use DocxTemplate\Lexer\Contract\Ast\AstNode;
-use DocxTemplate\Lexer\Contract\Reader;
-use DocxTemplate\Lexer\Exception\SyntaxError;
+use DocxTemplate\Contract\Lexer\Ast\AstNode;
+use DocxTemplate\Contract\Lexer\Reader;
+use DocxTemplate\Exception\Lexer\SyntaxError;
 
 class ExpressionParser extends Parser
 {

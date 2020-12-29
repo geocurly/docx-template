@@ -6,8 +6,8 @@ namespace DocxTemplate\Lexer\Ast;
 
 use ArrayIterator;
 use DocxTemplate\Lexer\Ast\Parser\BlockParser;
-use DocxTemplate\Lexer\Contract\Reader;
-use DocxTemplate\Lexer\Exception\SyntaxError;
+use DocxTemplate\Contract\Lexer\Reader;
+use DocxTemplate\Exception\Lexer\SyntaxError;
 use IteratorAggregate;
 use Traversable;
 

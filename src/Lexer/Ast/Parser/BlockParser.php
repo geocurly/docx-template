@@ -8,8 +8,8 @@ use DocxTemplate\Lexer\Ast\Node\Block;
 use DocxTemplate\Lexer\Ast\Node\EscapedBlock;
 use DocxTemplate\Lexer\Ast\NodePosition;
 use DocxTemplate\Lexer\Ast\Parser\Exception\EndNotFoundException;
-use DocxTemplate\Lexer\Contract\Ast\AstNode;
-use DocxTemplate\Lexer\Exception\SyntaxError;
+use DocxTemplate\Contract\Lexer\Ast\AstNode;
+use DocxTemplate\Exception\Lexer\SyntaxError;
 
 class BlockParser extends Parser
 {

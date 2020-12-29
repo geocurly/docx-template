@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DocxTemplate\Lexer\Contract\Ast;
+namespace DocxTemplate\Contract\Lexer\Ast;
 
 interface Identity extends AstNode
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DocxTemplate\Lexer\Contract\Ast;
+namespace DocxTemplate\Contract\Lexer\Ast;
 
-use DocxTemplate\Lexer\Exception\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxError;
 
 interface AstParser
 {

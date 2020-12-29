@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Processor\Source;
 
-use DocxTemplate\Processor\Exception\ResourceOpenException;
-use DocxTemplate\Processor\Exception\TemplateException;
+use DocxTemplate\Exception\Processor\ResourceOpenException;
+use DocxTemplate\Exception\Processor\TemplateException;
 use ZipArchive;
 
 class Docx

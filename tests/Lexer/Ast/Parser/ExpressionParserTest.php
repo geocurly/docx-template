@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace DocxTemplate\Tests\Lexer\Ast\Parser;
 
 use DocxTemplate\Lexer\Ast\Parser\ExpressionParser;
-use DocxTemplate\Lexer\Contract\Ast\AstNode;
-use DocxTemplate\Lexer\Exception\InvalidSourceException;
-use DocxTemplate\Lexer\Exception\SyntaxError;
+use DocxTemplate\Contract\Lexer\Ast\AstNode;
+use DocxTemplate\Exception\Lexer\InvalidSourceException;
+use DocxTemplate\Exception\Lexer\SyntaxError;
 use DocxTemplate\Tests\Lexer\Common\AstNodeTrait;
 use DocxTemplate\Tests\Lexer\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;

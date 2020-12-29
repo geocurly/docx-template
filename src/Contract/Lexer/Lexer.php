@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DocxTemplate\Lexer\Contract;
+namespace DocxTemplate\Contract\Lexer;
 
-use DocxTemplate\Lexer\Exception\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxError;
 
 interface Lexer
 {

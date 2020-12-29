@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Processor;
 
-use DocxTemplate\Processor\Exception\ResourceOpenException;
+use DocxTemplate\Exception\Processor\ResourceOpenException;
 use Psr\Http\Message\StreamInterface;
 use ZipStream\Option\Archive;
 use ZipStream\ZipStream;

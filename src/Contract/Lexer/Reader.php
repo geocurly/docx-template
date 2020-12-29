@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DocxTemplate\Lexer\Contract;
+namespace DocxTemplate\Contract\Lexer;
 
 use DocxTemplate\Lexer\Reader\ReadResult;
 

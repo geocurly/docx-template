@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Lexer\Common;
 
-use DocxTemplate\Lexer\Contract\Reader;
-use DocxTemplate\Lexer\Exception\InvalidSourceException;
+use DocxTemplate\Contract\Lexer\Reader;
+use DocxTemplate\Exception\Lexer\InvalidSourceException;
 use DocxTemplate\Lexer\Reader\StreamReader;
 use DocxTemplate\Lexer\Reader\StringReader;
 use GuzzleHttp\Psr7\Utils;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer\Reader;
 
-use DocxTemplate\Lexer\Contract\Reader;
+use DocxTemplate\Contract\Lexer\Reader;
 
 abstract class AbstractReader implements Reader
 {

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Processor;
 
-use DocxTemplate\Lexer\Exception\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxError;
+use DocxTemplate\Exception\Processor\ResourceOpenException;
+use DocxTemplate\Exception\Processor\TemplateException;
 use DocxTemplate\Lexer\Lexer;
 use DocxTemplate\Processor\Process\Process;
 use DocxTemplate\Processor\Source\Docx;
@@ -20,7 +22,7 @@ class TemplateProcessor
      * TemplateProcessor constructor.
      * @param string $source
      * @param BindStore $store
-     * @throws Exception\ResourceOpenException
+     * @throws ResourceOpenException
      */
     public function __construct(string $source, BindStore $store)
     {
@@ -32,7 +34,8 @@ class TemplateProcessor
      * Run template processing
      *
      * @return iterable
-     * @throws Exception\TemplateException
+     * @throws SyntaxError
+     * @throws TemplateException
      */
     public function run(): iterable
     {
@@ -55,7 +58,7 @@ class TemplateProcessor
      * @param string $name file to process
      * @param Relations $relations
      * @return string|StreamInterface
-     * @throws Exception\ResourceOpenException
+     * @throws ResourceOpenException
      * @throws SyntaxError
      */
     private function process(string $name, Relations $relations) /*: string|StreamInterface */

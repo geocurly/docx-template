@@ -8,9 +8,9 @@ use DocxTemplate\Lexer\Ast\Node\ImageSize;
 use DocxTemplate\Lexer\Ast\NodePosition;
 use DocxTemplate\Lexer\Ast\Parser\Exception\EndNotFoundException;
 use DocxTemplate\Lexer\Ast\Parser\Exception\InvalidImageSizeException;
-use DocxTemplate\Lexer\Contract\Ast\AstNode;
-use DocxTemplate\Lexer\Contract\Ast\Identity as IdentityInterface;
-use DocxTemplate\Lexer\Contract\Reader;
+use DocxTemplate\Contract\Lexer\Ast\AstNode;
+use DocxTemplate\Contract\Lexer\Ast\Identity as IdentityInterface;
+use DocxTemplate\Contract\Lexer\Reader;
 
 class ImageSizeParser extends Parser
 {

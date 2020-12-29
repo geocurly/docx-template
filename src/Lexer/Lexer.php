@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer;
 
+use DocxTemplate\Contract\Lexer\Lexer as LexerInterface;
+use DocxTemplate\Contract\Lexer\Reader;
 use Psr\Http\Message\StreamInterface;
 use DocxTemplate\Lexer\{
     Ast\Ast,
     Reader\StreamReader,
     Reader\StringReader,
-    Contract\Lexer as LexerInterface,
-    Contract\Reader
 };
 
 class Lexer implements LexerInterface

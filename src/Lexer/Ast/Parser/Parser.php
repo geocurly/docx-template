@@ -11,11 +11,11 @@ use DocxTemplate\Lexer\Ast\Node\Identity;
 use DocxTemplate\Lexer\Ast\Node\Image;
 use DocxTemplate\Lexer\Ast\Node\ImageSize;
 use DocxTemplate\Lexer\Ast\Node\Str;
-use DocxTemplate\Lexer\Contract\Ast\AstNode;
-use DocxTemplate\Lexer\Contract\Ast\AstParser;
-use DocxTemplate\Lexer\Contract\Ast\Identity as IdentityInterface;
-use DocxTemplate\Lexer\Contract\Reader;
-use DocxTemplate\Lexer\Exception\SyntaxError;
+use DocxTemplate\Contract\Lexer\Ast\AstNode;
+use DocxTemplate\Contract\Lexer\Ast\AstParser;
+use DocxTemplate\Contract\Lexer\Ast\Identity as IdentityInterface;
+use DocxTemplate\Contract\Lexer\Reader;
+use DocxTemplate\Exception\Lexer\SyntaxError;
 use DocxTemplate\Lexer\Reader\ReadResult;
 
 abstract class Parser implements AstParser

@@ -16,8 +16,8 @@ use DocxTemplate\Lexer\Ast\Node\Image;
 use DocxTemplate\Lexer\Ast\Node\ImageSize;
 use DocxTemplate\Lexer\Ast\Node\Str;
 use DocxTemplate\Lexer\Ast\NodePosition;
-use DocxTemplate\Lexer\Contract\Ast\AstNode;
-use DocxTemplate\Lexer\Contract\Ast\Identity as IdentityInterface;
+use DocxTemplate\Contract\Lexer\Ast\AstNode;
+use DocxTemplate\Contract\Lexer\Ast\Identity as IdentityInterface;
 
 trait AstNodeTrait
 {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer\Reader;
 
-use DocxTemplate\Lexer\Exception\InvalidSourceException;
+use DocxTemplate\Exception\Lexer\InvalidSourceException;
 use Psr\Http\Message\StreamInterface;
 
 class StreamReader extends AbstractReader

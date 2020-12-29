@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Lexer\Reader;
 
-use DocxTemplate\Lexer\Exception\InvalidSourceException;
+use DocxTemplate\Exception\Lexer\InvalidSourceException;
 use DocxTemplate\Lexer\Reader\ReadResult;
 use DocxTemplate\Tests\Lexer\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;

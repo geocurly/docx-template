@@ -8,7 +8,7 @@ use DocxTemplate\Lexer\Ast\Node\EscapedChar;
 use DocxTemplate\Lexer\Ast\Node\Str;
 use DocxTemplate\Lexer\Ast\NodePosition;
 use DocxTemplate\Lexer\Ast\Parser\Exception\EndNotFoundException;
-use DocxTemplate\Lexer\Contract\Ast\AstNode;
+use DocxTemplate\Contract\Lexer\Ast\AstNode;
 
 class StrParser extends Parser
 {

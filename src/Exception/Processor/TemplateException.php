@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DocxTemplate\Processor\Exception;
+namespace DocxTemplate\Exception\Processor;
 
 use Exception;
 
