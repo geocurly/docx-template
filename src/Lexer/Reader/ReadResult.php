@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer\Reader;
 
+/**
+ * @codeCoverageIgnore
+ */
 class ReadResult
 {
     private string $found;

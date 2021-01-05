@@ -12,6 +12,9 @@ use DocxTemplate\Tests\Common\NodeTrait;
 use DocxTemplate\Tests\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \DocxTemplate\Lexer\Parser\ConditionParser
+ */
 class ConditionParserTest extends TestCase
 {
     use ReaderTrait;

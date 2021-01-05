@@ -9,15 +9,16 @@ use DocxTemplate\Lexer\Reader\ReadResult;
 use DocxTemplate\Tests\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers  \DocxTemplate\Lexer\Reader\StreamReader
+ * @covers  \DocxTemplate\Lexer\Reader\StringReader
+ */
 class ReaderTest extends TestCase
 {
     use ReaderTrait;
 
     /**
      * @dataProvider findAnySequenceDataProvider
-     *
-     * @covers       \DocxTemplate\Lexer\Reader\StreamReader::findAny
-     * @covers       \DocxTemplate\Lexer\Reader\StringReader::findAny
      *
      * @param string $content
      * @param array $args
@@ -53,8 +54,6 @@ class ReaderTest extends TestCase
     }
 
     /**
-     * @covers       \DocxTemplate\Lexer\Reader\StreamReader::firstNotEmpty
-     * @covers       \DocxTemplate\Lexer\Reader\StringReader::firstNotEmpty
      * @dataProvider firstNotEmptyDataProvider
      *
      * @param string $content
@@ -88,8 +87,6 @@ class ReaderTest extends TestCase
     }
 
     /**
-     * @covers \DocxTemplate\Lexer\Reader\StreamReader::read
-     * @covers \DocxTemplate\Lexer\Reader\StringReader::read
      *
      * @dataProvider readProvider
      *

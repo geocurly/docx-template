@@ -15,6 +15,9 @@ use DocxTemplate\Tests\Common\NodeTrait;
 use DocxTemplate\Tests\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \DocxTemplate\Lexer\Parser\ImageSizeParser
+ */
 class ImageSizeParserTest extends TestCase
 {
     use ReaderTrait;
@@ -22,8 +25,6 @@ class ImageSizeParserTest extends TestCase
 
     /**
      * @dataProvider positiveProvider
-     *
-     * @covers       \DocxTemplate\Lexer\Parser\ImageSizeParser::parse
      *
      * @param string $content
      * @param Identity $id
@@ -125,8 +126,6 @@ class ImageSizeParserTest extends TestCase
 
     /**
      * @dataProvider negativeProvider
-     *
-     * @covers       \DocxTemplate\Lexer\Parser\ImageSizeParser::parse
      *
      * @param string $content
      * @param Identity $identity

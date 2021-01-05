@@ -14,13 +14,15 @@ use DocxTemplate\Tests\Common\NodeTrait;
 use DocxTemplate\Tests\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \DocxTemplate\Lexer\Parser\IdentityParser
+ */
 class IdentityParserTest extends TestCase
 {
     use ReaderTrait;
     use NodeTrait;
 
     /**
-     * @covers       \DocxTemplate\Lexer\Parser\IdentityParser::parse
      * @dataProvider positiveProvider
      *
      * @param string $content
@@ -105,8 +107,6 @@ class IdentityParserTest extends TestCase
     }
 
     /**
-     * @covers \DocxTemplate\Lexer\Parser\IdentityParser::parse
-     *
      * @dataProvider negativeProvider
      *
      * @param string $content

@@ -12,6 +12,9 @@ use DocxTemplate\Tests\Common\BindTrait;
 use DocxTemplate\Tests\Common\NodeTrait;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \DocxTemplate\Processor\Process\Resolver
+ */
 class ResolverTest extends TestCase
 {
     use NodeTrait;
@@ -21,7 +24,6 @@ class ResolverTest extends TestCase
 
     /**
      * @dataProvider solveProvider
-     * @covers \DocxTemplate\Processor\Process\Resolver::solve
      *
      * @param Node $node
      * @param string $expected

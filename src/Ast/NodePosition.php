@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Ast;
 
+/**
+ * @codeCoverageIgnore
+ */
 class NodePosition
 {
     private int $start;

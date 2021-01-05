@@ -7,13 +7,15 @@ use DocxTemplate\Lexer\Lexer;
 use DocxTemplate\Tests\Common\NodeTrait;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \DocxTemplate\Lexer\Lexer
+ */
 class LexerTest extends TestCase
 {
     use NodeTrait;
 
     /**
      * @dataProvider getRunProvider
-     * @covers       \DocxTemplate\Lexer\Lexer::run
      * @param $content
      * @param array $blocks
      * @throws SyntaxError

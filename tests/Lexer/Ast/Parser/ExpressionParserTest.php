@@ -12,13 +12,15 @@ use DocxTemplate\Tests\Common\NodeTrait;
 use DocxTemplate\Tests\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \DocxTemplate\Lexer\Parser\ExpressionParser
+ */
 class ExpressionParserTest extends TestCase
 {
     use ReaderTrait;
     use NodeTrait;
 
     /**
-     * @covers       \DocxTemplate\Lexer\Parser\ExpressionParser::parse
      * @dataProvider positiveProvider
      *
      * @param string $content

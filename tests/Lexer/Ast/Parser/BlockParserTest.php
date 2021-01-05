@@ -12,13 +12,15 @@ use DocxTemplate\Tests\Common\NodeTrait;
 use DocxTemplate\Tests\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \DocxTemplate\Lexer\Parser\BlockParser
+ */
 class BlockParserTest extends TestCase
 {
     use ReaderTrait;
     use NodeTrait;
 
     /**
-     * @covers       \DocxTemplate\Lexer\Parser\BlockParser::parse
      * @dataProvider positiveProvider
      *
      * @param string $content
