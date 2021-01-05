@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Lexer\Ast\Parser;
 
-use DocxTemplate\Lexer\Ast\Node\Identity;
-use DocxTemplate\Lexer\Ast\Node\ImageSize;
-use DocxTemplate\Lexer\Ast\Parser\Exception\EndNotFoundException;
-use DocxTemplate\Lexer\Ast\Parser\Exception\InvalidImageSizeException;
-use DocxTemplate\Lexer\Ast\Parser\ImageSizeParser;
+use DocxTemplate\Ast\Node\Identity;
+use DocxTemplate\Ast\Node\ImageSize;
+use DocxTemplate\Lexer\Parser\Exception\EndNotFoundException;
+use DocxTemplate\Lexer\Parser\Exception\InvalidImageSizeException;
+use DocxTemplate\Lexer\Parser\ImageSizeParser;
 use DocxTemplate\Exception\Lexer\InvalidSourceException;
 use DocxTemplate\Exception\Lexer\SyntaxError;
 use DocxTemplate\Tests\Lexer\Common\AstNodeTrait;
@@ -23,7 +23,7 @@ class ImageSizeParserTest extends TestCase
     /**
      * @dataProvider positiveProvider
      *
-     * @covers       \DocxTemplate\Lexer\Ast\Parser\ImageSizeParser::parse
+     * @covers       \DocxTemplate\Lexer\Parser\ImageSizeParser::parse
      *
      * @param string $content
      * @param Identity $id
@@ -126,7 +126,7 @@ class ImageSizeParserTest extends TestCase
     /**
      * @dataProvider negativeProvider
      *
-     * @covers       \DocxTemplate\Lexer\Ast\Parser\ImageSizeParser::parse
+     * @covers       \DocxTemplate\Lexer\Parser\ImageSizeParser::parse
      *
      * @param string $content
      * @param Identity $identity

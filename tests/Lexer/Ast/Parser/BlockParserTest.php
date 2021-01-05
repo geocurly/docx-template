@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Lexer\Ast\Parser;
 
-use DocxTemplate\Lexer\Ast\Parser\BlockParser;
-use DocxTemplate\Contract\Lexer\Ast\AstNode;
+use DocxTemplate\Lexer\Parser\BlockParser;
+use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Exception\Lexer\InvalidSourceException;
 use DocxTemplate\Exception\Lexer\SyntaxError;
 use DocxTemplate\Tests\Lexer\Common\AstNodeTrait;
@@ -18,15 +18,15 @@ class BlockParserTest extends TestCase
     use AstNodeTrait;
 
     /**
-     * @covers       \DocxTemplate\Lexer\Ast\Parser\BlockParser::parse
+     * @covers       \DocxTemplate\Lexer\Parser\BlockParser::parse
      * @dataProvider positiveProvider
      *
      * @param string $content
      * @param int $pos
-     * @param AstNode|null $expected
+     * @param Node|null $expected
      * @throws InvalidSourceException|SyntaxError
      */
-    public function testParsePositive(string $content, int $pos, ?AstNode $expected): void
+    public function testParsePositive(string $content, int $pos, ?Node $expected): void
     {
         foreach ($this->reader($content) as $reader) {
             $this->assertEquals(
@@ -40,20 +40,21 @@ class BlockParserTest extends TestCase
     public function positiveProvider(): array
     {
         return [
-            ['${ var }', 0, self::block(0, 8, self::id('var', 3, 3))],
+            ['${ var }', 0, self::block(0, 8,'${ var }', self::id('var', 3, 3))],
             [
                 '${ image(`str`):150x150 | filter }',
                 0,
                 self::block(
                     0,
                     34,
+                    '${ image(`str`):150x150 | filter }',
                     self::filter(
                         self::image(
                             self::call(
                                 self::id('image', 3, 5),
                                 3,
                                 12,
-                                self::str(9, 5)
+                                self::str(9, 5, '`str`',)
                             ),
                             self::imageSize(16, 7, '150', '150')
                         ),
@@ -67,10 +68,12 @@ class BlockParserTest extends TestCase
                 self::block(
                     0,
                     35,
+                    '${ ${ if ? then : else } | filter }',
                     self::filter(
                         self::block(
                             3,
                             21,
+                            '${ if ? then : else }',
                             self::cond(
                                 self::id('if', 6, 2),
                                 self::id('then', 11, 4),
@@ -87,6 +90,7 @@ class BlockParserTest extends TestCase
                 self::escapedBlock(
                     0,
                     13,
+                    '\${ escaped }',
                     self::id('escaped', 4, 7)
                 )
             ],
@@ -96,14 +100,16 @@ class BlockParserTest extends TestCase
                 self::block(
                     0,
                     29,
+                    '${ var ? \${ escaped } : `` }',
                     self::cond(
                         self::id('var', 3, 3),
                         self::escapedBlock(
                             9,
                             13,
+                            '\${ escaped }',
                             self::id('escaped', 13, 7)
                         ),
-                        self::str(25, 2)
+                        self::str(25, 2, '``')
                     )
                 )
             ],

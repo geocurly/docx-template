@@ -5,6 +5,7 @@ namespace DocxTemplate\Processor\Process\Bind\Filter;
 use DateTime;
 use DocxTemplate\Exception\Processor\BindException;
 use DocxTemplate\Processor\Process\Bind\Filter;
+use Exception;
 
 class Date extends Filter
 {
@@ -19,7 +20,7 @@ class Date extends Filter
     {
         try {
             $date = new DateTime($entity);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new BindException((string) $exception->getMessage());
         }
 

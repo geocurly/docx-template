@@ -36,12 +36,12 @@ class Template
         foreach ($this->processor->run() as $name => $fileContent) {
             if ($fileContent instanceof StreamInterface) {
                 $out->addFileFromPsr7Stream($name, $fileContent);
-                return;
+                continue;
             }
 
             if (is_resource($fileContent)) {
                 $out->addFileFromStream($name, $fileContent);
-                return;
+                continue;
             }
 
             $out->addFile($name, $fileContent);

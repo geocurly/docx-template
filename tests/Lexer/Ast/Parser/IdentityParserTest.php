@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Lexer\Ast\Parser;
 
-use DocxTemplate\Lexer\Ast\Parser\Exception\EndNotFoundException;
-use DocxTemplate\Lexer\Ast\Parser\Exception\UnexpectedCharactersException;
-use DocxTemplate\Lexer\Ast\Parser\IdentityParser;
-use DocxTemplate\Contract\Lexer\Ast\AstNode;
+use DocxTemplate\Lexer\Parser\Exception\EndNotFoundException;
+use DocxTemplate\Lexer\Parser\Exception\UnexpectedCharactersException;
+use DocxTemplate\Lexer\Parser\IdentityParser;
+use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Exception\Lexer\InvalidSourceException;
 use DocxTemplate\Exception\Lexer\SyntaxError;
 use DocxTemplate\Tests\Lexer\Common\AstNodeTrait;
@@ -20,15 +20,15 @@ class IdentityParserTest extends TestCase
     use AstNodeTrait;
 
     /**
-     * @covers       \DocxTemplate\Lexer\Ast\Parser\IdentityParser::parse
+     * @covers       \DocxTemplate\Lexer\Parser\IdentityParser::parse
      * @dataProvider positiveProvider
      *
      * @param string $content
      * @param int $pos
-     * @param AstNode|null $expected
+     * @param Node|null $expected
      * @throws InvalidSourceException|SyntaxError
      */
-    public function testParsePositive(string $content, int $pos, ?AstNode $expected): void
+    public function testParsePositive(string $content, int $pos, ?Node $expected): void
     {
         foreach ($this->reader($content) as $reader) {
             $this->assertEquals(
@@ -64,8 +64,8 @@ class IdentityParserTest extends TestCase
                     self::id('call', 1, 4),
                     1,
                     14,
-                    self::str(6, 3),
-                    self::str(11, 3)
+                    self::str(6, 3, '`1`'),
+                    self::str(11, 3, '`2`')
                 ),
             ],
             [
@@ -75,8 +75,8 @@ class IdentityParserTest extends TestCase
                     self::id('call', 1, 4),
                     1, 37,
                     self::id('var', 6, 3),
-                    self::str(11, 3),
-                    self::block(16, 6, self::id('var', 18, 3)),
+                    self::str(11, 3, '`2`'),
+                    self::block(16, 6, '${var}', self::id('var', 18, 3)),
                     self::image(
                         self::id('image', 24, 5),
                         self::imageSize(30, 7, '150', '150')
@@ -93,9 +93,10 @@ class IdentityParserTest extends TestCase
                     self::str(
                         6,
                         18,
-                        self::block(14, 9, self::id('nested', 16, 6))
+                        '`nested ${nested}`',
+                        self::block(14, 9, '${nested}', self::id('nested', 16, 6))
                     ),
-                    self::str(26, 8)
+                    self::str(26, 8, '`simple`')
                 ),
             ],
             ['${ \void }', 3, self::id('\void', 3, 5)],
@@ -104,7 +105,7 @@ class IdentityParserTest extends TestCase
     }
 
     /**
-     * @covers \DocxTemplate\Lexer\Ast\Parser\IdentityParser::parse
+     * @covers \DocxTemplate\Lexer\Parser\IdentityParser::parse
      *
      * @dataProvider negativeProvider
      *

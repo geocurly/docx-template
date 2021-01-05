@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Lexer\Ast\Parser;
 
-use DocxTemplate\Lexer\Ast\Parser\ExpressionParser;
-use DocxTemplate\Contract\Lexer\Ast\AstNode;
+use DocxTemplate\Lexer\Parser\ExpressionParser;
+use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Exception\Lexer\InvalidSourceException;
 use DocxTemplate\Exception\Lexer\SyntaxError;
 use DocxTemplate\Tests\Lexer\Common\AstNodeTrait;
@@ -18,16 +18,16 @@ class ExpressionParserTest extends TestCase
     use AstNodeTrait;
 
     /**
-     * @covers       \DocxTemplate\Lexer\Ast\Parser\ExpressionParser::parse
+     * @covers       \DocxTemplate\Lexer\Parser\ExpressionParser::parse
      * @dataProvider positiveProvider
      *
      * @param string $content
-     * @param AstNode $left
-     * @param AstNode|null $expected
+     * @param Node $left
+     * @param Node|null $expected
      * @throws InvalidSourceException
      * @throws SyntaxError
      */
-    public function testParsePositive(string $content, AstNode $left, ?AstNode $expected): void
+    public function testParsePositive(string $content, Node $left, ?Node $expected): void
     {
         foreach ($this->reader($content) as $reader) {
             $this->assertEquals(
@@ -52,7 +52,7 @@ class ExpressionParserTest extends TestCase
                     self::id('target', 3, 6),
                     3,
                     11,
-                    self::str(10, 3)
+                    self::str(10, 3, '`1`')
                 ),
                 self::filter($call, self::id('filter', 17, 6))
             ],
@@ -68,15 +68,18 @@ class ExpressionParserTest extends TestCase
                         self::str(
                             18,
                             15,
+                            '`string ${var}`',
                             self::block(
                                 26,
                                 6,
+                                '${var}',
                                 self::id('var', 28, 3),
                             )
                         ),
                         self::block(
                             38,
                             6,
+                            '${var}',
                             self::id('var', 40, 3)
                         )
                     )

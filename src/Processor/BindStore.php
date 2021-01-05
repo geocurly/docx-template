@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Processor;
 
-use DocxTemplate\Contract\Lexer\Ast\Identity;
+use DocxTemplate\Contract\Ast\Identity;
 use DocxTemplate\Contract\Processor\Bind\Filter;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
+use DocxTemplate\Exception\Processor\BindException;
 use DocxTemplate\Exception\Processor\TemplateException;
+use DocxTemplate\Processor\Process\Bind\Bind;
 
 final class BindStore
 {
@@ -45,21 +47,16 @@ final class BindStore
      * Get bind for node
      *
      * @param Identity $node
-     * @return Valuable|null
+     * @return Bind
+     * @throws BindException
      */
-    public function get(Identity $node): ?Valuable
+    public function get(Identity $node): \DocxTemplate\Contract\Processor\Bind\Bind
     {
-        return $this->binds[$node->getType()][$node->getId()] ?? null;
-    }
+        [$type, $id] = [$node->getType(), $node->getId()];
+        if (!isset($this->binds[$type][$id])) {
+            throw new BindException("Unbound item: [type = $type, id = $id]");
+        }
 
-    /**
-     * Get filter bind
-     *
-     * @param string $identity
-     * @return Filter|null
-     */
-    public function getFilter(string $identity): ?Filter
-    {
-        return $this->binds[self::TYPE_FILTER][$identity] ?? null;
+        return $this->binds[$type][$id];
     }
 }

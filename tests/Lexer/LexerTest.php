@@ -45,6 +45,7 @@ class LexerTest extends TestCase
                     self::block(
                         30,
                         19,
+                        '${ if ? if : else }',
                         self::cond(
                             self::id('if', 33, 2),
                             self::id('if', 38, 2),
@@ -54,6 +55,7 @@ class LexerTest extends TestCase
                     self::block(
                         58,
                         17,
+                        '${ var | filter }',
                         self::filter(
                             self::id('var', 61, 3),
                             self::id('filter', 67, 6),
@@ -62,6 +64,7 @@ class LexerTest extends TestCase
                     self::block(
                         107,
                         15,
+                        '${image:150x10}',
                         self::image(
                             self::id('image', 109, 5),
                             self::imageSize(115, 6, '150', '10'),

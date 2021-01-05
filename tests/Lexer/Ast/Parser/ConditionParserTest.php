@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Lexer\Ast\Parser;
 
-use DocxTemplate\Lexer\Ast\Parser\ConditionParser;
-use DocxTemplate\Contract\Lexer\Ast\AstNode;
+use DocxTemplate\Lexer\Parser\ConditionParser;
+use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Exception\Lexer\InvalidSourceException;
 use DocxTemplate\Exception\Lexer\SyntaxError;
 use DocxTemplate\Tests\Lexer\Common\AstNodeTrait;
@@ -18,16 +18,16 @@ class ConditionParserTest extends TestCase
     use AstNodeTrait;
 
     /**
-     * @covers       \DocxTemplate\Lexer\Ast\Parser\ConditionParser::parse
+     * @covers       \DocxTemplate\Lexer\Parser\ConditionParser::parse
      * @dataProvider positiveProvider
      *
      * @param string $content
-     * @param AstNode $if
-     * @param AstNode|null $expected
+     * @param Node $if
+     * @param Node|null $expected
      * @throws InvalidSourceException
      * @throws SyntaxError
      */
-    public function testParsePositive(string $content, AstNode $if, ?AstNode $expected): void
+    public function testParsePositive(string $content, Node $if, ?Node $expected): void
     {
         foreach ($this->reader($content) as $reader) {
             $this->assertEquals(
@@ -56,13 +56,14 @@ class ConditionParserTest extends TestCase
                             self::id('then', 5, 4),
                             5,
                             13,
-                            self::str(10, 7),
+                            self::str(10, 7, '`param`'),
                         ),
                         self::id('filter', 21, 6)
                     ),
                     self::block(
                         30,
                         12,
+                        '${var1 var2}',
                         self::id('var1', 32, 4),
                         self::id('var2', 37, 4),
                     )
@@ -112,9 +113,11 @@ class ConditionParserTest extends TestCase
                 $if = self::str(
                     0,
                     11,
+                    '`if ${var}`',
                     self::block(
                         4,
                         6,
+                        '${var}',
                         self::id('var', 6, 3)
                     )
                 ),
@@ -123,25 +126,29 @@ class ConditionParserTest extends TestCase
                     self::str(
                         14,
                         48,
+                        '`then ${    `ternary` ? bar : `else ${nested}`}`',
                         self::block(
                             20,
                             41,
+                            '${    `ternary` ? bar : `else ${nested}`}',
                             self::cond(
-                                self::str(26, 9),
+                                self::str(26, 9, '`ternary`'),
                                 self::id('bar', 38, 3),
                                 self::str(
                                     44,
                                     16,
+                                    '`else ${nested}`',
                                     self::block(
                                         50,
                                         9,
+                                        '${nested}',
                                         self::id('nested', 52, 6)
                                     ),
                                 )
                             )
                         ),
                     ),
-                    self::str(65, 2)
+                    self::str(65, 2, '``')
                 ),
             ]
         ];

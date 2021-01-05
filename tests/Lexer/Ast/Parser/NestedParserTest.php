@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Lexer\Ast\Parser;
 
-use DocxTemplate\Lexer\Ast\Parser\NestedParser;
-use DocxTemplate\Contract\Lexer\Ast\AstNode;
+use DocxTemplate\Lexer\Parser\NestedParser;
+use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Exception\Lexer\InvalidSourceException;
 use DocxTemplate\Exception\Lexer\SyntaxError;
 use DocxTemplate\Tests\Lexer\Common\AstNodeTrait;
@@ -18,15 +18,15 @@ class NestedParserTest extends TestCase
     use AstNodeTrait;
 
     /**
-     * @covers       \DocxTemplate\Lexer\Ast\Parser\NestedParser::parse
+     * @covers       \DocxTemplate\Lexer\Parser\NestedParser::parse
      * @dataProvider positiveProvider
      *
      * @param string $content
      * @param int $pos
-     * @param AstNode|null $expected
+     * @param Node|null $expected
      * @throws InvalidSourceException|SyntaxError
      */
-    public function testParsePositive(string $content, int $pos, ?AstNode $expected): void
+    public function testParsePositive(string $content, int $pos, ?Node $expected): void
     {
         foreach ($this->reader($content) as $reader) {
             $this->assertEquals(
@@ -40,8 +40,8 @@ class NestedParserTest extends TestCase
     public function positiveProvider(): array
     {
         return [
-            ['${ ${ var } }', 2, self::block(3, 8, self::id('var', 6, 3))],
-            ['${ `str` } }', 2, self::str(3, 5)],
+            ['${ ${ var } }', 2, self::block(3, 8, '${ var }', self::id('var', 6, 3))],
+            ['${ `str` } }', 2, self::str(3, 5, '`str`')],
             ['${ str } }', 2, self::id('str', 3, 3)],
             [
                 '${ img:150x150 } }',
