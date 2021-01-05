@@ -21,7 +21,6 @@ class ConditionParserTest extends TestCase
     use NodeTrait;
 
     /**
-     * @covers       \DocxTemplate\Lexer\Parser\ConditionParser::parse
      * @dataProvider positiveProvider
      *
      * @param string $content
