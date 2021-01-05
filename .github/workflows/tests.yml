@@ -11,8 +11,24 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        php-version:
+          - "7.4"
+          - "8.0"
+
+        coverage-driver:
+          - "xdebug3"
+
     steps:
+    - name: Checkout
     - uses: actions/checkout@v2
+
+    - name: Install PHP
+      uses: "shivammathur/setup-php@v2"
+      with:
+        php-version: "${{ matrix.php-version }}"
+        coverage: "${{ matrix.coverage-driver }}"
 
     - name: Validate composer.json and composer.lock
       run: composer validate
