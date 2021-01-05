@@ -21,7 +21,7 @@ class ResolverTest extends TestCase
 
     /**
      * @dataProvider solveProvider
-     * @covers Resolver::solve
+     * @covers \DocxTemplate\Processor\Process\Resolver::solve
      *
      * @param Node $node
      * @param string $expected
