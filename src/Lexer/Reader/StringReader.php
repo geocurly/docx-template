@@ -46,9 +46,9 @@ class StringReader extends AbstractReader
     }
 
     /** @inheritDoc */
-    protected function readRaw(int $startPosition, int $bytes): ?string
+    protected function readRaw(int $start, int $bytes): ?string
     {
-        $content = substr($this->content, $startPosition, $bytes);
+        $content = substr($this->content, $start, $bytes);
         if ($content === false || $content === '') {
             return null;
         }

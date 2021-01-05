@@ -152,4 +152,4 @@ abstract class AbstractReader implements Reader
      * @return string|null
      */
     abstract protected function readRaw(int $start, int $bytes): ?string;
- }
+}

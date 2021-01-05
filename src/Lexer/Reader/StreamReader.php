@@ -75,10 +75,10 @@ class StreamReader extends AbstractReader
     }
 
     /** @inheritDoc */
-    public function readRaw(int $from, int $bytes): ?string
+    public function readRaw(int $start, int $bytes): ?string
     {
         try {
-            $this->stream->seek($from);
+            $this->stream->seek($start);
         } catch (\RuntimeException $exception) {
             return null;
         }
