@@ -8,7 +8,10 @@ use DocxTemplate\Ast\NodePosition;
 use DocxTemplate\Contract\Ast\Inclusive;
 use DocxTemplate\Contract\Ast\Node as NodeInterface;
 
-class Str extends Node implements Inclusive
+/**
+ * @codeCoverageIgnore
+ */
+final class Str extends Node implements Inclusive
 {
     private array $nested;
     private string $content;

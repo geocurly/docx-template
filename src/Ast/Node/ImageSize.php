@@ -6,7 +6,10 @@ namespace DocxTemplate\Ast\Node;
 
 use DocxTemplate\Ast\NodePosition;
 
-class ImageSize extends Node
+/**
+ * @codeCoverageIgnore
+ */
+final class ImageSize extends Node
 {
     private string $width;
     private string $height;

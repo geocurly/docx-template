@@ -8,6 +8,9 @@ use DocxTemplate\Ast\NodePosition;
 use DocxTemplate\Contract\Ast\Node as NodeInterface;
 use DocxTemplate\Contract\Ast\Inclusive;
 
+/**
+ * @codeCoverageIgnore
+ */
 class Block extends Node implements Inclusive
 {
     private array $nested;

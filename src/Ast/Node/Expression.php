@@ -7,6 +7,9 @@ namespace DocxTemplate\Ast\Node;
 use DocxTemplate\Ast\NodePosition;
 use DocxTemplate\Contract\Ast\Node as NodeInterface;
 
+/**
+ * @codeCoverageIgnore
+ */
 abstract class Expression extends Node
 {
     private NodeInterface $left;

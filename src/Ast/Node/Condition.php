@@ -7,7 +7,10 @@ namespace DocxTemplate\Ast\Node;
 use DocxTemplate\Ast\NodePosition;
 use DocxTemplate\Contract\Ast\Node as NodeInterface;
 
-class Condition extends Node
+/**
+ * @codeCoverageIgnore
+ */
+final class Condition extends Node
 {
     private NodeInterface $if;
     private NodeInterface $then;

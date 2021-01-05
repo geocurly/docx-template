@@ -6,7 +6,10 @@ namespace DocxTemplate\Ast\Node;
 
 use DocxTemplate\Contract\Ast\Identity;
 
-class FilterExpression extends Expression implements Identity
+/**
+ * @codeCoverageIgnore
+ */
+final class FilterExpression extends Expression implements Identity
 {
     /** @inheritdoc  */
     public function toArray(): array

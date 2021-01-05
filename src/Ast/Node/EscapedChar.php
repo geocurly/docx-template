@@ -7,7 +7,10 @@ namespace DocxTemplate\Ast\Node;
 use DocxTemplate\Ast\NodePosition;
 use DocxTemplate\Contract\Ast\Inclusive;
 
-class EscapedChar extends Node implements Inclusive
+/**
+ * @codeCoverageIgnore
+ */
+final class EscapedChar extends Node implements Inclusive
 {
     private string $content;
 

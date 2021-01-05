@@ -8,7 +8,10 @@ use DocxTemplate\Ast\NodePosition;
 use DocxTemplate\Contract\Ast\Node as NodeInterface;
 use DocxTemplate\Contract\Ast\Identity as IdentityInterface;
 
-class Call extends Node implements IdentityInterface
+/**
+ * @codeCoverageIgnore
+ */
+final class Call extends Node implements IdentityInterface
 {
     private IdentityInterface $identity;
     private array $params;
