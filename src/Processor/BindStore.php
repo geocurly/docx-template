@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Processor;
 
+use DocxTemplate\Ast\Node\FilterExpression;
 use DocxTemplate\Contract\Ast\Identity;
 use DocxTemplate\Contract\Processor\Bind\Filter;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
@@ -13,10 +14,6 @@ use DocxTemplate\Processor\Process\Bind\Bind;
 
 final class BindStore
 {
-    public const TYPE_VARIABLE = 'Identity';
-    public const TYPE_FILTER = 'FilterExpression';
-    public const TYPE_IMAGE = 'Image';
-
     private array $binds;
 
     /**
@@ -30,10 +27,10 @@ final class BindStore
         foreach ($binds as $bind) {
             switch (true) {
                 case $bind instanceof Valuable:
-                    $type = self::TYPE_VARIABLE;
+                    $type = Identity::class;
                     break;
                 case $bind instanceof Filter:
-                    $type = self::TYPE_FILTER;
+                    $type = FilterExpression::class;
                     break;
                 default:
                     throw new TemplateException("Unknown bind type: " . get_class($bind));
@@ -52,7 +49,13 @@ final class BindStore
      */
     public function get(Identity $node): \DocxTemplate\Contract\Processor\Bind\Bind
     {
-        [$type, $id] = [$node->getType(), $node->getId()];
+        if ($node instanceof Identity) {
+            $type = Identity::class;
+        } else {
+            $type = get_class($node);
+        }
+
+        $id = $node->getId();
         if (!isset($this->binds[$type][$id])) {
             throw new BindException("Unbound item: [type = $type, id = $id]");
         }

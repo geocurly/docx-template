@@ -50,6 +50,21 @@ class ResolverTest extends TestCase
                 self::TEST_VALUE_1
             ],
             [
+                // sum(var, `str`)
+                self::call(
+                    self::id(
+                        'join',
+                        0,
+                        4
+                    ),
+                    0,
+                    16,
+                    self::id('var', 5, 3),
+                    self::str(10, 5, '`str`')
+                ),
+                self::TEST_VALUE_1 . 'str'
+            ],
+            [
                 self::block(
                     0,
                     8,
@@ -65,6 +80,7 @@ class ResolverTest extends TestCase
     {
         return new BindStore([
             self::valuableBind('var', fn() => self::TEST_VALUE_1),
+            self::valuableBind('join', fn(...$params) => implode('', $params))
         ]);
     }
 }

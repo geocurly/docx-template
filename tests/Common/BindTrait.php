@@ -29,7 +29,7 @@ trait BindTrait
             public function filter($entity)
             {
                 $call = $this->function;
-                return $call($entity, $this->getParams());
+                return $call($entity, ...$this->getParams());
             }
         };
     }
@@ -55,7 +55,7 @@ trait BindTrait
             public function getValue(): string
             {
                 $call = $this->function;
-                return $call($this->getParams());
+                return $call(...$this->getParams());
             }
         };
     }
