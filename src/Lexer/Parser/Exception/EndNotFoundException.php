@@ -6,6 +6,7 @@ namespace DocxTemplate\Lexer\Parser\Exception;
 
 use DocxTemplate\Exception\Lexer\SyntaxError;
 
+/** @codeCoverageIgnore  */
 class EndNotFoundException extends SyntaxError
 {
     protected $message = "Couldn't find the end of element";

@@ -19,6 +19,7 @@ use DocxTemplate\Contract\Lexer\Reader;
 use DocxTemplate\Exception\Lexer\SyntaxError;
 use DocxTemplate\Lexer\Reader\ReadResult;
 
+/** @codeCoverageIgnore  */
 abstract class Parser implements ParserInterface
 {
     protected const BLOCK_START = '${';

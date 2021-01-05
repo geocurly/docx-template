@@ -6,6 +6,7 @@ namespace DocxTemplate\Exception\Processor;
 
 use Exception;
 
+/** @codeCoverageIgnore  */
 class TemplateException extends Exception
 {
 
