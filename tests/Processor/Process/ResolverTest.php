@@ -46,6 +46,10 @@ class ResolverTest extends TestCase
     {
         return [
             [
+                self::id('var',0, 3),
+                self::TEST_VALUE_1
+            ],
+            [
                 self::block(
                     0,
                     8,
@@ -53,7 +57,7 @@ class ResolverTest extends TestCase
                     self::id('var', 3, 3)
                 ),
                 self::TEST_VALUE_1
-            ]
+            ],
         ];
     }
 
