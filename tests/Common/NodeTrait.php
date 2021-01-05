@@ -2,8 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DocxTemplate\Tests\Lexer\Common;
-
+namespace DocxTemplate\Tests\Common;
 
 use DocxTemplate\Ast\Node\Block;
 use DocxTemplate\Ast\Node\Call;
@@ -19,7 +18,7 @@ use DocxTemplate\Ast\NodePosition;
 use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Contract\Ast\Identity as IdentityInterface;
 
-trait AstNodeTrait
+trait NodeTrait
 {
     protected static function escapedBlock(int $from, int $length, string $content, Node ...$nested): Block
     {

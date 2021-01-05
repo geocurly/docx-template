@@ -11,14 +11,14 @@ use DocxTemplate\Lexer\Parser\Exception\InvalidImageSizeException;
 use DocxTemplate\Lexer\Parser\ImageSizeParser;
 use DocxTemplate\Exception\Lexer\InvalidSourceException;
 use DocxTemplate\Exception\Lexer\SyntaxError;
-use DocxTemplate\Tests\Lexer\Common\AstNodeTrait;
-use DocxTemplate\Tests\Lexer\Common\ReaderTrait;
+use DocxTemplate\Tests\Common\NodeTrait;
+use DocxTemplate\Tests\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
 
 class ImageSizeParserTest extends TestCase
 {
     use ReaderTrait;
-    use AstNodeTrait;
+    use NodeTrait;
 
     /**
      * @dataProvider positiveProvider

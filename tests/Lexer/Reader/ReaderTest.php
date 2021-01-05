@@ -6,7 +6,7 @@ namespace DocxTemplate\Tests\Lexer\Reader;
 
 use DocxTemplate\Exception\Lexer\InvalidSourceException;
 use DocxTemplate\Lexer\Reader\ReadResult;
-use DocxTemplate\Tests\Lexer\Common\ReaderTrait;
+use DocxTemplate\Tests\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
 
 class ReaderTest extends TestCase

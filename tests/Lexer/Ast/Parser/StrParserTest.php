@@ -9,14 +9,14 @@ use DocxTemplate\Lexer\Parser\StrParser;
 use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Exception\Lexer\InvalidSourceException;
 use DocxTemplate\Exception\Lexer\SyntaxError;
-use DocxTemplate\Tests\Lexer\Common\AstNodeTrait;
-use DocxTemplate\Tests\Lexer\Common\ReaderTrait;
+use DocxTemplate\Tests\Common\NodeTrait;
+use DocxTemplate\Tests\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
 
 class StrParserTest extends TestCase
 {
     use ReaderTrait;
-    use AstNodeTrait;
+    use NodeTrait;
 
     /**
      * @covers       \DocxTemplate\Lexer\Parser\StrParser::parse

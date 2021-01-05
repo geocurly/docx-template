@@ -4,12 +4,12 @@ namespace DocxTemplate\Tests\Lexer;
 
 use DocxTemplate\Exception\Lexer\SyntaxError;
 use DocxTemplate\Lexer\Lexer;
-use DocxTemplate\Tests\Lexer\Common\AstNodeTrait;
+use DocxTemplate\Tests\Common\NodeTrait;
 use PHPUnit\Framework\TestCase;
 
 class LexerTest extends TestCase
 {
-    use AstNodeTrait;
+    use NodeTrait;
 
     /**
      * @dataProvider getRunProvider

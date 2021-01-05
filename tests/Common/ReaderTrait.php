@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DocxTemplate\Tests\Lexer\Common;
+namespace DocxTemplate\Tests\Common;
 
 use DocxTemplate\Contract\Lexer\Reader;
 use DocxTemplate\Exception\Lexer\InvalidSourceException;
