@@ -1,4 +1,5 @@
 ![tests](https://github.com/geocurly/docx-template/workflows/tests/badge.svg?branch=main)
+[![codecov](https://codecov.io/gh/geocurly/docx-template/branch/main/graph/badge.svg?token=CHI8GSFWCT)](https://codecov.io/gh/geocurly/docx-template)
 # docx-template
 Template processor for OpenXML documents
 
