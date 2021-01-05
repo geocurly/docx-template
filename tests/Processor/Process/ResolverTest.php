@@ -14,6 +14,9 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \DocxTemplate\Processor\Process\Resolver
+ *
+ * @uses \DocxTemplate\Processor\BindStore
+ * @uses \DocxTemplate\Processor\Process\Process
  */
 class ResolverTest extends TestCase
 {
