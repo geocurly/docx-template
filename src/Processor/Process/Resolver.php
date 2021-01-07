@@ -16,19 +16,17 @@ use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Contract\Ast\Identity;
 use DocxTemplate\Contract\Processor\Bind\Bind;
 use DocxTemplate\Contract\Processor\Bind\Filter;
-use DocxTemplate\Contract\Processor\Bind\ParametersAware;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
-use DocxTemplate\Exception\Processor\BindException;
+use DocxTemplate\Contract\Processor\BindFactory;
 use DocxTemplate\Exception\Processor\TemplateException;
-use DocxTemplate\Processor\BindStore;
 
 class Resolver
 {
-    private BindStore $store;
+    private BindFactory $factory;
 
-    public function __construct(BindStore $store)
+    public function __construct(BindFactory $factory)
     {
-        $this->store = $store;
+        $this->factory = $factory;
     }
 
     public function solve(Node $node): string
@@ -68,7 +66,11 @@ class Resolver
 
     private function filter(FilterExpression $filterExpression): string
     {
-        $filter = $this->buildBind($filterExpression->getRight(), $this->store->get($filterExpression));
+        $filter = $this->buildBind(
+            $filterExpression->getRight(),
+            $this->factory->filter($filterExpression->getId())
+        );
+
         $target = $this->solve($filterExpression->getLeft());
 
         return $filter->filter($target);
@@ -100,8 +102,11 @@ class Resolver
 
     private function id(Identity $identity): string
     {
-        $id = $this->store->get($identity);
-        $this->buildBind($identity, $this->store->get($identity));
+        $id = $this->buildBind(
+            $identity,
+            $this->factory->valuable($identity->getId())
+        );
+
         return $id->getValue();
     }
 
@@ -132,10 +137,7 @@ class Resolver
             }
         }
 
-        if ($bind instanceof ParametersAware) {
-            $bind->setParams(...$params);
-        }
-
+        $bind->setParams(...$params);
         return $bind;
     }
 

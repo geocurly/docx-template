@@ -6,18 +6,18 @@ namespace DocxTemplate\Processor\Process;
 
 use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Contract\Lexer\Lexer;
+use DocxTemplate\Contract\Processor\BindFactory;
 use DocxTemplate\Exception\Lexer\SyntaxError;
 use DocxTemplate\Exception\Processor\TemplateException;
-use DocxTemplate\Processor\BindStore;
 
 class Process
 {
-    private BindStore $store;
+    private BindFactory $factory;
     private Lexer $lexer;
 
-    public function __construct(BindStore $store, Lexer $lexer)
+    public function __construct(BindFactory $factory, Lexer $lexer)
     {
-        $this->store = $store;
+        $this->factory = $factory;
         $this->lexer = $lexer;
     }
 
@@ -31,7 +31,7 @@ class Process
      */
     public function run(string $content): string
     {
-        $resolver = new Resolver($this->store);
+        $resolver = new Resolver($this->factory);
         /** @var Node $node */
         foreach ($this->lexer->run() as $node) {
             $content = substr_replace(

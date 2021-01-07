@@ -11,4 +11,10 @@ interface Bind
      * @return string
      */
     public function getId(): string;
+
+    /**
+     * Set some params to entity
+     * @param string ...$params
+     */
+    public function setParams(string ...$params): void;
 }

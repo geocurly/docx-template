@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Processor;
 
+use DocxTemplate\Contract\Processor\BindFactory;
 use DocxTemplate\Exception\Lexer\SyntaxError;
 use DocxTemplate\Exception\Processor\ResourceOpenException;
 use DocxTemplate\Exception\Processor\TemplateException;
@@ -16,18 +17,18 @@ use Psr\Http\Message\StreamInterface;
 class TemplateProcessor
 {
     private Docx $docx;
-    private BindStore $store;
+    private BindFactory $factory;
 
     /**
      * TemplateProcessor constructor.
      * @param string $source
-     * @param BindStore $store
+     * @param BindFactory $factory
      * @throws ResourceOpenException
      */
-    public function __construct(string $source, BindStore $store)
+    public function __construct(string $source, BindFactory $factory)
     {
         $this->docx = new Docx($source);
-        $this->store = $store;
+        $this->factory = $factory;
     }
 
     /**
@@ -64,7 +65,7 @@ class TemplateProcessor
     private function process(string $name, Relations $relations) /*: string|StreamInterface */
     {
         $content = $this->docx->get($name);
-        $process = new Process($this->store, new Lexer($content));
+        $process = new Process($this->factory, new Lexer($content));
         return $process->run($content);
     }
 }
