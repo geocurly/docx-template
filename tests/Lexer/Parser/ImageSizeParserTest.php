@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DocxTemplate\Tests\Lexer\Ast\Parser;
+namespace DocxTemplate\Tests\Lexer\Parser;
 
 use DocxTemplate\Ast\Node\Identity;
 use DocxTemplate\Ast\Node\ImageSize;

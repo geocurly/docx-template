@@ -1,6 +1,6 @@
 <?php
 
-namespace DocxTemplate\Tests\Lexer\Ast\Parser;
+namespace DocxTemplate\Tests\Lexer\Parser;
 
 use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Exception\Lexer\InvalidSourceException;

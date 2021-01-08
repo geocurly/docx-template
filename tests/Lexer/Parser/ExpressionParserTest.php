@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DocxTemplate\Tests\Lexer\Ast\Parser;
+namespace DocxTemplate\Tests\Lexer\Parser;
 
 use DocxTemplate\Lexer\Parser\ExpressionParser;
 use DocxTemplate\Contract\Ast\Node;
