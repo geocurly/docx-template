@@ -6,6 +6,7 @@ namespace DocxTemplate\Lexer\Parser;
 
 use DocxTemplate\Ast\Node\ImageSize;
 use DocxTemplate\Ast\NodePosition;
+use DocxTemplate\Lexer\Enum\ImageDimension;
 use DocxTemplate\Lexer\Parser\Exception\EndNotFoundException;
 use DocxTemplate\Lexer\Parser\Exception\InvalidImageSizeException;
 use DocxTemplate\Contract\Ast\Node;
@@ -14,31 +15,12 @@ use DocxTemplate\Contract\Lexer\Reader;
 
 class ImageSizeParser extends Parser
 {
-    public const CM = 'cm';
-    public const MM = 'mm';
-    public const IN = 'in';
-    public const PT = 'pt';
-    public const PX = 'px';
-    public const PE = '%';
-    public const EM = 'em';
-
-    public const MEASURES = [
-        self::CM,
-        self::MM,
-        self::IN,
-        self::PT,
-        self::PX,
-        self::PE,
-        self::EM,
-    ];
-
     public const BOOLEAN = [
         'f' => false,
         'false' => false,
         't' => true,
         'true' => true,
     ];
-
 
     private IdentityInterface $identity;
 
@@ -63,7 +45,7 @@ class ImageSizeParser extends Parser
         }
 
         // TODO parse without regex
-        $points = implode('|', self::MEASURES);
+        $points = implode('|', ImageDimension::DIMENSIONS);
         $boolean = implode('|', array_keys(self::BOOLEAN));
         $first = $this->firstNotEmpty($offset);
         switch (true) {

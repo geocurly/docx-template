@@ -3,7 +3,7 @@
 use DocxTemplate\Contract\Processor\Bind\Filter;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory;
-use DocxTemplate\Processor\Process\Bind\Bind;
+use DocxTemplate\Processor\Process\Bind\ValuableBind;
 use DocxTemplate\Processor\Process\Bind\Filter\Date as DateFilter;
 use DocxTemplate\Processor\Template;
 use DocxTemplate\Processor\TemplateProcessor;
@@ -18,7 +18,7 @@ $factory = new class implements BindFactory
     public function __construct()
     {
         $this->variables['date'] = function () {
-            return new class extends Bind {
+            return new class extends ValuableBind {
 
                 public function getId(): string
                 {

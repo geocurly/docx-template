@@ -7,7 +7,7 @@ namespace DocxTemplate\Processor\Process\Bind;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 
 /** @codeCoverageIgnore  */
-abstract class Bind implements Valuable
+abstract class ValuableBind implements Valuable
 {
     use ParametersTrait;
 }

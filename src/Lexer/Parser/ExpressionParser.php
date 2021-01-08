@@ -31,7 +31,7 @@ class ExpressionParser extends Parser
         $right = $this->identity($pipe->getEnd());
         if ($right === null) {
             throw new ElementNotFoundException(
-                'Filter identity not found',
+                'FilterBind identity not found',
                 $this->read($this->getOffset(), $pipe->getEnd() + 20)
             );
         }

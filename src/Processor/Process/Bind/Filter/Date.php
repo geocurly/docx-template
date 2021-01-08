@@ -4,10 +4,10 @@ namespace DocxTemplate\Processor\Process\Bind\Filter;
 
 use DateTime;
 use DocxTemplate\Exception\Processor\BindException;
-use DocxTemplate\Processor\Process\Bind\Filter;
+use DocxTemplate\Processor\Process\Bind\FilterBind;
 use Exception;
 
-class Date extends Filter
+class Date extends FilterBind
 {
     private string $id;
 

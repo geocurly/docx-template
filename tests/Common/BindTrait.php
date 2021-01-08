@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Common;
 
-use DocxTemplate\Processor\Process\Bind\Bind;
-use DocxTemplate\Processor\Process\Bind\Filter;
+use DocxTemplate\Processor\Process\Bind\ValuableBind;
+use DocxTemplate\Processor\Process\Bind\FilterBind;
 
 trait BindTrait
 {
-    public static function filterMock(string $id, callable $function): Filter
+    public static function filterMock(string $id, callable $function): FilterBind
     {
-        return new class($id, $function) extends Filter {
+        return new class($id, $function) extends FilterBind {
             private string $id;
             private $function;
 
@@ -34,9 +34,9 @@ trait BindTrait
         };
     }
 
-    public static function valuableMock(string $id, callable $function): Bind
+    public static function valuableMock(string $id, callable $function): ValuableBind
     {
-        return new class($id, $function) extends Bind {
+        return new class($id, $function) extends ValuableBind {
             private string $id;
             private $function;
 
