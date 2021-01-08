@@ -139,35 +139,11 @@ abstract class Parser implements ParserInterface
      * Get some container
      * @param int $offset
      * @return Node|null
+     * @throws SyntaxErrorException
      */
     final protected function container(int $offset): ?Node
     {
-        $next = $this->firstNotEmpty($offset);
-        if ($next === null) {
-            return null;
-        }
-
-        switch ($next->getFound()) {
-            case self::BLOCK_START[0]:
-                // ${...something
-                return $this->block($next->getStart());
-            case self::STR_BRACE;
-                // `...something
-                return $this->string($next->getStart());
-            case self::BLOCK_START_ESCAPED[0];
-                $afterEscaped = $this->read($next->getEnd(), 1);
-                if ($afterEscaped === self::BLOCK_START[0]) {
-                    return $this->block($next->getStart());
-                }
-
-                if ($afterEscaped === self::STR_BRACE[0]) {
-                    return $this->string($next->getStart());
-                }
-
-                return null;
-            default:
-                return null;
-        }
+        return (new ContainerParser($this->reader, $offset))->parse();
     }
 
     /**
