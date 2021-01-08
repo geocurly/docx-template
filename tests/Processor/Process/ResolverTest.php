@@ -106,7 +106,7 @@ class ResolverTest extends TestCase
             {
                 switch ($name) {
                     case 'date':
-                        return new Date();
+                        return new Date($name);
                     default:
                         throw new \RuntimeException();
                 }

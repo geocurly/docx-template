@@ -9,10 +9,20 @@ use Exception;
 
 class Date extends Filter
 {
-    /** @inheritdoc  */
+    private string $id;
+
+    public function __construct(string $id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @inheritdoc
+     * @codeCoverageIgnore
+     */
     public function getId(): string
     {
-        return 'date';
+        return $this->id;
     }
 
     /** @inheritdoc  */

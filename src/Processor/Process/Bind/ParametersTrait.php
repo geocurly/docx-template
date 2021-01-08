@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Processor\Process\Bind;
 
+/** @codeCoverageIgnore  */
 trait ParametersTrait /* implements ParametersAware */
 {
     private array $params = [];

@@ -33,7 +33,7 @@ $factory = new class implements BindFactory
         };
 
         $this->filters['date'] = function () {
-            return new DateFilter();
+            return new DateFilter('date');
         };
     }
 
