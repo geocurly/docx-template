@@ -8,7 +8,7 @@ use DocxTemplate\Ast\Node\FilterExpression;
 use DocxTemplate\Lexer\Parser\Exception\ElementNotFoundException;
 use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Contract\Lexer\Reader;
-use DocxTemplate\Exception\Lexer\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 
 class ExpressionParser extends Parser
 {

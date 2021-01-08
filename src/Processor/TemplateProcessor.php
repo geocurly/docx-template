@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace DocxTemplate\Processor;
 
 use DocxTemplate\Contract\Processor\BindFactory;
-use DocxTemplate\Exception\Lexer\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 use DocxTemplate\Exception\Processor\ResourceOpenException;
 use DocxTemplate\Exception\Processor\TemplateException;
 use DocxTemplate\Lexer\Lexer;
@@ -35,7 +35,7 @@ class TemplateProcessor
      * Run template processing
      *
      * @return iterable
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      * @throws TemplateException
      */
     public function run(): iterable
@@ -60,7 +60,7 @@ class TemplateProcessor
      * @param Relations $relations
      * @return string|StreamInterface
      * @throws ResourceOpenException
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      */
     private function process(string $name, Relations $relations) /*: string|StreamInterface */
     {

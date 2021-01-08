@@ -10,7 +10,7 @@ use DocxTemplate\Lexer\Parser\Exception\EndNotFoundException;
 use DocxTemplate\Lexer\Parser\Exception\InvalidImageSizeException;
 use DocxTemplate\Lexer\Parser\ImageSizeParser;
 use DocxTemplate\Exception\Lexer\InvalidSourceException;
-use DocxTemplate\Exception\Lexer\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 use DocxTemplate\Tests\Common\NodeTrait;
 use DocxTemplate\Tests\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
@@ -30,7 +30,7 @@ class ImageSizeParserTest extends TestCase
      * @param Identity $id
      * @param ImageSize|null $size
      * @throws InvalidSourceException
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      */
     public function testParsePositive(string $content, Identity $id, ?ImageSize $size): void
     {
@@ -131,7 +131,7 @@ class ImageSizeParserTest extends TestCase
      * @param Identity $identity
      * @param string $exception
      * @throws InvalidSourceException
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      */
     public function testParseNegative(string $content, Identity $identity, string $exception): void
     {

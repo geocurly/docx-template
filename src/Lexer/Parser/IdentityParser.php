@@ -12,7 +12,7 @@ use DocxTemplate\Lexer\Parser\Exception\EndNotFoundException;
 use DocxTemplate\Lexer\Parser\Exception\UnexpectedCharactersException;
 use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Contract\Lexer\Reader;
-use DocxTemplate\Exception\Lexer\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 
 class IdentityParser extends Parser
 {
@@ -23,7 +23,7 @@ class IdentityParser extends Parser
         
         $start = $this->firstNotEmpty($offset);
         if ($start === null) {
-            throw new SyntaxError("Couldn't find start of the identity");
+            throw new SyntaxErrorException("Couldn't find start of the identity");
         }
 
         $end = $this->findAnyOrEmpty(

@@ -7,7 +7,7 @@ namespace DocxTemplate\Processor\Process;
 use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Contract\Lexer\Lexer;
 use DocxTemplate\Contract\Processor\BindFactory;
-use DocxTemplate\Exception\Lexer\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 use DocxTemplate\Exception\Processor\TemplateException;
 
 class Process
@@ -26,7 +26,7 @@ class Process
      *
      * @param string $content
      * @return string
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      * @throws TemplateException
      */
     public function run(string $content): string

@@ -2,7 +2,7 @@
 
 namespace DocxTemplate\Tests\Lexer;
 
-use DocxTemplate\Exception\Lexer\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 use DocxTemplate\Lexer\Lexer;
 use DocxTemplate\Tests\Common\NodeTrait;
 use PHPUnit\Framework\TestCase;
@@ -18,7 +18,7 @@ class LexerTest extends TestCase
      * @dataProvider getRunProvider
      * @param $content
      * @param array $blocks
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      */
     public function testSimpleParse($content, array $blocks): void
     {

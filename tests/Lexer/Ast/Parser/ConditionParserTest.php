@@ -7,7 +7,7 @@ namespace DocxTemplate\Tests\Lexer\Ast\Parser;
 use DocxTemplate\Lexer\Parser\ConditionParser;
 use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Exception\Lexer\InvalidSourceException;
-use DocxTemplate\Exception\Lexer\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 use DocxTemplate\Tests\Common\NodeTrait;
 use DocxTemplate\Tests\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +27,7 @@ class ConditionParserTest extends TestCase
      * @param Node $if
      * @param Node|null $expected
      * @throws InvalidSourceException
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      */
     public function testParsePositive(string $content, Node $if, ?Node $expected): void
     {

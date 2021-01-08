@@ -18,7 +18,7 @@ use DocxTemplate\Contract\Processor\Bind\Bind;
 use DocxTemplate\Contract\Processor\Bind\Filter;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory;
-use DocxTemplate\Exception\Processor\TemplateException;
+use DocxTemplate\Exception\Processor\NodeException;
 
 class Resolver
 {
@@ -32,14 +32,14 @@ class Resolver
     public function solve(Node $node): string
     {
         switch (true) {
+            case $node instanceof EscapedBlock:
+                return $this->escapedBlock($node);
             case $node instanceof Block:
                 return $this->block($node);
             case $node instanceof FilterExpression:
                 return $this->filter($node);
             case $node instanceof Condition:
                 return $this->condition($node);
-            case $node instanceof EscapedBlock:
-                return $this->escapedBlock($node);
             case $node instanceof EscapedChar:
                 return $this->escapedChar($node);
             case $node instanceof Str:
@@ -50,7 +50,7 @@ class Resolver
             case $node instanceof Identity:
                 return $this->id($node);
             default:
-                throw new TemplateException("Unknown node to visit: " . get_class($node));
+                throw new NodeException("Unknown node to resolve: " . get_class($node));
         }
     }
 
@@ -126,7 +126,7 @@ class Resolver
      * @param Identity $node
      * @param Bind $bind
      * @return Bind|Filter|Valuable
-     * @throws TemplateException
+     * @throws NodeException
      */
     private function buildBind(Identity $node, Bind $bind): Bind
     {

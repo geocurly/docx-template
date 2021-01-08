@@ -16,7 +16,7 @@ use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Contract\Ast\Parser as ParserInterface;
 use DocxTemplate\Contract\Ast\Identity as IdentityInterface;
 use DocxTemplate\Contract\Lexer\Reader;
-use DocxTemplate\Exception\Lexer\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 use DocxTemplate\Lexer\Reader\ReadResult;
 
 /** @codeCoverageIgnore  */
@@ -118,7 +118,7 @@ abstract class Parser implements ParserInterface
      *
      * @param Node $left
      * @return Expression|null
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      */
     final protected function expressionChain(Node $left): ?Expression
     {
@@ -186,7 +186,7 @@ abstract class Parser implements ParserInterface
      *
      * @param int $offset
      * @return Node|Identity|null
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      */
     final protected function identity(int $offset): ?Node
     {
@@ -198,7 +198,7 @@ abstract class Parser implements ParserInterface
      *
      * @param IdentityInterface $id
      * @return Node|Image|null
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      */
     final protected function image(IdentityInterface $id): ?Image
     {
@@ -211,7 +211,7 @@ abstract class Parser implements ParserInterface
      *
      * @param IdentityInterface $identity
      * @return Node|ImageSize|null
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      */
     final protected function imageSize(IdentityInterface $identity): ?ImageSize
     {
@@ -223,7 +223,7 @@ abstract class Parser implements ParserInterface
      *
      * @param int $offset
      * @return Node|Str|null
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      */
     final protected function string(int $offset): ?Str
     {
@@ -235,7 +235,7 @@ abstract class Parser implements ParserInterface
      *
      * @param int $offset
      * @return Block|Node|null
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      */
     final protected function block(int $offset): ?Block
     {
@@ -247,7 +247,7 @@ abstract class Parser implements ParserInterface
      *
      * @param int $offset
      * @return Node
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      */
     final protected function nested(int $offset): ?Node
     {
@@ -259,7 +259,7 @@ abstract class Parser implements ParserInterface
      *
      * @param Node $if
      * @return Node|Condition|null
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      */
     final protected function condition(Node $if): ?Condition
     {
@@ -271,7 +271,7 @@ abstract class Parser implements ParserInterface
      *
      * @param Node $left
      * @return Node|Expression|null
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      */
     private function expression(Node $left): ?Expression
     {

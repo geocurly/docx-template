@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Processor\Process;
 
+use DocxTemplate\Ast\NodePosition;
 use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Contract\Processor\Bind\Filter;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory as Factory;
+use DocxTemplate\Exception\Processor\NodeException;
 use DocxTemplate\Exception\Processor\TemplateException;
 use DocxTemplate\Processor\Process\Bind\Filter\Date;
 use DocxTemplate\Processor\Process\Resolver;
@@ -34,13 +36,38 @@ class ResolverTest extends TestCase
      * @param string $expected
      * @throws TemplateException
      */
-    public function testSolve(Node $node, string $expected): void
+    public function testSolvePositive(Node $node, string $expected): void
     {
         $resolver = new Resolver($this->factory());
         self::assertEquals(
             $expected,
             $resolver->solve($node),
             "Try to solve " . get_class($node) . " with value: $expected."
+        );
+    }
+
+    public function testSolveNegative(): void
+    {
+        $resolver = new Resolver($this->factory());
+        self::expectException(NodeException::class);
+        $resolver->solve(
+            new class implements Node {
+
+                public function getPosition(): NodePosition
+                {
+                    return new NodePosition(0, 0);
+                }
+
+                public function getType(): string
+                {
+                    return 'Stub';
+                }
+
+                public function toArray(): array
+                {
+                    return [];
+                }
+            }
         );
     }
 
@@ -51,6 +78,10 @@ class ResolverTest extends TestCase
             $this->getCallableBind(),
             $this->getSimpleBlockBind(),
             $this->getFilterChain(),
+            $this->getTrueCondition(),
+            $this->getFalseCondition(),
+            $this->getEscapedBlock(),
+            $this->getEscapedChar(),
         ];
     }
 
@@ -63,9 +94,9 @@ class ResolverTest extends TestCase
             {
                 switch ($name) {
                     case 'var':
-                        return self::valuableBind('var', fn() => 'value_1');
+                        return self::valuableMock('var', fn() => 'value_1');
                     case 'join':
-                        return self::valuableBind('join', fn(...$params) => implode('', $params));
+                        return self::valuableMock('join', fn(...$params) => implode('', $params));
                     default:
                         throw new \RuntimeException();
                 }
@@ -146,6 +177,59 @@ class ResolverTest extends TestCase
                 )
             ),
             '17-01-1993'
+        ];
+    }
+
+    private function getTrueCondition(): array
+    {
+        return [
+            // var ? var : ``
+            self::cond(
+                self::id('var', 0 ,3),
+                self::id('var', 6 ,3),
+                self::str(12, 2, '``')
+            ),
+            self::TEST_VALUE_1
+        ];
+    }
+
+    private function getFalseCondition(): array
+    {
+        return [
+            // `` ?: var
+            self::cond(
+                self::str(0, 2, '``'),
+                self::str(0, 2, '``'),
+                self::id('var', 6 ,3),
+            ),
+            self::TEST_VALUE_1
+        ];
+    }
+
+    private function getEscapedBlock(): array
+    {
+        return [
+            // \${ var }
+            self::escapedBlock(
+                0,
+                9,
+                '\\${ var }',
+                self::id('var', 4, 3)
+            ),
+            '${ var }'
+        ];
+    }
+
+    private function getEscapedChar(): array
+    {
+        return [
+            // \`
+            self::escaped(
+                0,
+                2,
+                '\\`'
+            ),
+            '`'
         ];
     }
 }

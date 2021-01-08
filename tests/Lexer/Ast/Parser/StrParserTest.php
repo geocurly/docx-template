@@ -8,7 +8,7 @@ use DocxTemplate\Lexer\Parser\Exception\EndNotFoundException;
 use DocxTemplate\Lexer\Parser\StrParser;
 use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Exception\Lexer\InvalidSourceException;
-use DocxTemplate\Exception\Lexer\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 use DocxTemplate\Tests\Common\NodeTrait;
 use DocxTemplate\Tests\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +27,7 @@ class StrParserTest extends TestCase
      * @param string $content
      * @param int $pos
      * @param Node|null $expected
-     * @throws InvalidSourceException|SyntaxError
+     * @throws InvalidSourceException|SyntaxErrorException
      */
     public function testParsePositive(string $content, int $pos, ?Node $expected): void
     {

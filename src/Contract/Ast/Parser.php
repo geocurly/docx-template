@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Contract\Ast;
 
-use DocxTemplate\Exception\Lexer\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 
 interface Parser
 {
@@ -13,7 +13,7 @@ interface Parser
      *
      * @return Node|null
      *
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      */
     public function parse(): ?Node;
 }

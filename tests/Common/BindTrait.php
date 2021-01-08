@@ -9,7 +9,7 @@ use DocxTemplate\Processor\Process\Bind\Filter;
 
 trait BindTrait
 {
-    public static function filterBind(string $id, callable $function): Filter
+    public static function filterMock(string $id, callable $function): Filter
     {
         return new class($id, $function) extends Filter {
             private string $id;
@@ -34,7 +34,7 @@ trait BindTrait
         };
     }
 
-    public static function valuableBind(string $id, callable $function): Bind
+    public static function valuableMock(string $id, callable $function): Bind
     {
         return new class($id, $function) extends Bind {
             private string $id;

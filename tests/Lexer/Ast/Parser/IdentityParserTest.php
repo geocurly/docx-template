@@ -9,7 +9,7 @@ use DocxTemplate\Lexer\Parser\Exception\UnexpectedCharactersException;
 use DocxTemplate\Lexer\Parser\IdentityParser;
 use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Exception\Lexer\InvalidSourceException;
-use DocxTemplate\Exception\Lexer\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 use DocxTemplate\Tests\Common\NodeTrait;
 use DocxTemplate\Tests\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
@@ -28,7 +28,7 @@ class IdentityParserTest extends TestCase
      * @param string $content
      * @param int $pos
      * @param Node|null $expected
-     * @throws InvalidSourceException|SyntaxError
+     * @throws InvalidSourceException|SyntaxErrorException
      */
     public function testParsePositive(string $content, int $pos, ?Node $expected): void
     {
@@ -125,7 +125,7 @@ class IdentityParserTest extends TestCase
     {
         return [
             ['${identity', 3, EndNotFoundException::class],
-            ['   ', 0, SyntaxError::class],
+            ['   ', 0, SyntaxErrorException::class],
             ['${ {identity} }', 3, UnexpectedCharactersException::class],
             ['${ ident`ity }', 3, UnexpectedCharactersException::class],
         ];

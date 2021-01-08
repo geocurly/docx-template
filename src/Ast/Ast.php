@@ -7,7 +7,7 @@ namespace DocxTemplate\Ast;
 use ArrayIterator;
 use DocxTemplate\Lexer\Parser\BlockParser;
 use DocxTemplate\Contract\Lexer\Reader;
-use DocxTemplate\Exception\Lexer\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 use IteratorAggregate;
 use Traversable;
 
@@ -26,7 +26,7 @@ class Ast implements IteratorAggregate
      * Build Abstract Syntax Tree
      *
      * @return $this
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      */
     public function build(): self
     {

@@ -9,7 +9,7 @@ use DocxTemplate\Ast\Node\EscapedBlock;
 use DocxTemplate\Ast\NodePosition;
 use DocxTemplate\Lexer\Parser\Exception\EndNotFoundException;
 use DocxTemplate\Contract\Ast\Node;
-use DocxTemplate\Exception\Lexer\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 
 class BlockParser extends Parser
 {
@@ -24,7 +24,7 @@ class BlockParser extends Parser
 
         $first = $this->nested($open->getEnd());
         if ($first === null) {
-            throw new SyntaxError("Couldn't resolve nested construction in block");
+            throw new SyntaxErrorException("Couldn't resolve nested construction in block");
         }
 
         $condition = $this->condition($first);
@@ -47,12 +47,12 @@ class BlockParser extends Parser
 
             if ($condition !== null) {
                 $preview = $this->read($open->getStart(), $nextChar->getEnd());
-                throw new SyntaxError("Condition must be single construction in block", $preview);
+                throw new SyntaxErrorException("Condition must be single construction in block", $preview);
             }
 
             $next = $this->nested($nextChar->getStart());
             if ($next === null) {
-                throw new SyntaxError("Couldn't resolve nested construction in block");
+                throw new SyntaxErrorException("Couldn't resolve nested construction in block");
             }
 
             $nested[] = $next;

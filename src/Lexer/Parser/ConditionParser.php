@@ -8,7 +8,7 @@ use DocxTemplate\Ast\Node\Condition;
 use DocxTemplate\Lexer\Parser\Exception\InvalidImageSizeException;
 use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Contract\Lexer\Reader;
-use DocxTemplate\Exception\Lexer\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 
 class ConditionParser extends Parser
 {
@@ -38,7 +38,7 @@ class ConditionParser extends Parser
             // ${ $if ? `string` ...} or ${ $if ? ${block} ... } or ${ $if ? name ... }
             $then = $this->then($thenChar->getEnd());
             if ($then === null) {
-                throw new SyntaxError(
+                throw new SyntaxErrorException(
                     "Couldn't resolve 'then' condition",
                     $this->read($if->getPosition()->getStart(), $thenChar->getEnd() + 10)
                 );
@@ -47,7 +47,7 @@ class ConditionParser extends Parser
             // $if ? $then ...
             $elseChar = $this->firstNotEmpty($then->getPosition()->getEnd());
             if ($elseChar === null || $elseChar->getFound() !== self::COND_ELSE) {
-                throw new SyntaxError(
+                throw new SyntaxErrorException(
                     "Couldn't find ':' in ternary operator",
                     $this->read($if->getPosition()->getStart(), $then->getPosition()->getEnd() + 10)
                 );
@@ -56,7 +56,7 @@ class ConditionParser extends Parser
 
         $else = $this->nested($elseChar->getEnd());
         if ($else === null) {
-            throw new SyntaxError('Could\'t resolve "else" condition.');
+            throw new SyntaxErrorException('Could\'t resolve "else" condition.');
         }
 
         return new Condition($if, $then, $else);
@@ -67,7 +67,7 @@ class ConditionParser extends Parser
      *
      * @param int $offset
      * @return Node|null
-     * @throws SyntaxError
+     * @throws SyntaxErrorException
      */
     private function then(int $offset): ?Node
     {

@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Lexer\Parser\Exception;
 
-use DocxTemplate\Exception\Lexer\SyntaxError;
+use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 
-/** @codeCoverageIgnore  */
-class UnexpectedCharactersException extends SyntaxError
+class UnexpectedCharactersException extends SyntaxErrorException
 {
     protected $message = "Unexpected characters were found";
 }

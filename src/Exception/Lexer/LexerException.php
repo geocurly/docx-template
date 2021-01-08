@@ -6,7 +6,6 @@ namespace DocxTemplate\Exception\Lexer;
 
 use Exception;
 
-/** @codeCoverageIgnore  */
 class LexerException extends Exception
 {
 
