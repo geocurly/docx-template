@@ -115,9 +115,14 @@ class ResolverTest extends TestCase
         };
     }
 
-    private function relations()
+    private function relations(): Relations
     {
-        return new Relations('document.rels.xml', '');
+        $xml  = <<<XML
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>
+        XML;
+
+        return new Relations('document.rels.xml', $xml);
     }
 
     private function getSimpleBind(): array
