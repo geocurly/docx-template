@@ -10,21 +10,6 @@ use DocxTemplate\Lexer\Enum\ImageDimension;
 /** @codeCoverageIgnore  */
 abstract class ImageBind extends ValuableBind
 {
-    private const TEMPLATE = <<<XML
-    <w:pict>
-       <v:shape type="#_x0000_t75" style="width:%s;height:%s">
-            <v:imagedata r:id="%s" o:title=""/>
-        </v:shape>
-    </w:pict>
-    XML;
-
-    private const MIMES = [
-        'image/jpeg' => 'jpeg',
-        'image/png'  => 'png',
-        'image/bmp'  => 'bmp',
-        'image/gif'  => 'gif',
-    ];
-
     private ?string $width = null;
 
     private ?string $height = null;
@@ -39,7 +24,7 @@ abstract class ImageBind extends ValuableBind
      * @return $this
      * @throws BindException
      */
-    final public function setWidth(int $width, string $dimension): self
+    final public function setWidth(int $width, string $dimension = ImageDimension::PX): self
     {
         if (!in_array($dimension, ImageDimension::DIMENSIONS, true)) {
             throw new BindException("Invalid height dimension: $dimension");
@@ -57,7 +42,7 @@ abstract class ImageBind extends ValuableBind
      * @return $this
      * @throws BindException
      */
-    final public function setHeight(int $height, string $dimension): self
+    final public function setHeight(int $height, string $dimension = ImageDimension::PX): self
     {
         if (!in_array($dimension, ImageDimension::DIMENSIONS, true)) {
             throw new BindException("Invalid height dimension: $dimension");

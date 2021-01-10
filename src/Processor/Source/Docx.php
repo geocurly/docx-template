@@ -8,7 +8,7 @@ use DocxTemplate\Exception\Processor\ResourceOpenException;
 use DocxTemplate\Exception\Processor\TemplateException;
 use ZipArchive;
 
-class Docx
+final class Docx
 {
     private ZipArchive $zip;
     private array $files = [];

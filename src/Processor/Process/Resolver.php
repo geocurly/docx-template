@@ -19,14 +19,18 @@ use DocxTemplate\Contract\Processor\Bind\Filter;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory;
 use DocxTemplate\Exception\Processor\NodeException;
+use DocxTemplate\Processor\Source\Relation;
+use DocxTemplate\Processor\Source\Relations;
 
 class Resolver
 {
     private BindFactory $factory;
+    private Relations $relations;
 
-    public function __construct(BindFactory $factory)
+    public function __construct(BindFactory $factory, Relations $relations)
     {
         $this->factory = $factory;
+        $this->relations = $relations;
     }
 
     public function solve(Node $node): string
@@ -97,7 +101,23 @@ class Resolver
 
     private function image(Image $image): string
     {
-        // TODO: Implement visitImage() method.
+        $id = $image->getIdentity();
+        $bind = $this->buildBind($id, $this->factory->valuable($id->getId()));
+
+        $imageUrl = $bind->getValue();
+        if ($this->isEmpty($imageUrl)) {
+            return '';
+        }
+
+        $relation = new Relation(
+            $imageUrl,
+            $this->relations->getNextId(),
+            "media/image.png",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image"
+        );
+
+        $this->relations->add($relation);
+        return '';
     }
 
     private function id(Identity $identity): string

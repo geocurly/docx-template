@@ -65,7 +65,7 @@ class TemplateProcessor
     private function process(string $name, Relations $relations) /*: string|StreamInterface */
     {
         $content = $this->docx->get($name);
-        $process = new Process($this->factory, new Lexer($content));
+        $process = new Process($this->factory, new Lexer($content), $relations);
         return $process->run($content);
     }
 }

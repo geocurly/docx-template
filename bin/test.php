@@ -3,6 +3,7 @@
 use DocxTemplate\Contract\Processor\Bind\Filter;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory;
+use DocxTemplate\Processor\Process\Bind\ImageBind;
 use DocxTemplate\Processor\Process\Bind\ValuableBind;
 use DocxTemplate\Processor\Process\Bind\Filter\Date as DateFilter;
 use DocxTemplate\Processor\Template;
@@ -14,6 +15,7 @@ $factory = new class implements BindFactory
 {
     private array $filters = [];
     private array $variables = [];
+    private array $images = [];
 
     public function __construct()
     {
@@ -34,6 +36,21 @@ $factory = new class implements BindFactory
 
         $this->filters['date'] = function () {
             return new DateFilter('date');
+        };
+
+        $this->variables['img'] = function () {
+            return new class extends ImageBind {
+
+                public function getId(): string
+                {
+                    return 'img';
+                }
+
+                public function getValue(): string
+                {
+                    return 'image.png';
+                }
+            };
         };
     }
 

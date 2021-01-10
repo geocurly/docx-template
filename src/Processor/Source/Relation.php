@@ -5,17 +5,19 @@ declare(strict_types=1);
 namespace DocxTemplate\Processor\Source;
 
 /** @codeCoverageIgnore  */
-class Relation
+final class Relation
 {
     private string $id;
     private string $target;
     private string $type;
+    private string $url;
 
-    public function __construct(string $id, string $target, string $type)
+    public function __construct(string $url, string $id, string $target, string $type)
     {
         $this->id = $id;
         $this->target = $target;
         $this->type = $type;
+        $this->url = $url;
     }
 
     /**
@@ -43,5 +45,14 @@ class Relation
     public function getType(): string
     {
         return $this->type;
+    }
+
+    /**
+     * Original url of relation
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        return $this->url;
     }
 }
