@@ -14,7 +14,7 @@ abstract class ImageBind extends ValuableBind
 
     private ?string $height = null;
 
-    private ?bool $isSaveRatio = true;
+    private ?bool $isSaveRatio = null;
 
     /**
      * Set width value
@@ -66,27 +66,27 @@ abstract class ImageBind extends ValuableBind
 
     /**
      * Get image width
-     * @return string
+     * @return string|null
      */
-    final public function getWidth(): string
+    final public function getWidth(): ?string
     {
         return $this->width;
     }
 
     /**
      * Get image height
-     * @return string
+     * @return string|null
      */
-    final public function getHeight(): string
+    final public function getHeight(): ?string
     {
         return $this->height;
     }
 
     /**
      * Is need save image ratio
-     * @return bool
+     * @return bool|null
      */
-    final public function isSaveRatio(): bool
+    final public function isSaveRatio(): ?bool
     {
         return $this->isSaveRatio;
     }

@@ -10,6 +10,7 @@ use DocxTemplate\Exception\Processor\ResourceOpenException;
 use DocxTemplate\Exception\Processor\TemplateException;
 use DocxTemplate\Lexer\Lexer;
 use DocxTemplate\Processor\Process\Process;
+use DocxTemplate\Processor\Source\ContentTypes;
 use DocxTemplate\Processor\Source\Docx;
 use DocxTemplate\Processor\Source\Relations;
 use Psr\Http\Message\StreamInterface;
@@ -40,11 +41,12 @@ class TemplateProcessor
      */
     public function run(): iterable
     {
+        $types = $this->docx->getContentTypes();
         foreach ($this->docx->getRelations() as $main => $relations) {
-            yield $main => $this->process($main, $relations);
+            yield $main => $this->process($main, $relations, $types);
 
             foreach ($relations->getFiles() as $file) {
-                yield $file => $this->process($file, $relations);
+                yield $file => $this->process($file, $relations, $types);
             }
 
             yield $relations->getName() => $relations->getXml();
@@ -58,14 +60,22 @@ class TemplateProcessor
      *
      * @param string $name file to process
      * @param Relations $relations
+     * @param ContentTypes $types
      * @return string|StreamInterface
      * @throws ResourceOpenException
      * @throws SyntaxErrorException
+     * @throws TemplateException
      */
-    private function process(string $name, Relations $relations) /*: string|StreamInterface */
+    private function process(string $name, Relations $relations, ContentTypes $types) /*: string|StreamInterface */
     {
         $content = $this->docx->get($name);
-        $process = new Process($this->factory, new Lexer($content), $relations);
+        $process = new Process(
+            $this->factory,
+            new Lexer($content),
+            $relations,
+            $types
+        );
+
         return $process->run($content);
     }
 }

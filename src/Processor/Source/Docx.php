@@ -36,7 +36,7 @@ final class Docx
      * @return iterable
      * @throws TemplateException
      */
-    public function getRelations(): iterable
+     public function getRelations(): iterable
     {
         foreach ($this->files ?? [] as $name => $_) {
             if (strpos($name, 'word/_rels/') === false) {
@@ -50,6 +50,16 @@ final class Docx
 
             yield "word/$main" => new Relations($name, $this->get($name));
         }
+    }
+
+    /**
+     * Get content types file
+     * @return ContentTypes
+     * @throws ResourceOpenException
+     */
+    public function getContentTypes(): ContentTypes
+    {
+        return new ContentTypes('[Content_Types].xml', $this->get('[Content_Types].xml'));
     }
 
     /**

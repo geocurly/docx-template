@@ -35,6 +35,11 @@ final class Image extends Node
         return $this->identity;
     }
 
+    public function getSize(): ImageSize
+    {
+        return $this->size;
+    }
+
     /** @inheritdoc  */
     public function toArray(): array
     {

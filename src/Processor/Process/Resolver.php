@@ -19,6 +19,9 @@ use DocxTemplate\Contract\Processor\Bind\Filter;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory;
 use DocxTemplate\Exception\Processor\NodeException;
+use DocxTemplate\Processor\Process\Bind\ImageBind;
+use DocxTemplate\Processor\Source\ContentTypes;
+use DocxTemplate\Processor\Source\Image as ImageSource;
 use DocxTemplate\Processor\Source\Relation;
 use DocxTemplate\Processor\Source\Relations;
 
@@ -26,11 +29,13 @@ class Resolver
 {
     private BindFactory $factory;
     private Relations $relations;
+    private ContentTypes $types;
 
-    public function __construct(BindFactory $factory, Relations $relations)
+    public function __construct(BindFactory $factory, Relations $relations, ContentTypes $types)
     {
         $this->factory = $factory;
         $this->relations = $relations;
+        $this->types = $types;
     }
 
     public function solve(Node $node): string
@@ -48,8 +53,6 @@ class Resolver
                 return $this->escapedChar($node);
             case $node instanceof Str:
                 return $this->str($node);
-            case $node instanceof Image:
-                return $this->image($node);
             case $node instanceof Call:
             case $node instanceof Identity:
                 return $this->id($node);
@@ -104,19 +107,32 @@ class Resolver
         $id = $image->getIdentity();
         $bind = $this->buildBind($id, $this->factory->valuable($id->getId()));
 
-        $imageUrl = $bind->getValue();
-        if ($this->isEmpty($imageUrl)) {
+        $value = $bind->getValue();
+        if (!$bind instanceof ImageBind) {
+            return $value;
+        }
+
+        if ($this->isEmpty($value)) {
             return '';
         }
 
         $relation = new Relation(
-            $imageUrl,
+            $value,
             $this->relations->getNextId(),
             "media/image.png",
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image"
         );
 
+        $size = $image->getSize();
+        $image = new ImageSource(
+            $relation,
+            $bind->getWidth() ?? $size->getWidth(),
+            $bind->getHeight() ?? $size->getHeight(),
+            $bind->isSaveRatio() ?? $size->isSaveRatio() ?? false
+        );
+
         $this->relations->add($relation);
+        $this->types->add($relation);
         return '';
     }
 

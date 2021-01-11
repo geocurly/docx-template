@@ -13,6 +13,7 @@ use DocxTemplate\Exception\Processor\NodeException;
 use DocxTemplate\Exception\Processor\TemplateException;
 use DocxTemplate\Processor\Process\Bind\Filter\Date;
 use DocxTemplate\Processor\Process\Resolver;
+use DocxTemplate\Processor\Source\ContentTypes;
 use DocxTemplate\Processor\Source\Relations;
 use DocxTemplate\Tests\Common\BindTrait;
 use DocxTemplate\Tests\Common\NodeTrait;
@@ -39,7 +40,7 @@ class ResolverTest extends TestCase
      */
     public function testSolvePositive(Node $node, string $expected): void
     {
-        $resolver = new Resolver($this->factory(), $this->relations());
+        $resolver = new Resolver($this->factory(), $this->relations(), $this->types());
         self::assertEquals(
             $expected,
             $resolver->solve($node),
@@ -49,7 +50,7 @@ class ResolverTest extends TestCase
 
     public function testSolveNegative(): void
     {
-        $resolver = new Resolver($this->factory(), $this->relations());
+        $resolver = new Resolver($this->factory(), $this->relations(), $this->types());
         self::expectException(NodeException::class);
         $resolver->solve(
             new class implements Node {
@@ -122,7 +123,17 @@ class ResolverTest extends TestCase
         <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>
         XML;
 
-        return new Relations('document.rels.xml', $xml);
+        return new Relations('document.xml.rels', $xml);
+    }
+
+    private function types(): ContentTypes
+    {
+        $xml  = <<<XML
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"></Types>
+        XML;
+
+        return new ContentTypes('[Content_Types].xml', $xml);
     }
 
     private function getSimpleBind(): array
