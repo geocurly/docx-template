@@ -29,6 +29,6 @@ trait ImageSourceTrait
         </w:pict>
         XML;
 
-        return preg_replace('/[\r|\n]+/', '', $xml);
+        return preg_replace('/>\s+</', '><', $xml);
     }
 }

@@ -59,7 +59,7 @@ final class Image
             $this->relation->getId(),
         );
 
-        return preg_replace('/[\r\n]+/', '', $xml);
+        return preg_replace('/>\s+</', '><', $xml);
     }
 
     /**
@@ -113,13 +113,13 @@ final class Image
                 $height = $actualHeight . ImageDimension::PX;
             } elseif ($width === null) { // defined width is empty
                 $heightFloat = (float) $height;
-                $widthFloat = $heightFloat * $imageRatio;
+                $widthFloat = number_format($heightFloat * $imageRatio, 2);
                 $matches = [];
                 preg_match("/\d([a-z%]+)$/", $height, $matches);
                 $width = $widthFloat . $matches[1];
             } elseif ($height === null) { // defined height is empty
                 $widthFloat = (float) $width;
-                $heightFloat = $widthFloat / $imageRatio;
+                $heightFloat = number_format($widthFloat / $imageRatio, 2);
                 $matches = [];
                 preg_match("/\d([a-z%]+)$/", $width, $matches);
                 $height = $heightFloat . $matches[1];
@@ -134,9 +134,9 @@ final class Image
                     $definedRatio = $widthFloat / $heightFloat;
 
                     if ($imageRatio > $definedRatio) { // image wider than defined box
-                        $height = ($widthFloat / $imageRatio) . $dimension;
+                        $height = number_format($widthFloat / $imageRatio, 2) . $dimension;
                     } elseif ($imageRatio < $definedRatio) { // image higher than defined box
-                        $width = ($heightFloat * $imageRatio) . $dimension;
+                        $width = number_format($heightFloat * $imageRatio, 2) . $dimension;
                     }
                 }
             }

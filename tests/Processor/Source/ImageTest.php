@@ -87,6 +87,41 @@ class ImageTest extends TestCase
                 null,
                 '500px',
             ],
+            [
+                $relObj,
+                self::imgXml('rId1', '254px', '198px'),
+                null,
+                null,
+                true,
+            ],
+            [
+                $relObj,
+                self::imgXml('rId1', '192.42px', '150px'),
+                null,
+                '150px',
+                true,
+            ],
+            [
+                $relObj,
+                self::imgXml('rId1', '100px', '77.95px'),
+                '100px',
+                null,
+                true,
+            ],
+            [
+                $relObj,
+                self::imgXml('rId1', '100px', '77.95px'), // real ratio > given ratio
+                '100px',
+                '200px',
+                true,
+            ],
+            [
+                $relObj,
+                self::imgXml('rId1', '128.28px', '100px'), // real ratio < given ratio
+                '150px',
+                '100px',
+                true,
+            ],
         ];
     }
 }
