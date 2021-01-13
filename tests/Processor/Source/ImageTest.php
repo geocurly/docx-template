@@ -17,8 +17,6 @@ class ImageTest extends TestCase
      * @dataProvider getXmlProvider
      *
      * @param string $expected
-     * @param string $id
-     * @param string $url
      * @param string|null $w
      * @param string|null $h
      * @param bool|null $r

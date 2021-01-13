@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Processor\Process;
 
-use DocxTemplate\Ast\Node\Image as ImageNode;
 use DocxTemplate\Ast\NodePosition;
 use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Contract\Processor\Bind\Filter;
@@ -15,9 +14,9 @@ use DocxTemplate\Exception\Processor\TemplateException;
 use DocxTemplate\Processor\Process\Bind\Filter\Date;
 use DocxTemplate\Processor\Process\Resolver;
 use DocxTemplate\Processor\Source\ContentTypes;
-use DocxTemplate\Processor\Source\Image;
 use DocxTemplate\Processor\Source\Relations;
 use DocxTemplate\Tests\Common\BindTrait;
+use DocxTemplate\Tests\Common\ImageSourceTrait;
 use DocxTemplate\Tests\Common\NodeTrait;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -30,6 +29,7 @@ class ResolverTest extends TestCase
 {
     use NodeTrait;
     use BindTrait;
+    use ImageSourceTrait;
 
     private const TEST_VALUE_1 = 'value_1';
 
@@ -87,11 +87,29 @@ class ResolverTest extends TestCase
             $this->getFalseCondition(),
             $this->getEscapedBlock(),
             $this->getEscapedChar(),
-            $this->getImage(),
+            $this->getImageWithSize(),
+            $this->getImageWithoutSize(),
+            $this->getEmptyImage(),
         ];
     }
 
-    private function getImage(): array
+    private function getEmptyImage(): array {
+        return [
+            self::image(
+            // emp:100x50
+                self::id('emp', 0, 5),
+                self::imageSize(
+                    4,
+                    6,
+                    '100',
+                    '50'
+                )
+            ),
+            '',
+        ];
+    }
+
+    private function getImageWithSize(): array
     {
         return [
             self::image(
@@ -104,13 +122,15 @@ class ResolverTest extends TestCase
                     '50'
                 )
             ),
-            implode([
-                '<w:pict>',
-                '<v:shape type="#_x0000_t75" style="width:100px;height:50px">',
-                '<v:imagedata r:id="rId1" o:title=""/>',
-                '</v:shape>',
-                '</w:pict>',
-            ])
+            self::imgXml('rId1', '100px', '50px'),
+        ];
+    }
+
+    private function getImageWithoutSize(): array
+    {
+        return [
+            self::id('image_id', 0, 8),
+            self::imgXml('rId1', '100%', '22%'),
         ];
     }
 
@@ -128,6 +148,16 @@ class ResolverTest extends TestCase
                         return self::valuableMock('join', fn(...$params) => implode('', $params));
                     case 'img':
                         return self::imageBindMock('img', fn() => __DIR__ . '/../../Fixture/Image/cat.jpeg');
+                    case 'image_id':
+                        return self::imageBindMock(
+                            'image_id',
+                            fn() => __DIR__ . '/../../Fixture/Image/cat.jpeg',
+                            [100, '%'],
+                            [22, '%'],
+                            false
+                        );
+                    case 'emp':
+                        return self::imageBindMock('emp', fn() => '');
                     default:
                         throw new RuntimeException();
                 }

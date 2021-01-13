@@ -113,22 +113,28 @@ class Resolver
             $relations
         );
 
+        $size = $image->getSize();
+        return $this->buildImage($bind, $relations, [$size->getWidth(), $size->getHeight(), $size->isSaveRatio()]);
+    }
+
+    private function buildImage(Valuable $bind, Relations $relations, array $size = null): string
+    {
         $value = $bind->getValue();
         if (!$bind instanceof ImageBind) {
-            return $value;
+            return $bind->getValue();
         }
 
         if ($this->isEmpty($value)) {
             return '';
         }
 
-        $size = $image->getSize();
+        [$width, $height, $ratio] = $size ?? [null, null, null];
         $image = new ImageSource(
             $relations->getNextId(),
             $value,
-            $bind->getWidth() ?? $size->getWidth(),
-            $bind->getHeight() ?? $size->getHeight(),
-            $bind->isSaveRatio() ?? $size->isSaveRatio() ?? false
+            $bind->getWidth() ?? $width,
+            $bind->getHeight() ?? $height,
+            $bind->isSaveRatio() ?? $ratio ?? false
         );
 
         $relations->add($image);
@@ -142,6 +148,10 @@ class Resolver
             $this->factory->valuable($identity->getId()),
             $relations
         );
+
+        if ($id instanceof ImageBind) {
+            return $this->buildImage($id, $relations);
+        }
 
         return $id->getValue();
     }

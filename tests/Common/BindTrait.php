@@ -35,17 +35,33 @@ trait BindTrait
         };
     }
 
-    public static function imageBindMock(string $id, callable $function): ImageBind
-    {
-        return new class($id, $function) extends ImageBind {
+    public static function imageBindMock(
+        string $id,
+        callable $function,
+        array $w = null,
+        array $h = null,
+        bool $r = null
+    ): ImageBind {
+        return new class($id, $function, $w, $h, $r) extends ImageBind {
 
             private string $id;
             private $fn;
 
-            public function __construct(string $id, callable $fn)
+            public function __construct(string $id, callable $fn, ?array $w, ?array $h, ?bool $r)
             {
                 $this->id = $id;
                 $this->fn = $fn;
+                if ($w !== null) {
+                    $this->setWidth(...$w);
+                }
+
+                if ($h !== null) {
+                    $this->setHeight(...$h);
+                }
+
+                if ($r !== null) {
+                    $this->setSaveRatio($r);
+                }
             }
 
             public function getId(): string
