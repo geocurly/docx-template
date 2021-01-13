@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Processor\Process;
 
+use DocxTemplate\Ast\Node\Image as ImageNode;
 use DocxTemplate\Ast\NodePosition;
 use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Contract\Processor\Bind\Filter;
@@ -14,10 +15,12 @@ use DocxTemplate\Exception\Processor\TemplateException;
 use DocxTemplate\Processor\Process\Bind\Filter\Date;
 use DocxTemplate\Processor\Process\Resolver;
 use DocxTemplate\Processor\Source\ContentTypes;
+use DocxTemplate\Processor\Source\Image;
 use DocxTemplate\Processor\Source\Relations;
 use DocxTemplate\Tests\Common\BindTrait;
 use DocxTemplate\Tests\Common\NodeTrait;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 /**
  * @covers \DocxTemplate\Processor\Process\Resolver
@@ -84,6 +87,30 @@ class ResolverTest extends TestCase
             $this->getFalseCondition(),
             $this->getEscapedBlock(),
             $this->getEscapedChar(),
+            $this->getImage(),
+        ];
+    }
+
+    private function getImage(): array
+    {
+        return [
+            self::image(
+                // img:100x50
+                self::id('img', 0, 3),
+                self::imageSize(
+                    4,
+                    6,
+                    '100',
+                    '50'
+                )
+            ),
+            implode([
+                '<w:pict>',
+                '<v:shape type="#_x0000_t75" style="width:100px;height:50px">',
+                '<v:imagedata r:id="rId1" o:title=""/>',
+                '</v:shape>',
+                '</w:pict>',
+            ])
         ];
     }
 
@@ -99,8 +126,10 @@ class ResolverTest extends TestCase
                         return self::valuableMock('var', fn() => 'value_1');
                     case 'join':
                         return self::valuableMock('join', fn(...$params) => implode('', $params));
+                    case 'img':
+                        return self::imageBindMock('img', fn() => __DIR__ . '/../../Fixture/Image/cat.jpeg');
                     default:
-                        throw new \RuntimeException();
+                        throw new RuntimeException();
                 }
             }
 
@@ -110,7 +139,7 @@ class ResolverTest extends TestCase
                     case 'date':
                         return new Date($name);
                     default:
-                        throw new \RuntimeException();
+                        throw new RuntimeException();
                 }
             }
         };

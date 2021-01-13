@@ -53,6 +53,8 @@ class Resolver
                 return $this->escapedChar($node);
             case $node instanceof Str:
                 return $this->str($node, $relations);
+            case $node instanceof Image:
+                return $this->image($node, $relations);
             case $node instanceof Call:
             case $node instanceof Identity:
                 return $this->id($node, $relations);
@@ -105,10 +107,10 @@ class Resolver
 
     private function image(Image $image, Relations $relations): string
     {
-        $id = $image->getIdentity();
+        $idNode = $image->getIdentity();
         $bind = $this->buildStored(
-            $id,
-            $this->factory->valuable($id->getId()),
+            $idNode,
+            $this->factory->valuable($idNode->getId()),
             $relations
         );
 
@@ -121,12 +123,7 @@ class Resolver
             return '';
         }
 
-        $relation = new Relation(
-            $value,
-            $this->relations->getNextId(),
-            "media/image.png",
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image"
-        );
+        $relation = new Relation($value, $relations->getNextId(), ImageSource::TYPE);
 
         $size = $image->getSize();
         $image = new ImageSource(
@@ -136,9 +133,8 @@ class Resolver
             $bind->isSaveRatio() ?? $size->isSaveRatio() ?? false
         );
 
-        $this->relations->add($relation);
-        $this->types->add($relation);
-        return '';
+        $relations->add($relation);
+        return $image->getXml();
     }
 
     private function id(Identity $identity, Relations $relations): string

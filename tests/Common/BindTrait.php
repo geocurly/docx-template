@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Common;
 
+use DocxTemplate\Processor\Process\Bind\ImageBind;
 use DocxTemplate\Processor\Process\Bind\ValuableBind;
 use DocxTemplate\Processor\Process\Bind\FilterBind;
 
@@ -30,6 +31,32 @@ trait BindTrait
             {
                 $call = $this->function;
                 return $call($entity, ...$this->getParams());
+            }
+        };
+    }
+
+    public static function imageBindMock(string $id, callable $function): ImageBind
+    {
+        return new class($id, $function) extends ImageBind {
+
+            private string $id;
+            private $fn;
+
+            public function __construct(string $id, callable $fn)
+            {
+                $this->id = $id;
+                $this->fn = $fn;
+            }
+
+            public function getId(): string
+            {
+                return $this->id;
+            }
+
+            public function getValue(): string
+            {
+                $fn = $this->fn;
+                return $fn(...$this->getParams());
             }
         };
     }

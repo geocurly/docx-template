@@ -48,7 +48,7 @@ $factory = new class implements BindFactory
 
                 public function getValue(): string
                 {
-                    return 'image.png';
+                    return 'tests/Fixture/Image/cat.jpeg';
                 }
             };
         };

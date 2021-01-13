@@ -12,10 +12,10 @@ final class Relation
     private string $type;
     private string $url;
 
-    public function __construct(string $url, string $id, string $target, string $type)
+    public function __construct(string $url, string $id, string $type)
     {
         $this->id = $id;
-        $this->target = $target;
+        $this->target = "media/$id";
         $this->type = $type;
         $this->url = $url;
     }

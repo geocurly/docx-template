@@ -38,7 +38,6 @@ class RelationsTest extends TestCase
             new Relation(
                 'image.png',
                 'rId1000',
-                'media/image1000.png',
                 'test-type'
             )
         );
@@ -50,7 +49,7 @@ class RelationsTest extends TestCase
             '<Relationship Id="rId7" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/>' .
             '<Relationship Id="rId8" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header2.xml"/>' .
             '<Relationship Id="rId9" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>' .
-            '<Relationship Id="rId1000" Type="test-type" Target="media/image1000.png"/>' .
+            '<Relationship Id="rId1000" Type="test-type" Target="media/rId1000"/>' .
             '</Relationships>'
         ];
 

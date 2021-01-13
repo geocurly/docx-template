@@ -45,10 +45,11 @@ final class Docx
      public function getDocumentRelations(): Relations
     {
         $document = $this->types->getDocumentPath();
+        $name = $this->getRelationsName($document);
         return $this->relations[$document] ??= new Relations(
             $document,
-            $this->getRelationsName($document),
-            $this->get($document)
+            $name,
+            $this->get($name)
         );
     }
 
@@ -59,7 +60,7 @@ final class Docx
      */
     private function getRelationsName(string $owner): string
     {
-        return "word/rels/" . basename($owner) . ".rels";
+        return "word/_rels/" . basename($owner) . ".rels";
     }
 
     /**

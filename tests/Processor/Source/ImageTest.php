@@ -47,7 +47,7 @@ class ImageTest extends TestCase
 
     public function getXmlProvider(): array
     {
-        $rel = [realpath(__DIR__ . '/../../Fixture/Image/cat.jpeg'), 'rId1', 'target', 'type'];
+        $rel = [realpath(__DIR__ . '/../../Fixture/Image/cat.jpeg'), 'rId1', 'type'];
         // Actual size is 254x198
         $relObj = new Relation(...$rel);
         return [
