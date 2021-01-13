@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers  \DocxTemplate\Lexer\Reader\StreamReader
  * @covers  \DocxTemplate\Lexer\Reader\StringReader
+ * @covers \DocxTemplate\Lexer\Reader\AbstractReader
  */
 class ReaderTest extends TestCase
 {
