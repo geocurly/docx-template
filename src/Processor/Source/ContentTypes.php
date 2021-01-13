@@ -8,23 +8,19 @@ use DOMDocument;
 
 final class ContentTypes
 {
-    private DOMDocument $dom;
-    private string $name;
+    private const DEFAULT_DOCUMENT_XML = 'word/document.xml';
+    private const DOCUMENT_TYPES = [
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml'
+    ];
 
-    public function __construct(string $name, string $content)
+    private DOMDocument $dom;
+    private string $document;
+
+    public function __construct(string $content)
     {
         $this->dom = new DOMDocument();
         $this->dom->loadXML($content);
-        $this->name = $name;
-    }
-
-    /**
-     * Get file name
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
+        $this->dom->preserveWhiteSpace = false;
     }
 
     /**
@@ -54,5 +50,26 @@ final class ContentTypes
             ->appendChild($newRelation);
 
         return $this;
+    }
+
+    /**
+     * Get main document file path
+     * @return string
+     */
+    public function getDocumentPath(): string
+    {
+        if (isset($this->document)) {
+            return $this->document;
+        }
+
+        /** @var \DOMElement $override */
+        foreach ($this->dom->getElementsByTagName('Override') as $override) {
+            $type = $override->getAttribute('ContentType');
+            if (in_array($type, self::DOCUMENT_TYPES, true)) {
+                return $this->document ??= trim($override->getAttribute('PartName'), '/');
+            }
+        }
+
+        return $this->document ??= self::DEFAULT_DOCUMENT_XML;
     }
 }

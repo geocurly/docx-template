@@ -20,7 +20,6 @@ use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory;
 use DocxTemplate\Exception\Processor\NodeException;
 use DocxTemplate\Processor\Process\Bind\ImageBind;
-use DocxTemplate\Processor\Source\ContentTypes;
 use DocxTemplate\Processor\Source\Image as ImageSource;
 use DocxTemplate\Processor\Source\Relation;
 use DocxTemplate\Processor\Source\Relations;
@@ -28,68 +27,70 @@ use DocxTemplate\Processor\Source\Relations;
 class Resolver
 {
     private BindFactory $factory;
-    private Relations $relations;
-    private ContentTypes $types;
 
-    public function __construct(BindFactory $factory, Relations $relations, ContentTypes $types)
+    public function __construct(BindFactory $factory)
     {
         $this->factory = $factory;
-        $this->relations = $relations;
-        $this->types = $types;
     }
 
-    public function solve(Node $node): string
+    public function solve(Node $node, Relations $relations): Decision
+    {
+        return new Decision($this->bind($node, $relations));
+    }
+
+    private function bind(Node $node, Relations $relations): string
     {
         switch (true) {
             case $node instanceof EscapedBlock:
                 return $this->escapedBlock($node);
             case $node instanceof Block:
-                return $this->block($node);
+                return $this->block($node, $relations);
             case $node instanceof FilterExpression:
-                return $this->filter($node);
+                return $this->filter($node, $relations);
             case $node instanceof Condition:
-                return $this->condition($node);
+                return $this->condition($node, $relations);
             case $node instanceof EscapedChar:
                 return $this->escapedChar($node);
             case $node instanceof Str:
-                return $this->str($node);
+                return $this->str($node, $relations);
             case $node instanceof Call:
             case $node instanceof Identity:
-                return $this->id($node);
+                return $this->id($node, $relations);
             default:
                 throw new NodeException("Unknown node to resolve: " . get_class($node));
         }
     }
 
-    private function block(Block $block): string
+    private function block(Block $block, Relations $relations): string
     {
         $values = [];
         foreach ($block->getNested() as $node) {
-            $values[] = $this->solve($node);
+            $values[] = $this->bind($node, $relations);
         }
 
         return implode(' ', $values);
     }
 
-    private function filter(FilterExpression $filterExpression): string
+    private function filter(FilterExpression $filterExpression, Relations $relations): string
     {
-        $filter = $this->buildBind(
+        $filter = $this->buildStored(
             $filterExpression->getRight(),
-            $this->factory->filter($filterExpression->getId())
+            $this->factory->filter($filterExpression->getId()),
+            $relations
         );
 
-        $target = $this->solve($filterExpression->getLeft());
+        $target = $this->bind($filterExpression->getLeft(), $relations);
 
         return $filter->filter($target);
     }
 
-    private function condition(Condition $condition): string
+    private function condition(Condition $condition, Relations $relations): string
     {
-        if ($this->isEmpty($this->solve($condition->getIf()))) {
-            return $this->solve($condition->getElse());
+        if ($this->isEmpty($this->bind($condition->getIf(), $relations))) {
+            return $this->bind($condition->getElse(), $relations);
         }
 
-        return $this->solve($condition->getThen());
+        return $this->bind($condition->getThen(),$relations);
     }
 
     private function escapedBlock(EscapedBlock $escapedBlock): string
@@ -102,10 +103,14 @@ class Resolver
         return substr($char->getContent(), 1);
     }
 
-    private function image(Image $image): string
+    private function image(Image $image, Relations $relations): string
     {
         $id = $image->getIdentity();
-        $bind = $this->buildBind($id, $this->factory->valuable($id->getId()));
+        $bind = $this->buildStored(
+            $id,
+            $this->factory->valuable($id->getId()),
+            $relations
+        );
 
         $value = $bind->getValue();
         if (!$bind instanceof ImageBind) {
@@ -136,23 +141,24 @@ class Resolver
         return '';
     }
 
-    private function id(Identity $identity): string
+    private function id(Identity $identity, Relations $relations): string
     {
-        $id = $this->buildBind(
+        $id = $this->buildStored(
             $identity,
-            $this->factory->valuable($identity->getId())
+            $this->factory->valuable($identity->getId()),
+            $relations
         );
 
         return $id->getValue();
     }
 
-    private function str(Str $str): string
+    private function str(Str $str, Relations $relations): string
     {
         $values = [];
         $keys = [];
         foreach ($str->getNested() as $node) {
             $keys[] = $node->getContent();
-            $values[] = $this->solve($node);
+            $values[] = $this->bind($node, $relations);
         }
 
         return substr(str_replace($keys, $values, $str->getContent()), 1, -1);
@@ -161,15 +167,16 @@ class Resolver
     /**
      * @param Identity $node
      * @param Bind $bind
+     * @param Relations $relations
      * @return Bind|Filter|Valuable
      * @throws NodeException
      */
-    private function buildBind(Identity $node, Bind $bind): Bind
+    private function buildStored(Identity $node, Bind $bind, Relations $relations): Bind
     {
         $params = [];
         if ($node instanceof Call) {
             foreach ($node->getParams() as $param) {
-                $params[] = $this->solve($param);
+                $params[] = $this->bind($param, $relations);
             }
         }
 

@@ -9,10 +9,8 @@ use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 use DocxTemplate\Exception\Processor\ResourceOpenException;
 use DocxTemplate\Exception\Processor\TemplateException;
 use DocxTemplate\Lexer\Lexer;
-use DocxTemplate\Processor\Process\Process;
-use DocxTemplate\Processor\Source\ContentTypes;
+use DocxTemplate\Processor\Process\Resolver;
 use DocxTemplate\Processor\Source\Docx;
-use DocxTemplate\Processor\Source\Relations;
 use Psr\Http\Message\StreamInterface;
 
 class TemplateProcessor
@@ -41,16 +39,14 @@ class TemplateProcessor
      */
     public function run(): iterable
     {
-        $types = $this->docx->getContentTypes();
-        foreach ($this->docx->getRelations() as $main => $relations) {
-            yield $main => $this->process($main, $relations, $types);
+        $relations = $this->docx->getDocumentRelations();
+        yield $relations->getOwnerPath() => $this->process($relations->getOwnerPath());
 
-            foreach ($relations->getFiles() as $file) {
-                yield $file => $this->process($file, $relations, $types);
-            }
-
-            yield $relations->getName() => $relations->getXml();
+        foreach ($relations->getFiles() as $file) {
+            yield $file => $this->process($file);
         }
+
+        yield $relations->getPath() => $relations->getXml();
 
         yield from $this->docx->flush();
     }
@@ -59,23 +55,26 @@ class TemplateProcessor
      * Start template processing
      *
      * @param string $name file to process
-     * @param Relations $relations
-     * @param ContentTypes $types
      * @return string|StreamInterface
      * @throws ResourceOpenException
      * @throws SyntaxErrorException
-     * @throws TemplateException
      */
-    private function process(string $name, Relations $relations, ContentTypes $types) /*: string|StreamInterface */
+    private function process(string $name) /*: string|StreamInterface */
     {
         $content = $this->docx->get($name);
-        $process = new Process(
-            $this->factory,
-            new Lexer($content),
-            $relations,
-            $types
-        );
+        $lexer = new Lexer($content);
+        $resolver = new Resolver($this->factory);
+        foreach ($lexer->run() as $node) {
+            $decision = $resolver->solve($node, $this->docx->getRelation($name));
 
-        return $process->run($content);
+            $content = substr_replace(
+                $content,
+                $decision->getValue(),
+                $node->getPosition()->getStart(),
+                $node->getPosition()->getLength(),
+            );
+        }
+
+        return $content;
     }
 }

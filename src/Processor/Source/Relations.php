@@ -9,21 +9,29 @@ use DOMDocument;
 final class Relations
 {
     private DOMDocument $dom;
-    private string $name;
+    private string $owner;
     private array $files;
-    private array $ids;
+    private array $ids = [];
     private int $count;
+    private string $path;
 
     /**
      * Resources constructor.
-     * @param string $name
-     * @param string $content
+     * @param string $owner
+     * @param string $path
+     * @param string|null $content
      */
-    public function __construct(string $name, string $content)
+    public function __construct(string $owner, string $path,  string $content = null)
     {
+        $content ??= <<<XML
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>
+        XML;
+
         $this->dom = new DOMDocument();
         $this->dom->loadXML($content);
-        $this->name = $name;
+        $this->owner = $owner;
+        $this->path = $path;
 
         $this->init();
     }
@@ -63,9 +71,18 @@ final class Relations
      * Get relations file name
      * @return string
      */
-    public function getName(): string
+    public function getPath(): string
     {
-        return $this->name;
+        return $this->path;
+    }
+
+    /**
+     * Get relation owner path
+     * @return string
+     */
+    public function getOwnerPath(): string
+    {
+        return $this->owner;
     }
 
     /**

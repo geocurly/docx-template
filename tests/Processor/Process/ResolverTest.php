@@ -22,7 +22,6 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \DocxTemplate\Processor\Process\Resolver
  *
- * @uses \DocxTemplate\Processor\Process\Process
  */
 class ResolverTest extends TestCase
 {
@@ -40,17 +39,17 @@ class ResolverTest extends TestCase
      */
     public function testSolvePositive(Node $node, string $expected): void
     {
-        $resolver = new Resolver($this->factory(), $this->relations(), $this->types());
+        $resolver = new Resolver($this->factory());
         self::assertEquals(
             $expected,
-            $resolver->solve($node),
+            $resolver->solve($node, $this->relations())->getValue(),
             "Try to solve " . get_class($node) . " with value: $expected."
         );
     }
 
     public function testSolveNegative(): void
     {
-        $resolver = new Resolver($this->factory(), $this->relations(), $this->types());
+        $resolver = new Resolver($this->factory());
         self::expectException(NodeException::class);
         $resolver->solve(
             new class implements Node {
@@ -69,7 +68,8 @@ class ResolverTest extends TestCase
                 {
                     return [];
                 }
-            }
+            },
+            $this->relations()
         );
     }
 

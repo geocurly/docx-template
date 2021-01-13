@@ -26,7 +26,8 @@ class RelationsTest extends TestCase
     protected function setUp(): void
     {
         $this->relations = new Relations(
-            'name',
+            'word/name.xml',
+            'word/rels/name.xml.rels',
             implode("\r\n", self::DEFAULT_XML)
         );
     }
@@ -84,8 +85,19 @@ class RelationsTest extends TestCase
         );
     }
 
-    public function testGetName(): void
+    public function testGetPath(): void
     {
-        self::assertEquals('name', $this->relations->getName());
+        self::assertEquals(
+            'word/rels/name.xml.rels',
+            $this->relations->getPath()
+        );
+    }
+
+    public function getOwnerPath(): void
+    {
+        self::assertEquals(
+            'word/name.xml',
+            $this->relations->getOwnerPath()
+        );
     }
 }

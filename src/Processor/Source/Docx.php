@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace DocxTemplate\Processor\Source;
 
 use DocxTemplate\Exception\Processor\ResourceOpenException;
-use DocxTemplate\Exception\Processor\TemplateException;
 use ZipArchive;
 
 final class Docx
 {
+    private const CONTENT_TYPE_XML = '[Content_Types].xml';
+
     private ZipArchive $zip;
+    private ContentTypes $types;
+    /** @var Relations[] */
+    private array $relations = [];
     private array $files = [];
 
     /**
@@ -25,6 +29,8 @@ final class Docx
             throw new ResourceOpenException("Couldn't open docx document");
         }
 
+        $this->types = new ContentTypes($this->get(self::CONTENT_TYPE_XML));
+
         for( $i = 0; $i < $this->zip->numFiles; $i++ ) {
             $name = $this->zip->getNameIndex($i, ZipArchive::FL_UNCHANGED);
             $this->files[$name] = null;
@@ -33,33 +39,48 @@ final class Docx
 
     /**
      * Get docx relation files
-     * @return iterable
-     * @throws TemplateException
+     * @return Relations
+     * @throws ResourceOpenException
      */
-     public function getRelations(): iterable
+     public function getDocumentRelations(): Relations
     {
-        foreach ($this->files ?? [] as $name => $_) {
-            if (strpos($name, 'word/_rels/') === false) {
-                continue;
-            }
-
-            $main = substr($name, 11, -5);
-            if (!array_key_exists("word/$main", $this->files)) {
-                throw new TemplateException("Unknown main part $main for relation $name");
-            }
-
-            yield "word/$main" => new Relations($name, $this->get($name));
-        }
+        $document = $this->types->getDocumentPath();
+        return $this->relations[$document] ??= new Relations(
+            $document,
+            $this->getRelationsName($document),
+            $this->get($document)
+        );
     }
 
     /**
-     * Get content types file
-     * @return ContentTypes
-     * @throws ResourceOpenException
+     * Get relation file name by owner file
+     * @param string $owner
+     * @return string
      */
-    public function getContentTypes(): ContentTypes
+    private function getRelationsName(string $owner): string
     {
-        return new ContentTypes('[Content_Types].xml', $this->get('[Content_Types].xml'));
+        return "word/rels/" . basename($owner) . ".rels";
+    }
+
+    /**
+     * Get relation files
+     * @param string $owner
+     * @return Relations
+     */
+    public function getRelation(string $owner): Relations
+    {
+        if (isset($this->relations[$owner])) {
+            return $this->relations[$owner];
+        }
+
+        $file = $owner . 'rels';
+        try {
+            $this->relations[$owner] = new Relations($owner, $this->getRelationsName($owner), $this->get($file));
+        } catch (ResourceOpenException $exception) {
+            $this->relations[$owner] = new Relations($owner, $this->getRelationsName($owner));
+        }
+
+        return $this->relations[$owner];
     }
 
     /**
