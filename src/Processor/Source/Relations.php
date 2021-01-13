@@ -14,6 +14,9 @@ final class Relations
     private array $ids = [];
     private int $count;
     private string $path;
+    /** @var Image[] */
+    private array $unprocessed = [];
+
 
     /**
      * Resources constructor.
@@ -110,20 +113,29 @@ final class Relations
 
     /**
      * Add given relation to collection
-     * @param Relation $relation
+     * @param Image $image
      * @return $this
      */
-    public function add(Relation $relation): self
+    public function add(Image $image): self
     {
         $newRelation = $this->dom->createElement('Relationship');
-        $newRelation->setAttribute('Id', $relation->getId());
-        $newRelation->setAttribute('Type', $relation->getType());
-        $newRelation->setAttribute('Target', $relation->getTarget());
+        $newRelation->setAttribute('Id', $image->getId());
+        $newRelation->setAttribute('Type', $image->getType());
+        $newRelation->setAttribute('Target', $image->getTarget());
 
         $this->dom->getElementsByTagName('Relationships')
             ->item(0)
             ->appendChild($newRelation);
 
+        $this->unprocessed[] = $image;
         return $this;
+    }
+
+    /**
+     * @return Image[]
+     */
+    public function getUnprocessed(): array
+    {
+        return $this->unprocessed;
     }
 }

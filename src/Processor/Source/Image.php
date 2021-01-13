@@ -10,7 +10,7 @@ use DocxTemplate\Lexer\Enum\ImageDimension;
 
 final class Image
 {
-    public const TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image";
+    private const TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image";
 
     private const TEMPLATE = <<<XML
     <w:pict>
@@ -26,16 +26,23 @@ final class Image
         'image/bmp'  => 'bmp',
         'image/gif'  => 'gif',
     ];
-    /**
-     * @var Relation
-     */
-    private Relation $relation;
+
     private string $width;
     private string $height;
     private string $ext;
+    private string $rId;
+    private string $url;
 
-    public function __construct(Relation $relation, ?string $width, ?string $height, ?bool $isSaveRatio)
-    {
+    public function __construct(
+        string $rId,
+        string $url,
+        ?string $width = null,
+        ?string $height = null,
+        ?bool $isSaveRatio = null
+    ) {
+        $this->rId = $rId;
+        $this->url = $url;
+
         if (is_numeric($width)) {
             $width .= ImageDimension::PX;
         }
@@ -44,7 +51,6 @@ final class Image
             $height .= ImageDimension::PX;
         }
 
-        $this->relation = $relation;
         $this->init($width, $height, $isSaveRatio ?? false);
     }
 
@@ -58,7 +64,7 @@ final class Image
             self::TEMPLATE,
             $this->width,
             $this->height,
-            $this->relation->getId(),
+            $this->getId(),
         );
 
         return preg_replace('/>\s+</', '><', $xml);
@@ -74,17 +80,6 @@ final class Image
     }
 
     /**
-     * Get relation
-     * @return Relation
-     *
-     * @codeCoverageIgnore
-     */
-    public function getRelation(): Relation
-    {
-        return $this->relation;
-    }
-
-    /**
      * Fix image dimension
      *
      * @param string|null $width
@@ -95,16 +90,16 @@ final class Image
      */
     private function init(?string $width, ?string $height, bool $isSaveRatio): void
     {
-        $imageData = @getimagesize($this->relation->getUrl());
+        $imageData = @getimagesize($this->getUrl());
         if (!is_array($imageData)) {
-            throw new ResourceOpenException("Invalid image: {$this->relation->getUrl()}");
+            throw new ResourceOpenException("Invalid image: {$this->getUrl()}");
         }
 
         [$actualWidth, $actualHeight, $imageType] = $imageData;
 
         $mime = image_type_to_mime_type($imageType);
         if (!array_key_exists($mime, self::EXTENSIONS)) {
-            throw new ResourceOpenException("Invalid mime: {$mime} in {$this->relation->getUrl()}");
+            throw new ResourceOpenException("Invalid mime: {$mime} in {$this->getUrl()}");
         }
 
         if ($isSaveRatio) {
@@ -147,5 +142,30 @@ final class Image
         $this->width = $width ?? ($actualWidth . ImageDimension::PX);
         $this->height = $height ?? ($actualHeight . ImageDimension::PX);
         $this->ext = self::EXTENSIONS[$mime];
+    }
+
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
+    public function getType(): string
+    {
+        return self::TYPE;
+    }
+
+    public function getId(): string
+    {
+        return $this->rId;
+    }
+
+    public function getTarget(): string
+    {
+        return "media/{$this->getId()}.{$this->getExtension()}";
+    }
+
+    public function getSourcePath(): string
+    {
+        return "word/{$this->getTarget()}";
     }
 }

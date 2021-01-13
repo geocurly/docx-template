@@ -21,7 +21,6 @@ use DocxTemplate\Contract\Processor\BindFactory;
 use DocxTemplate\Exception\Processor\NodeException;
 use DocxTemplate\Processor\Process\Bind\ImageBind;
 use DocxTemplate\Processor\Source\Image as ImageSource;
-use DocxTemplate\Processor\Source\Relation;
 use DocxTemplate\Processor\Source\Relations;
 
 class Resolver
@@ -123,17 +122,16 @@ class Resolver
             return '';
         }
 
-        $relation = new Relation($value, $relations->getNextId(), ImageSource::TYPE);
-
         $size = $image->getSize();
         $image = new ImageSource(
-            $relation,
+            $relations->getNextId(),
+            $value,
             $bind->getWidth() ?? $size->getWidth(),
             $bind->getHeight() ?? $size->getHeight(),
             $bind->isSaveRatio() ?? $size->isSaveRatio() ?? false
         );
 
-        $relations->add($relation);
+        $relations->add($image);
         return $image->getXml();
     }
 

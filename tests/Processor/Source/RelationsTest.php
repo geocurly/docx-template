@@ -2,7 +2,7 @@
 
 namespace DocxTemplate\Tests\Processor\Source;
 
-use DocxTemplate\Processor\Source\Relation;
+use DocxTemplate\Processor\Source\Image;
 use DocxTemplate\Processor\Source\Relations;
 use PHPUnit\Framework\TestCase;
 
@@ -34,13 +34,10 @@ class RelationsTest extends TestCase
 
     public function testGetXml(): void
     {
-        $this->relations->add(
-            new Relation(
-                'image.png',
-                'rId1000',
-                'test-type'
-            )
-        );
+        $this->relations->add(new Image(
+            'rId1000',
+            realpath(__DIR__ . '/../../Fixture/Image/cat.jpeg'),
+        ));
 
         $expect = [
             '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>',
@@ -49,7 +46,7 @@ class RelationsTest extends TestCase
             '<Relationship Id="rId7" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/>' .
             '<Relationship Id="rId8" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header2.xml"/>' .
             '<Relationship Id="rId9" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>' .
-            '<Relationship Id="rId1000" Type="test-type" Target="media/rId1000"/>' .
+            '<Relationship Id="rId1000" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rId1000.jpeg"/>' .
             '</Relationships>'
         ];
 
@@ -92,7 +89,7 @@ class RelationsTest extends TestCase
         );
     }
 
-    public function getOwnerPath(): void
+    public function testGetOwnerPath(): void
     {
         self::assertEquals(
             'word/name.xml',
