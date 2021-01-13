@@ -20,7 +20,6 @@ final class ContentTypes
     {
         $this->dom = new DOMDocument();
         $this->dom->loadXML($content);
-        $this->dom->preserveWhiteSpace = false;
     }
 
     /**
