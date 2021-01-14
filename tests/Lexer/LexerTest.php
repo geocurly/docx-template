@@ -2,9 +2,11 @@
 
 namespace DocxTemplate\Tests\Lexer;
 
+use DocxTemplate\Exception\Lexer\InvalidSourceException;
 use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 use DocxTemplate\Lexer\Lexer;
 use DocxTemplate\Tests\Common\NodeTrait;
+use GuzzleHttp\Psr7\Utils;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -14,17 +16,29 @@ class LexerTest extends TestCase
 {
     use NodeTrait;
 
+    public function testNegativeConstruct(): void
+    {
+        self::expectException(InvalidSourceException::class);
+        new Lexer(new \stdClass());
+    }
+
     /**
      * @dataProvider getRunProvider
      * @param $content
      * @param array $blocks
+     * @throws InvalidSourceException
      * @throws SyntaxErrorException
      */
     public function testSimpleParse($content, array $blocks): void
     {
-        $lexer = new Lexer($content);
-        foreach ($lexer->run() as $num => $block) {
-            self::assertEquals($blocks[$num] ?? null, $block);
+        foreach ([$content, Utils::streamFor($content)] as $key => $source) {
+            $lexer = new Lexer($source);
+            $objects = [];
+            foreach ($lexer->run() as $num => $block) {
+                $objects[] = $block;
+            }
+
+            self::assertTrue($this->isObjectsSame($objects, $blocks));
         }
     }
 

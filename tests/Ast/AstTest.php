@@ -34,25 +34,6 @@ class AstTest extends TestCase
         self::assertTrue($this->isObjectsSame($expected, $blocks));
     }
 
-    private function isObjectsSame(array $first, array $second): bool
-    {
-        if (count($first) !== count($second)) {
-            return false;
-        }
-
-        foreach ($first as $key => $object) {
-            if (!isset($second[$key])) {
-                return false;
-            }
-
-            if ($object != $second[$key]) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public function getIteratorProvider(): array
     {
         return [

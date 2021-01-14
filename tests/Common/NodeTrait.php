@@ -20,6 +20,25 @@ use DocxTemplate\Contract\Ast\Identity as IdentityInterface;
 
 trait NodeTrait
 {
+    protected function isObjectsSame(array $first, array $second): bool
+    {
+        if (count($first) !== count($second)) {
+            return false;
+        }
+
+        foreach ($first as $key => $object) {
+            if (!isset($second[$key])) {
+                return false;
+            }
+
+            if ($object != $second[$key]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     protected static function escapedBlock(int $from, int $length, string $content, Node ...$nested): Block
     {
         return new EscapedBlock(

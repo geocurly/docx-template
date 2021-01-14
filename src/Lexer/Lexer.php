@@ -7,6 +7,7 @@ namespace DocxTemplate\Lexer;
 use DocxTemplate\Ast\Ast;
 use DocxTemplate\Contract\Lexer\Lexer as LexerInterface;
 use DocxTemplate\Contract\Lexer\Reader;
+use DocxTemplate\Exception\Lexer\InvalidSourceException;
 use Psr\Http\Message\StreamInterface;
 use DocxTemplate\Lexer\{
     Reader\StreamReader,
@@ -24,7 +25,7 @@ class Lexer implements LexerInterface
         } elseif ($source instanceof StreamInterface) {
             $this->reader = new StreamReader($source);
         } else {
-            throw new \InvalidArgumentException("Invalid source type: " . gettype($source));
+            throw new InvalidSourceException("Invalid source type: " . gettype($source));
         }
     }
 
