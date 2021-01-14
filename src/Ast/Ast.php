@@ -17,9 +17,15 @@ class Ast implements IteratorAggregate
 
     private array $blocks = [];
 
+    /**
+     * Ast constructor.
+     * @param Reader $reader
+     * @throws SyntaxErrorException
+     */
     public function __construct(Reader $reader)
     {
         $this->reader = $reader;
+        $this->build();
     }
 
     /**
@@ -28,7 +34,7 @@ class Ast implements IteratorAggregate
      * @return $this
      * @throws SyntaxErrorException
      */
-    public function build(): self
+    private function build(): self
     {
         $position = 0;
         while (true) {

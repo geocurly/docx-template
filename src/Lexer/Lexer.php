@@ -31,7 +31,6 @@ class Lexer implements LexerInterface
     /** @inheritDoc */
     public function run(): iterable
     {
-        $ast = new Ast($this->reader);
-        return $ast->build();
+        return new Ast($this->reader);
     }
 }
