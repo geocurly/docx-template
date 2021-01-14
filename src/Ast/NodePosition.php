@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Ast;
 
-/**
- * @codeCoverageIgnore
- */
 class NodePosition
 {
     private int $start;
     private int $length;
+    private ?NodePosition $next = null;
 
     public function __construct(int $start, int $length)
     {
@@ -59,5 +57,40 @@ class NodePosition
             'start' => $this->getStart(),
             'end' => $this->getEnd(),
         ];
+    }
+
+    /**
+     * Add next position
+     * @param NodePosition $next
+     * @return $this
+     *
+     * @codeCoverageIgnore
+     */
+    public function addNext(NodePosition $next): self
+    {
+        $this->next = $next;
+        return $this;
+    }
+
+    /**
+     * Change length to given
+     * @param int $start
+     * @param int|null $length
+     * @return $this
+     */
+    public function change(int $start, int $length = null): self
+    {
+        $diff = $start - $this->getStart();
+        if ($length !== null) {
+            $diff +=  $length - $this->getLength();
+            $this->length = $length;
+        }
+
+        $this->start = $start;
+        if ($this->next !== null) {
+            $this->next->change($this->next->getStart() + $diff);
+        }
+
+        return $this;
     }
 }
