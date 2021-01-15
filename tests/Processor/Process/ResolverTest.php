@@ -10,7 +10,6 @@ use DocxTemplate\Contract\Processor\Bind\Filter;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory as Factory;
 use DocxTemplate\Exception\Processor\NodeException;
-use DocxTemplate\Exception\Processor\TemplateException;
 use DocxTemplate\Processor\Process\Bind\Filter\Date;
 use DocxTemplate\Processor\Process\Resolver;
 use DocxTemplate\Processor\Source\ContentTypes;
@@ -38,21 +37,20 @@ class ResolverTest extends TestCase
      *
      * @param Node $node
      * @param string $expected
-     * @throws TemplateException
      */
     public function testSolvePositive(Node $node, string $expected): void
     {
-        $resolver = new Resolver($this->factory());
+        $resolver = new Resolver($this->factory(), $this->relations());
         self::assertEquals(
             $expected,
-            $resolver->solve($node, $this->relations())->getValue(),
+            $resolver->solve($node)->getValue(),
             "Try to solve " . get_class($node) . " with value: $expected."
         );
     }
 
     public function testSolveNegative(): void
     {
-        $resolver = new Resolver($this->factory());
+        $resolver = new Resolver($this->factory(), $this->relations());
         self::expectException(NodeException::class);
         $resolver->solve(
             new class implements Node {
@@ -71,8 +69,7 @@ class ResolverTest extends TestCase
                 {
                     return [];
                 }
-            },
-            $this->relations()
+            }
         );
     }
 

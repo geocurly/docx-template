@@ -46,20 +46,20 @@ class RelationsTest extends TestCase
             '<Relationship Id="rId7" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/>' .
             '<Relationship Id="rId8" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header2.xml"/>' .
             '<Relationship Id="rId9" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>' .
-            '<Relationship Id="rId1000" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/rId1000.jpeg"/>' .
+            '<Relationship Id="rId1000" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="/word/media/rId1000.jpeg"/>' .
             '</Relationships>'
         ];
 
         self::assertEquals(
             preg_replace('/\s+/', '', implode("\r\n", $expect)),
-            preg_replace('/\s+/', '', $this->relations->getXml())
+            preg_replace('/\s+/', '', $this->relations->getContent())
         );
     }
 
     public function testGetNextId(): void
     {
         self::assertEquals(
-            $this->relations->getNextId(),
+            $this->relations->getNextRelationId(),
             'rId6'
         );
     }
@@ -67,7 +67,7 @@ class RelationsTest extends TestCase
     public function testGetFiles(): void
     {
         $files = [];
-        foreach ($this->relations->getFiles() as $file) {
+        foreach ($this->relations->getPreparedFiles() as $file) {
             $files[] = $file;
         }
 

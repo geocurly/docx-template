@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace DocxTemplate\Processor\Process;
 
 /** @codeCoverageIgnore  */
-class Decision
+class Decision /* implements Stringable */
 {
     private string $value;
 
@@ -15,6 +15,12 @@ class Decision
     }
 
     public function getValue(): string
+    {
+        return $this->value;
+    }
+
+    /** @inheritdoc  */
+    public function __toString(): string
     {
         return $this->value;
     }

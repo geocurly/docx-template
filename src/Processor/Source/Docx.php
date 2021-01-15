@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Processor\Source;
 
+use DocxTemplate\Contract\Processor\Source\Source;
 use DocxTemplate\Exception\Processor\ResourceOpenException;
 use ZipArchive;
 
-final class Docx
+class Docx implements Source
 {
     private const CONTENT_TYPE_XML = '[Content_Types].xml';
 
     private ZipArchive $zip;
     private ContentTypes $types;
+
     /** @var Relations[] */
     private array $relations = [];
     private array $files = [];
@@ -42,16 +44,6 @@ final class Docx
      * @return Relations
      * @throws ResourceOpenException
      */
-     public function getDocumentRelations(): Relations
-    {
-        $document = $this->types->getDocumentPath();
-        $name = $this->getRelationsName($document);
-        return $this->relations[$document] ??= new Relations(
-            $document,
-            $name,
-            $this->get($name)
-        );
-    }
 
     /**
      * Get relation file name by owner file
@@ -68,17 +60,17 @@ final class Docx
      * @param string $owner
      * @return Relations
      */
-    public function getRelation(string $owner): Relations
+     private function getRelation(string $owner): Relations
     {
         if (isset($this->relations[$owner])) {
             return $this->relations[$owner];
         }
 
-        $file = $owner . 'rels';
+        $file = $this->getRelationsName($owner);
         try {
-            $this->relations[$owner] = new Relations($owner, $this->getRelationsName($owner), $this->get($file));
+            $this->relations[$owner] = new Relations($owner, $file, $this->get($file));
         } catch (ResourceOpenException $exception) {
-            $this->relations[$owner] = new Relations($owner, $this->getRelationsName($owner));
+            $this->relations[$owner] = new Relations($owner, $file);
         }
 
         return $this->relations[$owner];
@@ -91,7 +83,7 @@ final class Docx
      * @return string
      * @throws ResourceOpenException
      */
-    public function get(string $name): string
+    private function get(string $name): string
     {
         $file = $this->zip->getFromName($name, 0, ZipArchive::FL_UNCHANGED);
         if ($file === false) {
@@ -102,10 +94,49 @@ final class Docx
         return $file;
     }
 
-    public function flush(): iterable
+    /**
+     * Get nested file with name
+     * @param string $path
+     * @return NestedFile
+     * @throws ResourceOpenException
+     */
+    private function nested(string $path): NestedFile
+    {
+        return new NestedFile($path, $this->get($path), $this->getRelation($path), $this->types);
+    }
+
+    /**
+     * Get all prepared files from Relations
+     * @param Relations $relations
+     * @return iterable
+     * @throws ResourceOpenException
+     */
+    private function getRelationsFiles(Relations $relations): iterable
+    {
+        foreach ($relations->getPreparedFiles() as $filePath) {
+            yield $filePath => $this->nested($filePath);
+        }
+    }
+
+    /** @inheritdoc  */
+    public function getPreparedFiles(): iterable
+    {
+        $documentPath = $this->types->getDocumentPath();
+
+        yield $documentPath => $this->nested($documentPath);
+        yield from $this->getRelationsFiles($this->getRelation($documentPath));
+    }
+
+    /** @inheritdoc  */
+    public function getLeftoverFiles(): iterable
     {
         foreach ($this->files as $name => $_) {
             yield $name => $this->get($name);
+        }
+
+        foreach ($this->relations as $relations) {
+            yield from $relations->getLeftoverFiles();
+            yield $relations->getPath() => $relations->getContent();
         }
 
         $this->zip->close();

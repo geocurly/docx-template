@@ -6,6 +6,7 @@ use DocxTemplate\Contract\Processor\BindFactory;
 use DocxTemplate\Processor\Process\Bind\ImageBind;
 use DocxTemplate\Processor\Process\Bind\ValuableBind;
 use DocxTemplate\Processor\Process\Bind\Filter\Date as DateFilter;
+use DocxTemplate\Processor\Source\Docx;
 use DocxTemplate\Processor\Template;
 use DocxTemplate\Processor\TemplateProcessor;
 
@@ -70,7 +71,7 @@ $factory = new class implements BindFactory
 
 
 $template = new Template(
-    new TemplateProcessor('template.docx', $factory)
+    new TemplateProcessor(new Docx('template.docx'), $factory)
 );
 
 $template->stream('tmp.docx');

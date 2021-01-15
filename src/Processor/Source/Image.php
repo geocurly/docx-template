@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace DocxTemplate\Processor\Source;
 
 
+use DocxTemplate\Contract\Processor\Source\Relation;
 use DocxTemplate\Exception\Processor\ResourceOpenException;
 use DocxTemplate\Lexer\Enum\ImageDimension;
 
-final class Image
+final class Image implements Relation
 {
     private const TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image";
 
@@ -32,6 +33,7 @@ final class Image
     private string $ext;
     private string $rId;
     private string $url;
+    private string $mime;
 
     public function __construct(
         string $rId,
@@ -142,6 +144,7 @@ final class Image
         $this->width = $width ?? ($actualWidth . ImageDimension::PX);
         $this->height = $height ?? ($actualHeight . ImageDimension::PX);
         $this->ext = self::EXTENSIONS[$mime];
+        $this->mime = $mime;
     }
 
     public function getUrl(): string
@@ -149,23 +152,36 @@ final class Image
         return $this->url;
     }
 
+    /** @inheritdoc  */
     public function getType(): string
     {
         return self::TYPE;
     }
 
+    /** @inheritdoc  */
+    public function getMime(): string
+    {
+        return $this->mime;
+    }
+
+    /** @inheritdoc  */
     public function getId(): string
     {
         return $this->rId;
     }
 
+    /** @inheritdoc  */
     public function getTarget(): string
     {
-        return "media/{$this->getId()}.{$this->getExtension()}";
+        return "/word/media/{$this->getId()}.{$this->getExtension()}";
     }
 
-    public function getSourcePath(): string
+    /**
+     * @inheritdoc
+     * @codeCoverageIgnore
+     */
+    public function getContent(): string
     {
-        return "word/{$this->getTarget()}";
+        return file_get_contents($this->getUrl());
     }
 }

@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Processor\Source;
 
+use DocxTemplate\Contract\Processor\Source\Relation;
+use DocxTemplate\Contract\Processor\Source\RelationContainer;
+use DocxTemplate\Contract\Processor\Source\Source;
 use DOMDocument;
 
-final class Relations
+final class Relations implements Source, RelationContainer
 {
     private DOMDocument $dom;
     private string $owner;
@@ -61,13 +64,19 @@ final class Relations
         }
     }
 
-    /**
-     * Get relation files
-     * @return iterable
-     */
-    public function getFiles(): iterable
+    /** @inheritdoc  */
+    public function getPreparedFiles(): iterable
     {
         return $this->files;
+    }
+
+
+    /** @inheritdoc  */
+    public function getLeftoverFiles(): iterable
+    {
+        foreach ($this->unprocessed as $relation) {
+            yield trim($relation->getTarget(), '/') => $relation->getContent();
+        }
     }
 
     /**
@@ -89,19 +98,16 @@ final class Relations
     }
 
     /**
-     * Get relation xml
+     * Get relation content
      * @return string
      */
-    public function getXml(): string
+    public function getContent(): string
     {
         return $this->dom->saveXML();
     }
 
-    /**
-     * Get next relation id
-     * @return string
-     */
-    public function getNextId(): string
+    /** @inheritdoc  */
+    public function getNextRelationId(): string
     {
         do {
             $this->count++;
@@ -113,29 +119,19 @@ final class Relations
 
     /**
      * Add given relation to collection
-     * @param Image $image
-     * @return $this
+     * @param Relation $relation
      */
-    public function add(Image $image): self
+    public function add(Relation $relation): void
     {
         $newRelation = $this->dom->createElement('Relationship');
-        $newRelation->setAttribute('Id', $image->getId());
-        $newRelation->setAttribute('Type', $image->getType());
-        $newRelation->setAttribute('Target', $image->getTarget());
+        $newRelation->setAttribute('Id', $relation->getId());
+        $newRelation->setAttribute('Type', $relation->getType());
+        $newRelation->setAttribute('Target', $relation->getTarget());
 
         $this->dom->getElementsByTagName('Relationships')
             ->item(0)
             ->appendChild($newRelation);
 
-        $this->unprocessed[] = $image;
-        return $this;
-    }
-
-    /**
-     * @return Image[]
-     */
-    public function getUnprocessed(): array
-    {
-        return $this->unprocessed;
+        $this->unprocessed[] = $relation;
     }
 }

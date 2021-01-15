@@ -19,7 +19,7 @@ class LexerTest extends TestCase
     public function testNegativeConstruct(): void
     {
         self::expectException(InvalidSourceException::class);
-        new Lexer(new \stdClass());
+        (new Lexer())->run(new \stdClass());
     }
 
     /**
@@ -32,9 +32,9 @@ class LexerTest extends TestCase
     public function testSimpleParse($content, array $blocks): void
     {
         foreach ([$content, Utils::streamFor($content)] as $key => $source) {
-            $lexer = new Lexer($source);
+            $lexer = new Lexer();
             $objects = [];
-            foreach ($lexer->run() as $num => $block) {
+            foreach ($lexer->run($source) as $num => $block) {
                 $objects[] = $block;
             }
 
