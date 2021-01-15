@@ -36,15 +36,25 @@ class Ast implements IteratorAggregate
      */
     private function build(): self
     {
-        $position = 0;
+        $parsePosition = 0;
+
+        /** @var NodePosition $previous */
+        $previous = null;
         while (true) {
-            $parser = new BlockParser($this->reader, $position);
+            $parser = new BlockParser($this->reader, $parsePosition);
             $block = $parser->parse();
             if ($block === null) {
                 break;
             }
 
-            $position = $block->getPosition()->getEnd();
+            $nodePosition = $block->getPosition();
+            if ($previous !== null) {
+                $previous->addNext($nodePosition);
+            }
+
+            $parsePosition = $nodePosition->getEnd();
+            $previous = $nodePosition;
+
             $this->blocks[] = $block;
         }
 

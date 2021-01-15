@@ -36,13 +36,20 @@ class AstTest extends TestCase
 
     public function getIteratorProvider(): array
     {
+        $var = self::block(0, 8, '${ var }', self::id('var', 3, 3));
+        $foo = self::block(18, 8, '${ foo }', self::id('foo', 21, 3));
+        $bar = self::block(27, 8, '${ bar }', self::id('bar', 30, 3));
+
+        $var->getPosition()->addNext($foo->getPosition());
+        $foo->getPosition()->addNext($bar->getPosition());
+
         return [
             [
                 '${ var } external ${ foo } ${ bar }',
                 [
-                    self::block(0, 8, '${ var }', self::id('var', 3, 3)),
-                    self::block(18, 8, '${ foo }', self::id('foo', 21, 3)),
-                    self::block(27, 8, '${ bar }', self::id('bar', 30, 3)),
+                    $var,
+                    $foo,
+                    $bar,
                 ],
             ],
         ];
