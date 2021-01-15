@@ -7,27 +7,27 @@ namespace DocxTemplate\Processor;
 use DocxTemplate\Contract\Lexer\Lexer as LexerInterface;
 use DocxTemplate\Contract\Processor\BindFactory;
 use DocxTemplate\Contract\Processor\Source\RelationContainer;
+use DocxTemplate\Contract\Processor\Source\Source;
 use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 use DocxTemplate\Lexer\Lexer;
 use DocxTemplate\Processor\Process\Resolver;
-use DocxTemplate\Processor\Source\Docx;
 use Psr\Http\Message\StreamInterface;
 
 class TemplateProcessor
 {
-    private Docx $docx;
+    private Source $source;
     private BindFactory $factory;
     private LexerInterface $lexer;
 
     /**
      * TemplateProcessor constructor.
      * @param BindFactory $factory
-     * @param Docx $docx
+     * @param Source $source
      * @param LexerInterface|null $lexer
      */
-    public function __construct(Docx $docx, BindFactory $factory, LexerInterface $lexer = null)
+    public function __construct(Source $source, BindFactory $factory, LexerInterface $lexer = null)
     {
-        $this->docx = $docx;
+        $this->source = $source;
         $this->factory = $factory;
         $this->lexer = $lexer ?? new Lexer();
     }
@@ -40,11 +40,11 @@ class TemplateProcessor
      */
     public function run(): iterable
     {
-        foreach ($this->docx->getPreparedFiles() as $path => $source) {
+        foreach ($this->source->getPreparedFiles() as $path => $source) {
             yield $path => $this->process($source, $source->getContent());
         }
 
-        yield from $this->docx->getLeftoverFiles();
+        yield from $this->source->getLeftoverFiles();
     }
 
     /**

@@ -22,21 +22,29 @@ class Docx implements Source
     /**
      * Docx constructor.
      * @param string $source docx file name
+     * @param ZipArchive|null $zip
      * @throws ResourceOpenException
      */
-    public function __construct(string $source)
+    public function __construct(string $source, ZipArchive $zip = null)
     {
-        $this->zip = new ZipArchive();
+        $this->zip = $zip ?? new ZipArchive();
         if ($this->zip->open($source, ZipArchive::CHECKCONS) === false) {
             throw new ResourceOpenException("Couldn't open docx document");
         }
 
-        $this->types = new ContentTypes($this->get(self::CONTENT_TYPE_XML));
+        $index = 0;
+        $name = null;
+        while (true) {
+            $name = $this->zip->getNameIndex($index, ZipArchive::FL_UNCHANGED);
+            if ($name === false) {
+                break;
+            }
 
-        for( $i = 0; $i < $this->zip->numFiles; $i++ ) {
-            $name = $this->zip->getNameIndex($i, ZipArchive::FL_UNCHANGED);
             $this->files[$name] = null;
+            $index++;
         }
+
+        $this->types = new ContentTypes($this->get(self::CONTENT_TYPE_XML));
     }
 
     /**
@@ -138,6 +146,8 @@ class Docx implements Source
             yield from $relations->getLeftoverFiles();
             yield $relations->getPath() => $relations->getContent();
         }
+
+        yield self::CONTENT_TYPE_XML => $this->types->getXml();
 
         $this->zip->close();
     }
