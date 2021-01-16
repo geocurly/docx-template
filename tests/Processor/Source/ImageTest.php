@@ -43,6 +43,37 @@ class ImageTest extends TestCase
         self::assertEquals('jpeg', $image->getExtension());
     }
 
+    public function testGetId(): void
+    {
+        $image = new Image('rId1', realpath(__DIR__ . '/../../Fixture/Image/cat.jpeg'));
+
+        self::assertEquals('rId1', $image->getId());
+    }
+
+    public function testGetType(): void
+    {
+        $image = new Image('rId1', realpath(__DIR__ . '/../../Fixture/Image/cat.jpeg'));
+
+        self::assertEquals(
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+            $image->getType()
+        );
+    }
+
+    public function testGetMime(): void
+    {
+        $image = new Image('rId1', realpath(__DIR__ . '/../../Fixture/Image/cat.jpeg'));
+
+        self::assertEquals("image/jpeg", $image->getMime());
+    }
+
+    public function testGetTarget(): void
+    {
+        $image = new Image('rId1', realpath(__DIR__ . '/../../Fixture/Image/cat.jpeg'));
+
+        self::assertEquals("/word/media/rId1.jpeg", $image->getTarget());
+    }
+
     public function getXmlProvider(): array
     {
         // Actual size is 254x198

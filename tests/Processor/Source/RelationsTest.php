@@ -54,6 +54,20 @@ class RelationsTest extends TestCase
         );
     }
 
+    public function testGetLeftoverFiles(): void
+    {
+        $this->relations->add(new Image('rId', __DIR__ . '/../../Fixture/Image/cat.jpeg'));
+        $files = [];
+        foreach ($this->relations->getLeftoverFiles() as $path => $_) {
+            $files[] = $path;
+        }
+
+        self::assertEquals(
+            ['word/media/rId.jpeg'],
+            $files,
+        );
+    }
+
     public function testGetFiles(): void
     {
         $files = [];
