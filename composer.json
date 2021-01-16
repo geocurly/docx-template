@@ -2,7 +2,7 @@
     "name": "geocurly/docx-template",
     "type": "library",
     "license": "MIT",
-    "description": "",
+    "description": "There is template processor for .docx files",
     "authors": [
         {
             "name": "Aleksandr.Blizorukov",
