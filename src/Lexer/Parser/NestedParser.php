@@ -13,6 +13,9 @@ class NestedParser extends Parser
     {
         $offset = $this->getOffset();
         $next = $this->firstNotEmpty($offset);
+        if ($next === null) {
+            return null;
+        }
 
         $container = $this->container($next->getStart());
         if ($container !== null) {

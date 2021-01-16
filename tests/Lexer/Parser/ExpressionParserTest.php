@@ -14,6 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \DocxTemplate\Lexer\Parser\ExpressionParser
+ * @covers \DocxTemplate\Lexer\Parser\Parser
  */
 class ExpressionParserTest extends TestCase
 {

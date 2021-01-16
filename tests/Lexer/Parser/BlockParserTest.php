@@ -8,12 +8,15 @@ use DocxTemplate\Lexer\Parser\BlockParser;
 use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Exception\Lexer\InvalidSourceException;
 use DocxTemplate\Exception\Lexer\SyntaxErrorException;
+use DocxTemplate\Lexer\Parser\Exception\EndNotFoundException;
 use DocxTemplate\Tests\Common\NodeTrait;
 use DocxTemplate\Tests\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 /**
  * @covers \DocxTemplate\Lexer\Parser\BlockParser
+ * @covers \DocxTemplate\Lexer\Parser\Parser
  */
 class BlockParserTest extends TestCase
 {
@@ -42,6 +45,7 @@ class BlockParserTest extends TestCase
     public function positiveProvider(): array
     {
         return [
+            ['var', 0, null],
             ['${ var }', 0, self::block(0, 8,'${ var }', self::id('var', 3, 3))],
             [
                 '${ image(`str`):150x150 | filter }',
@@ -114,6 +118,52 @@ class BlockParserTest extends TestCase
                         self::str(25, 2, '``')
                     )
                 )
+            ],
+            [
+                '${ var foo }',
+                0,
+                self::block(
+                    0,
+                    12,
+                    '${ var foo }',
+                    self::id('var', 3, 3),
+                    self::id('foo', 7, 3),
+                )
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider parseNegativeProvider
+     *
+     * @psalm-param class-string<Throwable> $expected
+     * @psalm-param string $content
+     *
+     * @throws InvalidSourceException
+     * @throws SyntaxErrorException
+     */
+    public function testParseNegative(string $expected, string $content): void
+    {
+        $this->expectException($expected);
+        foreach ($this->reader($content) as $reader) {
+            (new BlockParser($reader, 0))->parse();
+        }
+    }
+
+    public function parseNegativeProvider(): array
+    {
+        return [
+            [
+                SyntaxErrorException::class,
+                '${ if ?: else var }',
+            ],
+            [
+                SyntaxErrorException::class,
+                '${',
+            ],
+            [
+                EndNotFoundException::class,
+                '${ ${var} '
             ],
         ];
     }

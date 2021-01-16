@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Lexer\Parser;
 
+use DocxTemplate\Lexer\Parser\Exception\ElementNotFoundException;
 use DocxTemplate\Lexer\Parser\Exception\EndNotFoundException;
 use DocxTemplate\Lexer\Parser\Exception\UnexpectedCharactersException;
 use DocxTemplate\Lexer\Parser\IdentityParser;
@@ -16,6 +17,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \DocxTemplate\Lexer\Parser\IdentityParser
+ * @covers \DocxTemplate\Lexer\Parser\Parser
  */
 class IdentityParserTest extends TestCase
 {
@@ -128,6 +130,9 @@ class IdentityParserTest extends TestCase
             ['   ', 0, SyntaxErrorException::class],
             ['${ {identity} }', 3, UnexpectedCharactersException::class],
             ['${ ident`ity }', 3, UnexpectedCharactersException::class],
+            ['${ id( ', 3, ElementNotFoundException::class],
+            ['${ id(`str`, ', 3, ElementNotFoundException::class],
+            ['${ id(`str` `str`) }', 3, UnexpectedCharactersException::class],
         ];
     }
 }

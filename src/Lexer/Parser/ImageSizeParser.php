@@ -34,11 +34,20 @@ class ImageSizeParser extends Parser
     public function parse(): ?Node
     {
         $next = $this->firstNotEmpty($this->getOffset());
+        if ($next === null) {
+            return null;
+        }
+
         if ($next->getFound() !== self::IMAGE_SIZE_DELIMITER) {
             return null;
         }
 
-        $offset = $this->firstNotEmpty($next->getEnd())->getStart();
+        $sizeStartChar = $this->firstNotEmpty($next->getEnd());
+        if ($sizeStartChar === null) {
+            return null;
+        }
+
+        $offset = $sizeStartChar->getStart();
         $end = $this->findAnyOrEmpty([self::BLOCK_END, self::PARAMS_CLOSE, self::PARAMS_DELIMITER], $offset);
         if ($end === null) {
             throw new EndNotFoundException("Couldn't find the end of element", $this->getPreview(20));

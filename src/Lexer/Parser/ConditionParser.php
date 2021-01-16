@@ -73,6 +73,10 @@ class ConditionParser extends Parser
     {
         $next = $this->firstNotEmpty($offset);
 
+        if ($next === null) {
+            return null;
+        }
+
         $container = $this->container($next->getStart());
         if ($container !== null) {
             $nested = $container;

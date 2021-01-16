@@ -10,7 +10,10 @@ use DocxTemplate\Tests\Common\NodeTrait;
 use DocxTemplate\Tests\Common\ReaderTrait;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \DocxTemplate\Lexer\Parser\ContainerParser */
+/**
+ * @covers \DocxTemplate\Lexer\Parser\ContainerParser
+ * @covers \DocxTemplate\Lexer\Parser\Parser
+ */
 class ContainerParserTest extends TestCase
 {
     use ReaderTrait;

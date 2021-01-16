@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \DocxTemplate\Lexer\Parser\StrParser
+ * @covers \DocxTemplate\Lexer\Parser\Parser
  */
 class StrParserTest extends TestCase
 {

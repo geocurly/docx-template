@@ -17,6 +17,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \DocxTemplate\Lexer\Parser\ImageSizeParser
+ * @covers \DocxTemplate\Lexer\Parser\Parser
  */
 class ImageSizeParserTest extends TestCase
 {
@@ -46,6 +47,21 @@ class ImageSizeParserTest extends TestCase
     public function positiveProvider(): array
     {
         return [
+            [
+                'image:',
+                self::id('image', 0, 5),
+                null,
+            ],
+            [
+                'image',
+                self::id('image', 0, 5),
+                null,
+            ],
+            [
+                'image |',
+                self::id('image', 0, 5),
+                null,
+            ],
             [
                 'image:150x200 ',
                 self::id('image', 0, 5),

@@ -14,6 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \DocxTemplate\Lexer\Parser\NestedParser
+ * @covers \DocxTemplate\Lexer\Parser\Parser
  */
 class NestedParserTest extends TestCase
 {
@@ -63,6 +64,11 @@ class NestedParserTest extends TestCase
                     ),
                     self::id('filter2', 19, 7)
                 )
+            ],
+            [
+                '${ ',
+                3,
+                null
             ]
         ];
     }

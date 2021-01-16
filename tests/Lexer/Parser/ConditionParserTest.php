@@ -14,6 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \DocxTemplate\Lexer\Parser\ConditionParser
+ * @covers \DocxTemplate\Lexer\Parser\Parser
  */
 class ConditionParserTest extends TestCase
 {
@@ -153,6 +154,40 @@ class ConditionParserTest extends TestCase
                     self::str(65, 2, '``')
                 ),
             ]
+        ];
+    }
+
+    /**
+     * @dataProvider getParseProvider
+     *
+     * @param string $expected
+     * @param string $content
+     * @throws InvalidSourceException
+     * @throws SyntaxErrorException
+     */
+    public function testParseNegative(string $expected, string $content): void
+    {
+        $this->expectException($expected);
+        foreach ($this->reader($content) as $reader) {
+            (new ConditionParser($reader, self::id('if', 3, 2)))->parse();
+        }
+    }
+
+    public function getParseProvider(): array
+    {
+        return [
+            [
+                SyntaxErrorException::class,
+                '${ if ?',
+            ],
+            [
+                SyntaxErrorException::class,
+                '${ if ? then ?',
+            ],
+            [
+                SyntaxErrorException::class,
+                '${ if ? then :',
+            ],
         ];
     }
 }
