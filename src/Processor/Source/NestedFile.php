@@ -9,7 +9,7 @@ use DocxTemplate\Contract\Processor\Source\Relation;
 use DocxTemplate\Contract\Processor\Source\RelationContainer;
 
 /** @codeCoverageIgnore  */
-class NestedFile implements File, RelationContainer
+final class NestedFile implements File, RelationContainer
 {
     private string $url;
     private string $source;

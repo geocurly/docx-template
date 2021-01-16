@@ -6,22 +6,22 @@ use DocxTemplate\Contract\Processor\Bind\Filter;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory as Factory;
 use DocxTemplate\Processor\Source\Docx;
-use DocxTemplate\Processor\TemplateProcessor;
+use DocxTemplate\Processor\DocxProcessor;
 use DocxTemplate\Tests\Common\BindTrait;
 use DocxTemplate\Tests\Common\DocxTrait;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 /**
- * @covers \DocxTemplate\Processor\TemplateProcessor
+ * @covers \DocxTemplate\Processor\DocxProcessor
  */
-class TemplateProcessorTest extends TestCase
+class DocxProcessorTest extends TestCase
 {
     use DocxTrait;
 
     public function testRun(): void
     {
-        $processor = new TemplateProcessor($this->getDocx(), $this->getFactory());
+        $processor = new DocxProcessor($this->getDocx(), $this->getFactory());
 
         $files = [];
         foreach ($processor->run() as $path => $content) {

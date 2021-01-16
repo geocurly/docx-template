@@ -11,13 +11,13 @@ use ZipStream\ZipStream;
 
 class Template
 {
-    private TemplateProcessor $processor;
+    private DocxProcessor $processor;
 
     /**
      * Docx constructor.
-     * @param TemplateProcessor $processor
+     * @param DocxProcessor $processor
      */
-    public function __construct(TemplateProcessor $processor)
+    public function __construct(DocxProcessor $processor)
     {
         $this->processor = $processor;
     }
