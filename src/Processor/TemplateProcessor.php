@@ -13,7 +13,7 @@ use DocxTemplate\Lexer\Lexer;
 use DocxTemplate\Processor\Process\Resolver;
 use Psr\Http\Message\StreamInterface;
 
-class TemplateProcessor
+final class TemplateProcessor
 {
     private Source $source;
     private BindFactory $factory;

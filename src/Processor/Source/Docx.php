@@ -8,7 +8,7 @@ use DocxTemplate\Contract\Processor\Source\Source;
 use DocxTemplate\Exception\Processor\ResourceOpenException;
 use ZipArchive;
 
-class Docx implements Source
+final class Docx implements Source
 {
     private const CONTENT_TYPE_XML = '[Content_Types].xml';
 
