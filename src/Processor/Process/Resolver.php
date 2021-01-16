@@ -23,7 +23,7 @@ use DocxTemplate\Exception\Processor\NodeException;
 use DocxTemplate\Processor\Process\Bind\ImageBind;
 use DocxTemplate\Processor\Source\Image as ImageSource;
 
-class Resolver
+final class Resolver
 {
     private BindFactory $factory;
     private RelationContainer $relations;

@@ -123,6 +123,7 @@ final class Docx implements Source
     {
         foreach ($relations->getPreparedFiles() as $filePath) {
             yield $filePath => $this->nested($filePath);
+            yield from $this->getRelationsFiles($this->getRelation($filePath));
         }
     }
 

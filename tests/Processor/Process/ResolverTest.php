@@ -11,6 +11,7 @@ use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory as Factory;
 use DocxTemplate\Exception\Processor\NodeException;
 use DocxTemplate\Processor\Process\Bind\Filter\Date;
+use DocxTemplate\Processor\Process\Bind\ImageBind;
 use DocxTemplate\Processor\Process\Resolver;
 use DocxTemplate\Processor\Source\ContentTypes;
 use DocxTemplate\Processor\Source\Relations;
@@ -133,43 +134,16 @@ class ResolverTest extends TestCase
 
     private function factory(): Factory
     {
-        return new class implements Factory {
-            use BindTrait;
-
-            public function valuable(string $name): Valuable
-            {
-                switch ($name) {
-                    case 'var':
-                        return self::valuableMock('var', fn() => 'value_1');
-                    case 'join':
-                        return self::valuableMock('join', fn(...$params) => implode('', $params));
-                    case 'img':
-                        return self::imageBindMock('img', fn() => __DIR__ . '/../../Fixture/Image/cat.jpeg');
-                    case 'image_id':
-                        return self::imageBindMock(
-                            'image_id',
-                            fn() => __DIR__ . '/../../Fixture/Image/cat.jpeg',
-                            [100, '%'],
-                            [22, '%'],
-                            false
-                        );
-                    case 'emp':
-                        return self::imageBindMock('emp', fn() => '');
-                    default:
-                        throw new RuntimeException();
-                }
-            }
-
-            public function filter(string $name): Filter
-            {
-                switch ($name) {
-                    case 'date':
-                        return new Date($name);
-                    default:
-                        throw new RuntimeException();
-                }
-            }
-        };
+        $img = realpath(__DIR__ . '/../../Fixture/Image/cat.jpeg');
+        return self::mockBindFactory(
+            [
+                'var' => [Valuable::class, fn() => 'value_1'],
+                'join' => [Valuable::class, fn(...$params) => implode('', $params)],
+                'img' => [ImageBind::class, fn() => $img],
+                'image_id' => [ImageBind::class, fn() => $img, [[100, '%'], [22, '%'], false]],
+                'emp' => [ImageBind::class, fn() => ''],
+            ]
+        );
     }
 
     private function relations(): Relations

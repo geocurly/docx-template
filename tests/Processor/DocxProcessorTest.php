@@ -2,7 +2,6 @@
 
 namespace DocxTemplate\Tests\Processor;
 
-use DocxTemplate\Contract\Processor\Bind\Filter;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory as Factory;
 use DocxTemplate\Processor\Source\Docx;
@@ -10,7 +9,6 @@ use DocxTemplate\Processor\DocxProcessor;
 use DocxTemplate\Tests\Common\BindTrait;
 use DocxTemplate\Tests\Common\DocxTrait;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 
 /**
  * @covers \DocxTemplate\Processor\DocxProcessor
@@ -18,6 +16,7 @@ use RuntimeException;
 class DocxProcessorTest extends TestCase
 {
     use DocxTrait;
+    use BindTrait;
 
     public function testRun(): void
     {
@@ -62,31 +61,12 @@ class DocxProcessorTest extends TestCase
 
     private function getFactory(): Factory
     {
-        return new class implements Factory {
-            use BindTrait;
-
-            public function valuable(string $name): Valuable
-            {
-                switch ($name) {
-                    case 'body1':
-                        return self::valuableMock('body1', fn() => 'There is');
-                    case 'body2':
-                        return self::valuableMock('body2', fn() => 'good');
-                    case 'header1':
-                        return self::valuableMock('header1', fn() => 'There is header1');
-                    case 'header2':
-                        return self::valuableMock('header2', fn() => 'There is header2');
-                    case 'footer1':
-                        return self::valuableMock('footer1', fn() => 'There is footer1');
-                    default:
-                        throw new RuntimeException();
-                }
-            }
-
-            public function filter(string $name): Filter
-            {
-                throw new RuntimeException("Not implemented");
-            }
-        };
+        return self::mockBindFactory([
+            'body1' => [Valuable::class, fn() => 'There is'],
+            'body2' => [Valuable::class, fn() => 'good'],
+            'header1' => [Valuable::class, fn() => 'There is header1'],
+            'header2' => [Valuable::class, fn() => 'There is header2'],
+            'footer1' => [Valuable::class, fn() => 'There is footer1'],
+        ]);
     }
 }

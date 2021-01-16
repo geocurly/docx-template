@@ -32,8 +32,8 @@ class DocxTest extends TestCase
     public function testGetPreparedFiles(): void
     {
         $prepared = [];
-        foreach ($this->docx->getPreparedFiles() as $file) {
-            $prepared[] = $file->getUrl();
+        foreach ($this->docx->getPreparedFiles() as $path => $file) {
+            $prepared[] = $path;
         }
 
         $leftover = [];

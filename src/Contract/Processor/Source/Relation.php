@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Contract\Processor\Source;
 
-interface Relation extends File
+interface Relation extends UrlAware
 {
     /**
      * Get identity of relation

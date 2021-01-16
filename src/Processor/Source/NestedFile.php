@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Processor\Source;
 
-use DocxTemplate\Contract\Processor\Source\File;
 use DocxTemplate\Contract\Processor\Source\Relation;
 use DocxTemplate\Contract\Processor\Source\RelationContainer;
 
 /** @codeCoverageIgnore  */
-final class NestedFile implements File, RelationContainer
+final class NestedFile implements RelationContainer
 {
     private string $url;
     private string $source;
@@ -28,12 +27,6 @@ final class NestedFile implements File, RelationContainer
     public function getContent(): string
     {
         return $this->source;
-    }
-
-    /** @inheritdoc  */
-    public function getUrl(): string
-    {
-        return $this->url;
     }
 
     /** @inheritdoc  */

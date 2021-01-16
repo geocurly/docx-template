@@ -4,75 +4,142 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Tests\Common;
 
+use DocxTemplate\Contract\Processor\Bind\Filter;
+use DocxTemplate\Contract\Processor\Bind\Valuable;
+use DocxTemplate\Contract\Processor\BindFactory;
+use DocxTemplate\Processor\Process\Bind\Filter\Date;
 use DocxTemplate\Processor\Process\Bind\ImageBind;
 use DocxTemplate\Processor\Process\Bind\ValuableBind;
 use DocxTemplate\Processor\Process\Bind\FilterBind;
 
 trait BindTrait
 {
-    public static function filterMock(string $id, callable $function): FilterBind
+    /**
+     * @template name of string
+     * @template factory of callable
+     * @template size of array
+     *
+     * @param list<name, array<class-string, factory, size|null>> $valuables
+     * @param list<name, factory> $filters
+     * @return BindFactory
+     */
+    public static function mockBindFactory(array $valuables = [], array $filters = []): BindFactory
     {
-        return new class($id, $function) extends FilterBind {
-            private string $id;
-            private $function;
+        return new class($valuables, $filters) implements BindFactory
+        {
+            private array $valuables;
+            private array $filters;
 
-            public function __construct(string $id, callable $function)
+            public function __construct(array $valuables, array $filters)
             {
-                $this->id = $id;
-                $this->function = $function;
+                $this->valuables = $valuables;
+                $this->filters = $filters;
             }
 
-            public function getId(): string
+            /** @inheritdoc  */
+            public function valuable(string $name): Valuable
             {
-                return $this->id;
-            }
-
-            public function filter($entity)
-            {
-                $call = $this->function;
-                return $call($entity, ...$this->getParams());
-            }
-        };
-    }
-
-    public static function imageBindMock(
-        string $id,
-        callable $function,
-        array $w = null,
-        array $h = null,
-        bool $r = null
-    ): ImageBind {
-        return new class($id, $function, $w, $h, $r) extends ImageBind {
-
-            private string $id;
-            private $fn;
-
-            public function __construct(string $id, callable $fn, ?array $w, ?array $h, ?bool $r)
-            {
-                $this->id = $id;
-                $this->fn = $fn;
-                if ($w !== null) {
-                    $this->setWidth(...$w);
+                if (!isset($this->valuables[$name])) {
+                    throw new \InvalidArgumentException("Unknown test bind: $name");
                 }
 
-                if ($h !== null) {
-                    $this->setHeight(...$h);
+                $base = $this->valuables[$name][0];
+                $factory = $this->valuables[$name][1];
+
+                if ($base === ImageBind::class) {
+                    $size = $this->valuables[$name][2] ?? [null, null, null];
+                    return new class($name, $factory, ...$size) extends ImageBind {
+
+                        private string $id;
+                        private $fn;
+
+                        public function __construct(string $id, callable $fn, ?array $w, ?array $h, ?bool $r)
+                        {
+                            $this->id = $id;
+                            $this->fn = $fn;
+                            if ($w !== null) {
+                                $this->setWidth(...$w);
+                            }
+
+                            if ($h !== null) {
+                                $this->setHeight(...$h);
+                            }
+
+                            if ($r !== null) {
+                                $this->setSaveRatio($r);
+                            }
+                        }
+
+                        public function getId(): string
+                        {
+                            return $this->id;
+                        }
+
+                        public function getValue(): string
+                        {
+                            $fn = $this->fn;
+                            return $fn(...$this->getParams());
+                        }
+                    };
                 }
 
-                if ($r !== null) {
-                    $this->setSaveRatio($r);
+                return new class($name, $factory) extends ValuableBind {
+                    private string $id;
+                    private $function;
+
+                    public function __construct(string $id, callable $function)
+                    {
+                        $this->id = $id;
+                        $this->function = $function;
+                    }
+
+
+                    public function getId(): string
+                    {
+                        return $this->id;
+                    }
+
+                    public function getValue(): string
+                    {
+                        $call = $this->function;
+                        return $call(...$this->getParams());
+                    }
+                };
+            }
+
+            /** @inheritdoc  */
+            public function filter(string $name): Filter
+            {
+                if (!isset($this->filters[$name])) {
+                    switch ($name) {
+                        case 'date':
+                            return new Date($name);
+                    }
+
+                    throw new \InvalidArgumentException("Unknown test filter: $name");
                 }
-            }
 
-            public function getId(): string
-            {
-                return $this->id;
-            }
+                return new class($name, $this->filters[$name]) extends FilterBind {
+                    private string $id;
+                    private $function;
 
-            public function getValue(): string
-            {
-                $fn = $this->fn;
-                return $fn(...$this->getParams());
+                    public function __construct(string $id, callable $function)
+                    {
+                        $this->id = $id;
+                        $this->function = $function;
+                    }
+
+                    public function getId(): string
+                    {
+                        return $this->id;
+                    }
+
+                    public function filter($entity)
+                    {
+                        $call = $this->function;
+                        return $call($entity, ...$this->getParams());
+                    }
+                };
             }
         };
     }

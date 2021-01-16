@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Contract\Processor\Source;
 
-interface RelationContainer
+interface RelationContainer extends ContentAware
 {
     /**
      * Add relation to file

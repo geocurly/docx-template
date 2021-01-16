@@ -4,14 +4,8 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Contract\Processor\Source;
 
-interface File
+interface UrlAware
 {
-    /**
-     * Get file content
-     * @return string
-     */
-    public function getContent(): string;
-
     /**
      * Get file URL
      * @return string
