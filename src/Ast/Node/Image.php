@@ -44,7 +44,6 @@ final class Image extends Node
     public function toArray(): array
     {
         return [
-            'type' => $this->getType(),
             'position' => $this->getPosition()->toArray(),
             'identity' => $this->identity->toArray(),
             'size' => $this->size->toArray(),

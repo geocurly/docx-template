@@ -18,9 +18,9 @@ class SimpleContentProcessTest extends TestCase
     public function testRun(): void
     {
         $factory = self::mockBindFactory([
-            'var' => [Valuable::class, fn() => 'var value'],
-            'foo' => [Valuable::class, fn() => 'foo value'],
-            'bar' => [Valuable::class, fn() => 'bar value'],
+            'var' => fn() => 'var value',
+            'foo' => fn() => 'foo value',
+            'bar' => fn() => 'bar value',
         ]);
 
         $process = new SimpleContentProcess(

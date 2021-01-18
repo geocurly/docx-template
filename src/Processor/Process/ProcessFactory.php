@@ -24,7 +24,7 @@ final class ProcessFactory
                 $container
             );
 
-            yield new SimpleContentProcess($row, $container);
+            yield new TableRowContentProcess($row, $container);
 
             $offset = $position + strlen($row);
         }

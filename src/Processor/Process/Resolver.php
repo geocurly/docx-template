@@ -16,9 +16,11 @@ use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Contract\Ast\Identity;
 use DocxTemplate\Contract\Processor\Bind\Bind;
 use DocxTemplate\Contract\Processor\Bind\Filter;
+use DocxTemplate\Contract\Processor\Bind\Image;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory;
 use DocxTemplate\Contract\Processor\Source\RelationContainer;
+use DocxTemplate\Exception\Processor\BindException;
 use DocxTemplate\Exception\Processor\NodeException;
 use DocxTemplate\Processor\Process\Bind\ImageBind;
 use DocxTemplate\Processor\Source\Image as ImageSource;
@@ -76,11 +78,7 @@ final class Resolver
 
     private function filter(FilterExpression $filterExpression): string
     {
-        $filter = $this->buildStored(
-            $filterExpression->getRight(),
-            $this->factory->filter($filterExpression->getId())
-        );
-
+        $filter = $this->buildStored($filterExpression);
         $target = $this->bind($filterExpression->getLeft());
 
         return $filter->filter($target);
@@ -108,10 +106,7 @@ final class Resolver
     private function image(ImageNode $image): string
     {
         $idNode = $image->getIdentity();
-        $bind = $this->buildStored(
-            $idNode,
-            $this->factory->valuable($idNode->getId()),
-        );
+        $bind = $this->buildStored($idNode);
 
         $size = $image->getSize();
         return $this->buildImage(
@@ -150,12 +145,8 @@ final class Resolver
 
     private function id(Identity $identity): string
     {
-        $id = $this->buildStored(
-            $identity,
-            $this->factory->valuable($identity->getId()),
-        );
-
-        if ($id instanceof ImageBind) {
+        $id = $this->buildStored($identity);
+        if ($id instanceof Image) {
             return $this->buildImage($id);
         }
 
@@ -175,18 +166,39 @@ final class Resolver
     }
 
     /**
+     * Build bind by given identity node
+     *
      * @param Identity $node
-     * @param Bind $bind
      * @return Bind|Filter|Valuable
+     * @throws BindException
      * @throws NodeException
      */
-    private function buildStored(Identity $node, Bind $bind): Bind
+    private function buildStored(Identity $node): Bind
     {
+        $bind = null;
+        switch ($node->getType()) {
+            case Identity::FILTER:
+                $bind = $this->factory->filter($node->getId());
+                break;
+            case Identity::IMAGE:
+                $bind = $this->factory->image($node->getId());
+                break;
+            case Identity::VALUABLE:
+                $bind = $this->factory->valuable($node->getId());
+                // There is may be an image with custom size instead simple bind
+                if ($bind === null) {
+                    $bind = $this->factory->image($node->getId());
+                }
+                break;
+        }
+
+        if ($bind === null) {
+            throw new BindException("Unknown bind for node: {$node->getId()}");
+        }
+
         $params = [];
-        if ($node instanceof Call) {
-            foreach ($node->getParams() as $param) {
-                $params[] = $this->bind($param);
-            }
+        foreach ($node->getArgs() as $arg) {
+            $params[] = $this->bind($arg);
         }
 
         $bind->setParams(...$params);

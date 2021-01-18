@@ -62,11 +62,11 @@ class DocxProcessorTest extends TestCase
     private function getFactory(): Factory
     {
         return self::mockBindFactory([
-            'body1' => [Valuable::class, fn() => 'There is'],
-            'body2' => [Valuable::class, fn() => 'good'],
-            'header1' => [Valuable::class, fn() => 'There is header1'],
-            'header2' => [Valuable::class, fn() => 'There is header2'],
-            'footer1' => [Valuable::class, fn() => 'There is footer1'],
+            'body1' => fn() => 'There is',
+            'body2' => fn() => 'good',
+            'header1' => fn() => 'There is header1',
+            'header2' => fn() => 'There is header2',
+            'footer1' => fn() => 'There is footer1',
         ]);
     }
 }

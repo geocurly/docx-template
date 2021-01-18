@@ -55,7 +55,6 @@ final class ImageSize extends Node
     public function toArray(): array
     {
         return [
-            'type' => $this->getType(),
             'position' => $this->getPosition()->toArray(),
             'width' => $this->getWidth(),
             'height' => $this->getHeight(),

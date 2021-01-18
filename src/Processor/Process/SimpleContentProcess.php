@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace DocxTemplate\Processor\Process;
 
 use DocxTemplate\Contract\Processor\BindFactory;
+use DocxTemplate\Contract\Processor\Process;
 use DocxTemplate\Contract\Processor\Source\RelationContainer;
 use DocxTemplate\Lexer\Lexer;
 
-final class SimpleContentProcess
+class SimpleContentProcess implements Process
 {
     private string $content;
     private RelationContainer $container;
@@ -19,6 +20,7 @@ final class SimpleContentProcess
         $this->container = $container;
     }
 
+    /** @inheritdoc  */
     public function run(BindFactory $factory): string
     {
         $lexer = new Lexer();

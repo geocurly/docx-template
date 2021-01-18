@@ -1,6 +1,7 @@
 <?php
 
 use DocxTemplate\Contract\Processor\Bind\Filter;
+use DocxTemplate\Contract\Processor\Bind\Image;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory;
 use DocxTemplate\Processor\Process\Bind\ImageBind;
@@ -39,7 +40,7 @@ $factory = new class implements BindFactory
             return new DateFilter('date');
         };
 
-        $this->variables['img'] = function () {
+        $this->images['img'] = function () {
             return new class extends ImageBind {
 
                 public function getId(): string
@@ -65,6 +66,12 @@ $factory = new class implements BindFactory
     public function filter(string $name): Filter
     {
         return $this->filters[$name]();
+    }
+
+    /** @inheritdoc  */
+    public function image(string $name): Image
+    {
+        return $this->images[$name]();
     }
 };
 

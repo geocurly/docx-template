@@ -49,7 +49,6 @@ final class Condition extends Node
     public function toArray(): array
     {
         return [
-            'type' => $this->getType(),
             'position' => $this->getPosition()->toArray(),
             'if' => $this->if->toArray(),
             'then' => $this->then->toArray(),

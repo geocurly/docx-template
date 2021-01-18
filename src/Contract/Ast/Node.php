@@ -15,12 +15,6 @@ interface Node
     public function getPosition(): NodePosition;
 
     /**
-     * Get type of node
-     * @return string
-     */
-    public function getType(): string;
-
-    /**
      * Transform to array
      * @return array
      */

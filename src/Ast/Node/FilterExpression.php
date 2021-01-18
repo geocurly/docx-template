@@ -15,7 +15,6 @@ final class FilterExpression extends Expression implements Identity
     public function toArray(): array
     {
         return [
-            'type' => $this->getType(),
             'position' => $this->getPosition()->toArray(),
             'left' => $this->getLeft()->toArray(),
             'right' => $this->getRight()->toArray(),
@@ -26,5 +25,17 @@ final class FilterExpression extends Expression implements Identity
     public function getId(): string
     {
         return $this->getRight()->getId();
+    }
+
+    /** @inheritdoc  */
+    public function getArgs(): array
+    {
+        return $this->getRight()->getArgs();
+    }
+
+    /** @inheritdoc  */
+    public function getType(): string
+    {
+        return self::FILTER;
     }
 }

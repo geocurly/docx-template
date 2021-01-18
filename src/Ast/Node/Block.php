@@ -36,7 +36,6 @@ class Block extends Node implements Inclusive
     public function toArray(): array
     {
         return [
-            'type' => $this->getType(),
             'position' => $this->getPosition()->toArray(),
             'nested' => array_map(fn(NodeInterface $node) => $node->toArray(), $this->nested)
         ];

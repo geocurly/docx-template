@@ -137,11 +137,13 @@ class ResolverTest extends TestCase
         $img = realpath(__DIR__ . '/../../Fixture/Image/cat.jpeg');
         return self::mockBindFactory(
             [
-                'var' => [Valuable::class, fn() => 'value_1'],
-                'join' => [Valuable::class, fn(...$params) => implode('', $params)],
-                'img' => [ImageBind::class, fn() => $img],
-                'image_id' => [ImageBind::class, fn() => $img, [[100, '%'], [22, '%'], false]],
-                'emp' => [ImageBind::class, fn() => ''],
+                'var' => fn() => 'value_1',
+                'join' => fn(...$params) => implode('', $params),
+            ],
+            [
+                'img' => [fn() => $img],
+                'image_id' => [fn() => $img, [[100, '%'], [22, '%'], false]],
+                'emp' => [fn() => ''],
             ]
         );
     }

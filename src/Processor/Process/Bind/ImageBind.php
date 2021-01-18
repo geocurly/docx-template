@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Processor\Process\Bind;
 
+use DocxTemplate\Contract\Processor\Bind\Image;
 use DocxTemplate\Exception\Processor\BindException;
 use DocxTemplate\Lexer\Enum\ImageDimension;
 
 /** @codeCoverageIgnore  */
-abstract class ImageBind extends ValuableBind
+abstract class ImageBind extends ValuableBind implements Image
 {
     private ?string $width = null;
 

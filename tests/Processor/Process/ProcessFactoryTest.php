@@ -5,6 +5,7 @@ namespace DocxTemplate\Tests\Processor\Process;
 use DocxTemplate\Contract\Processor\Source\RelationContainer;
 use DocxTemplate\Processor\Process\ProcessFactory;
 use DocxTemplate\Processor\Process\SimpleContentProcess;
+use DocxTemplate\Processor\Process\TableRowContentProcess;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -50,7 +51,7 @@ class ProcessFactoryTest extends TestCase
                     '<document><w:p><w:t>There is something</w:t></w:p><w:tbl>',
                     $file
                 ),
-                new SimpleContentProcess(
+                new TableRowContentProcess(
                     '<w:tr><w:tc><w:p><w:r><w:t>1</w:t></w:r></w:p></w:tc></w:tr>',
                     $file,
                 ),

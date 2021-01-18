@@ -23,9 +23,4 @@ abstract class Node implements NodeInterface
     {
         return $this->position;
     }
-
-    public function getType(): string
-    {
-        return substr(static::class, strrpos(static::class, '\\') + 1);
-    }
 }
