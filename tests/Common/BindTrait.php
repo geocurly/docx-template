@@ -6,10 +6,12 @@ namespace DocxTemplate\Tests\Common;
 
 use DocxTemplate\Contract\Processor\Bind\Filter;
 use DocxTemplate\Contract\Processor\Bind\Image;
+use DocxTemplate\Contract\Processor\Bind\Table;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory;
 use DocxTemplate\Processor\Process\Bind\Filter\Date;
 use DocxTemplate\Processor\Process\Bind\ImageBind;
+use DocxTemplate\Processor\Process\Bind\Table as TableBind;
 use DocxTemplate\Processor\Process\Bind\ValuableBind;
 use DocxTemplate\Processor\Process\Bind\FilterBind;
 
@@ -32,12 +34,18 @@ trait BindTrait
             private array $valuables;
             private array $filters;
             private array $images;
+            private array $tables;
 
-            public function __construct(array $valuables, array $images, array $filters)
-            {
+            public function __construct(
+                array $valuables = [],
+                array $images = [],
+                array $filters = [],
+                array $tables = []
+            ) {
                 $this->valuables = $valuables;
                 $this->filters = $filters;
                 $this->images = $images;
+                $this->tables = $tables;
             }
 
             /** @inheritdoc  */
@@ -145,6 +153,61 @@ trait BindTrait
                     {
                         $fn = $this->fn;
                         return $fn(...$this->getParams());
+                    }
+                };
+            }
+
+            public function table(string $name): ?Table
+            {
+                if (!isset($this->tables[$name])) {
+                    return null;
+                }
+
+                $call = $this->tables[$name];
+                return new class($name, $call) extends TableBind {
+                    private string $name;
+                    private array $rows;
+
+                    public function __construct(string $name, array $rows)
+                    {
+                        $this->name = $name;
+                        $this->rows = $rows;
+                    }
+
+                    public function getId(): string
+                    {
+                        return $this->name;
+                    }
+
+                    public function getRows(): iterable
+                    {
+                        $rows = [];
+                        foreach ($this->rows as $num => $row) {
+                            foreach ($row as $name => $value) {
+                                $rows[$num][] = new class($name, $value) extends ValuableBind {
+                                    private string $name;
+                                    private string $value;
+
+                                    public function __construct(string $name, string $value)
+                                    {
+                                        $this->name = $name;
+                                        $this->value = $value;
+                                    }
+
+                                    public function getId(): string
+                                    {
+                                        return $this->name;
+                                    }
+
+                                    public function getValue(): string
+                                    {
+                                        return $this->value;
+                                    }
+                                };
+                            }
+                        }
+
+                        return $rows;
                     }
                 };
             }

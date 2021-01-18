@@ -105,8 +105,7 @@ final class Resolver
 
     private function image(ImageNode $image): string
     {
-        $idNode = $image->getIdentity();
-        $bind = $this->buildStored($idNode);
+        $bind = $this->buildStored($image);
 
         $size = $image->getSize();
         return $this->buildImage(

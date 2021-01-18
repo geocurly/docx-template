@@ -2,6 +2,7 @@
 
 use DocxTemplate\Contract\Processor\Bind\Filter;
 use DocxTemplate\Contract\Processor\Bind\Image;
+use DocxTemplate\Contract\Processor\Bind\Table;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory;
 use DocxTemplate\Processor\Process\Bind\ImageBind;
@@ -72,6 +73,11 @@ $factory = new class implements BindFactory
     public function image(string $name): Image
     {
         return $this->images[$name]();
+    }
+
+    public function table(string $name): ?Table
+    {
+        return null;
     }
 };
 

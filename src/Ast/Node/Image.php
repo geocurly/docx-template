@@ -10,7 +10,7 @@ use DocxTemplate\Contract\Ast\Identity as IdentityInterface;
 /**
  * @codeCoverageIgnore
  */
-final class Image extends Node
+final class Image extends Node implements IdentityInterface
 {
     private IdentityInterface $identity;
     private ?ImageSize $size;
@@ -30,11 +30,6 @@ final class Image extends Node
         $this->size = $size;
     }
 
-    public function getIdentity(): IdentityInterface
-    {
-        return $this->identity;
-    }
-
     public function getSize(): ImageSize
     {
         return $this->size;
@@ -48,5 +43,23 @@ final class Image extends Node
             'identity' => $this->identity->toArray(),
             'size' => $this->size->toArray(),
         ];
+    }
+
+    /** @inheritdoc  */
+    public function getId(): string
+    {
+        return $this->identity->getId();
+    }
+
+    /** @inheritdoc  */
+    public function getType(): string
+    {
+        return self::IMAGE;
+    }
+
+    /** @inheritdoc  */
+    public function getArgs(): array
+    {
+        return $this->identity->getArgs();
     }
 }

@@ -6,6 +6,7 @@ namespace DocxTemplate\Contract\Processor;
 
 use DocxTemplate\Contract\Processor\Bind\Filter;
 use DocxTemplate\Contract\Processor\Bind\Image;
+use DocxTemplate\Contract\Processor\Bind\Table;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 
 interface BindFactory
@@ -34,4 +35,12 @@ interface BindFactory
      * @return Image|null
      */
     public function image(string $name): ?Image;
+
+    /**
+     * Make table bind by name
+     *
+     * @param string $name
+     * @return Table|null
+     */
+    public function table(string $name): ?Table;
 }

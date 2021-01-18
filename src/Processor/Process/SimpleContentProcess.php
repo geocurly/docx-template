@@ -11,8 +11,8 @@ use DocxTemplate\Lexer\Lexer;
 
 class SimpleContentProcess implements Process
 {
-    private string $content;
-    private RelationContainer $container;
+    protected string $content;
+    protected RelationContainer $container;
 
     public function __construct(string $content, RelationContainer $container)
     {

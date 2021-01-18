@@ -29,4 +29,10 @@ interface Relation extends UrlAware
      * @return string
      */
     public function getTarget(): string;
+
+    /**
+     * Get relation content
+     * @return string
+     */
+    public function getContent(): string;
 }

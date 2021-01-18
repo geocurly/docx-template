@@ -2,7 +2,6 @@
 
 namespace DocxTemplate\Tests\Processor\Process;
 
-use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\Source\RelationContainer;
 use DocxTemplate\Processor\Process\SimpleContentProcess;
 use DocxTemplate\Tests\Common\BindTrait;
