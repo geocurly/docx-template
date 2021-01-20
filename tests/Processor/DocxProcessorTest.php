@@ -2,7 +2,6 @@
 
 namespace DocxTemplate\Tests\Processor;
 
-use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory as Factory;
 use DocxTemplate\Processor\Source\Docx;
 use DocxTemplate\Processor\DocxProcessor;

@@ -15,18 +15,20 @@ final class ProcessFactory
     public function make(RelationContainer $container): iterable
     {
         $content = $container->getContent();
-        preg_match_all('/<w:tr[^<]*>.*<\/w:tr>/U', $content, $matches, PREG_OFFSET_CAPTURE);
+        preg_match_all('/<w:tbl[^<]*>.*<\/w:tbl>/U', $content, $matches, PREG_OFFSET_CAPTURE);
 
         $offset = 0;
-        foreach ($matches[0] ?? [] as [$row, $position]) {
-            yield new SimpleContentProcess(
-                substr($content, $offset, $position - $offset),
-                $container
-            );
+        foreach ($matches[0] ?? [] as [$table, $position]) {
+            if ($position !== $offset) {
+                yield new SimpleContentProcess(
+                    substr($content, $offset, $position - $offset),
+                    $container
+                );
+            }
 
-            yield new TableRowContentProcess($row, $container);
+            yield new TableContentProcess($table, $container);
 
-            $offset = $position + strlen($row);
+            $offset = $position + strlen($table);
         }
 
         yield new SimpleContentProcess(substr($content, $offset), $container);

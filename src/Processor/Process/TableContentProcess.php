@@ -8,7 +8,7 @@ namespace DocxTemplate\Processor\Process;
 use DocxTemplate\Contract\Processor\BindFactory;
 use DocxTemplate\Lexer\Lexer;
 
-final class TableRowContentProcess extends SimpleContentProcess
+final class TableContentProcess extends SimpleContentProcess
 {
     /** @inheritdoc  */
     public function run(BindFactory $factory): string

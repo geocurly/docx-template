@@ -3,14 +3,14 @@
 namespace DocxTemplate\Tests\Processor\Process;
 
 use DocxTemplate\Contract\Processor\Source\RelationContainer;
-use DocxTemplate\Processor\Process\TableRowContentProcess;
+use DocxTemplate\Processor\Process\TableContentProcess;
 use DocxTemplate\Tests\Common\BindTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \DocxTemplate\Processor\Process\TableRowContentProcess
+ * @covers \DocxTemplate\Processor\Process\TableContentProcess
  */
-class TableRowContentProcessTest extends TestCase
+class TableContentProcessTest extends TestCase
 {
     use BindTrait;
 
@@ -24,7 +24,7 @@ class TableRowContentProcessTest extends TestCase
     public function testRun(array $factory, string $content, string $expected): void
     {
         $factory = self::mockBindFactory(...$factory);
-        $process = new TableRowContentProcess($content, $this->getContainer());
+        $process = new TableContentProcess($content, $this->getContainer());
 
         self::assertSame($expected, $process->run($factory));
     }
