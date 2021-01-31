@@ -58,21 +58,21 @@ $factory = new class implements BindFactory
     }
 
     /** @inheritdoc  */
-    public function valuable(string $name): Valuable
+    public function valuable(string $name): ?Valuable
     {
-        return $this->variables[$name]();
+        return isset($this->variables1[$name]) ? $this->variables[$name]() : null;
     }
 
     /** @inheritdoc  */
-    public function filter(string $name): Filter
+    public function filter(string $name): ?Filter
     {
-        return $this->filters[$name]();
+        return isset($this->filters[$name]) ? $this->filters[$name]() : null;
     }
 
     /** @inheritdoc  */
-    public function image(string $name): Image
+    public function image(string $name): ?Image
     {
-        return $this->images[$name]();
+        return isset($this->images[$name]) ? $this->images[$name]() : null;
     }
 
     public function table(string $name): ?Table

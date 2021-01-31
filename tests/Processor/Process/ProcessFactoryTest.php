@@ -26,7 +26,7 @@ class ProcessFactoryTest extends TestCase
                             <w:tcPr>
                                 <w:vMerge w:val="restart"/>  
                             </w:tcPr>
-                            <w:p><w:r><w:t>1</w:t></w:r></w:p>
+                            <w:p><w:r><w:t><w:tbl>1</w:tbl></w:t></w:r></w:p>
                         </w:tc>
                     </w:tr>
                     <w:tr>
@@ -73,7 +73,7 @@ class ProcessFactoryTest extends TestCase
                         <w:tcPr>
                             <w:vMerge w:val="restart"/>  
                         </w:tcPr>
-                        <w:p><w:r><w:t>1</w:t></w:r></w:p>
+                        <w:p><w:r><w:t><w:tbl>1</w:tbl></w:t></w:r></w:p>
                     </w:tc>
                 </w:tr>
                 <w:tr>
