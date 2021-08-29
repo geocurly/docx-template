@@ -7,7 +7,7 @@ use DocxTemplate\Exception\Processor\BindException;
 use DocxTemplate\Processor\Process\Bind\FilterBind;
 use Exception;
 
-class Date extends FilterBind
+class DateFilter extends FilterBind
 {
     private string $id;
 

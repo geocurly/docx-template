@@ -17,4 +17,10 @@ interface Bind
      * @param string ...$params
      */
     public function setParams(string ...$params): void;
+
+    /**
+     * Clone bind to new instance
+     * @return static
+     */
+    public function clone(): static;
 }

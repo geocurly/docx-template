@@ -26,4 +26,12 @@ trait ParametersTrait /* implements ParametersAware */
     {
         $this->params = $params;
     }
+
+    /** @inheritDoc */
+    public function clone(): static
+    {
+        $entity = clone $this;
+        $entity->setParams();
+        return $entity;
+    }
 }

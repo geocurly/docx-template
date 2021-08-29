@@ -3,15 +3,15 @@
 namespace DocxTemplate\Tests\Processor\Process\Bind\Filter;
 
 use DocxTemplate\Exception\Processor\BindException;
-use DocxTemplate\Processor\Process\Bind\Filter\Date;
+use DocxTemplate\Processor\Process\Bind\Filter\DateFilter;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \DocxTemplate\Processor\Process\Bind\Filter\Date */
+/** @covers \DocxTemplate\Processor\Process\Bind\Filter\DateFilter */
 class DateTest extends TestCase
 {
     public function testFilterPositive()
     {
-        $filter = new Date('date');
+        $filter = new DateFilter('date');
         $filter->setParams('d.m.Y');
         self::assertEquals(
             '01.01.2000',
@@ -28,7 +28,7 @@ class DateTest extends TestCase
     {
         self::expectException(BindException::class);
 
-        $filter = new Date('date');
+        $filter = new DateFilter('date');
         $filter->setParams(...$params);
         $filter->filter($target);
     }

@@ -1,90 +1,63 @@
 <?php
 
-use DocxTemplate\Contract\Processor\Bind\Filter;
-use DocxTemplate\Contract\Processor\Bind\Image;
-use DocxTemplate\Contract\Processor\Bind\Table;
-use DocxTemplate\Contract\Processor\Bind\Valuable;
-use DocxTemplate\Contract\Processor\BindFactory;
+use DocxTemplate\Processor\BaseFactory;
 use DocxTemplate\Processor\Process\Bind\ImageBind;
 use DocxTemplate\Processor\Process\Bind\ValuableBind;
-use DocxTemplate\Processor\Process\Bind\Filter\Date as DateFilter;
 use DocxTemplate\Processor\Source\Docx;
 use DocxTemplate\Processor\Template;
 use DocxTemplate\Processor\DocxProcessor;
 
 require_once "vendor/autoload.php";
 
-$factory = new class implements BindFactory
-{
-    private array $filters = [];
-    private array $variables = [];
-    private array $images = [];
+$binds = [
+    new class extends ImageBind {
 
-    public function __construct()
-    {
-        $this->variables['date'] = function () {
-            return new class extends ValuableBind {
+        public function getId(): string
+        {
+            return 'img';
+        }
 
-                public function getId(): string
-                {
-                    return 'date';
-                }
+        public function getValue(): string
+        {
+            return 'tests/Fixture/Image/cat.jpeg';
+        }
+    },
+];
 
-                public function getValue(): string
-                {
-                    return '1993-01-17 23:01:01';
-                }
-            };
-        };
+$templates = [
+    'instead_str' => 'Взамен',
+    'notification_date' => '25.01.1993',
+    'date' => '1993-01-17 23:01:01',
+    'doc_num' => ' Номер',
+    'with_respect' => ' citizen_data_list',
+    'citizen_data_list' => ' citizen_data_list',
+    'doc_reg_date' => '1993-01-17 23:01:01',
+    'organizations_to_str' => 'таким и таким'
+];
 
-        $this->filters['date'] = function () {
-            return new DateFilter('date');
-        };
+foreach ($templates as $id => $str) {
+    $binds[] = new class($id, $str) extends ValuableBind {
+        public function __construct(private string $id, private string $str)
+        {
+        }
 
-        $this->images['img'] = function () {
-            return new class extends ImageBind {
+        public function getId(): string
+        {
+            return $this->id;
+        }
 
-                public function getId(): string
-                {
-                    return 'img';
-                }
-
-                public function getValue(): string
-                {
-                    return 'tests/Fixture/Image/cat.jpeg';
-                }
-            };
-        };
-    }
-
-    /** @inheritdoc  */
-    public function valuable(string $name): ?Valuable
-    {
-        return isset($this->variables1[$name]) ? $this->variables[$name]() : null;
-    }
-
-    /** @inheritdoc  */
-    public function filter(string $name): ?Filter
-    {
-        return isset($this->filters[$name]) ? $this->filters[$name]() : null;
-    }
-
-    /** @inheritdoc  */
-    public function image(string $name): ?Image
-    {
-        return isset($this->images[$name]) ? $this->images[$name]() : null;
-    }
-
-    public function table(string $name): ?Table
-    {
-        return null;
-    }
-};
-
-
+        public function getValue(): string
+        {
+            return $this->str;
+        }
+    };
+}
 
 $template = new Template(
-    new DocxProcessor(new Docx('template.docx'), $factory)
+    new DocxProcessor(
+        new Docx('/tmp/template.docx'),
+        new BaseFactory(...$binds),
+    )
 );
 
 $template->stream('tmp.docx');

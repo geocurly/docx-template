@@ -10,7 +10,7 @@ use DocxTemplate\Contract\Processor\Bind\Filter;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory as Factory;
 use DocxTemplate\Exception\Processor\NodeException;
-use DocxTemplate\Processor\Process\Bind\Filter\Date;
+use DocxTemplate\Processor\Process\Bind\Filter\DateFilter;
 use DocxTemplate\Processor\Process\Bind\ImageBind;
 use DocxTemplate\Processor\Process\Resolver;
 use DocxTemplate\Processor\Source\ContentTypes;

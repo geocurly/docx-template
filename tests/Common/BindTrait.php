@@ -9,7 +9,7 @@ use DocxTemplate\Contract\Processor\Bind\Image;
 use DocxTemplate\Contract\Processor\Bind\Table;
 use DocxTemplate\Contract\Processor\Bind\Valuable;
 use DocxTemplate\Contract\Processor\BindFactory;
-use DocxTemplate\Processor\Process\Bind\Filter\Date;
+use DocxTemplate\Processor\Process\Bind\Filter\DateFilter;
 use DocxTemplate\Processor\Process\Bind\ImageBind;
 use DocxTemplate\Processor\Process\Bind\Table as TableBind;
 use DocxTemplate\Processor\Process\Bind\ValuableBind;
@@ -85,7 +85,7 @@ trait BindTrait
                 if (!isset($this->filters[$name])) {
                     switch ($name) {
                         case 'date':
-                            return new Date($name);
+                            return new DateFilter($name);
                     }
 
                     return null;
