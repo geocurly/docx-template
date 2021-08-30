@@ -12,12 +12,9 @@ use DocxTemplate\Exception\Lexer\SyntaxErrorException;
 
 class ConditionParser extends Parser
 {
-    private Node $if;
-
-    public function __construct(Reader $reader, Node $if)
+    public function __construct(Reader $reader, private Node $if)
     {
         parent::__construct($reader, $if->getPosition()->getEnd());
-        $this->if = $if;
     }
 
     /** @inheritdoc  */

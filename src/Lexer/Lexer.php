@@ -16,14 +16,12 @@ use DocxTemplate\Lexer\{
 class Lexer implements LexerInterface
 {
     /** @inheritDoc */
-    public function run(/* string|StreamInterface */ $source): iterable
+    public function run(string|StreamInterface $source): iterable
     {
-        if (is_string($source)) {
-            $reader = new StringReader($source);
-        } elseif ($source instanceof StreamInterface) {
+        if ($source instanceof StreamInterface) {
             $reader = new StreamReader($source);
         } else {
-            throw new InvalidSourceException("Invalid source type: " . gettype($source));
+            $reader = new StringReader($source);
         }
 
         return new Ast($reader);

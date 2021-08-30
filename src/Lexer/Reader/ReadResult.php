@@ -9,38 +9,23 @@ namespace DocxTemplate\Lexer\Reader;
  */
 class ReadResult
 {
-    private string $found;
-    private int $start;
-    private int $length;
-
-    public function __construct(string $found, int $start, int $length)
-    {
-        $this->found = $found;
-        $this->start = $start;
-        $this->length = $length;
+    public function __construct(
+        private string $found,
+        private int $start,
+        private int $length,
+    ) {
     }
 
-    /**
-     * @return string
-     */
     public function getFound(): string
     {
         return $this->found;
     }
 
-    /**
-     * Get start of node
-     * @return int
-     */
     public function getStart(): int
     {
         return $this->start;
     }
 
-    /**
-     * Get end of node
-     * @return int
-     */
     public function getEnd(): int
     {
         if ($this->getLength() === 0) {
@@ -50,10 +35,6 @@ class ReadResult
         return $this->getStart() + $this->getLength();
     }
 
-    /**
-     * Get node length
-     * @return int
-     */
     public function getLength(): int
     {
         return $this->length;

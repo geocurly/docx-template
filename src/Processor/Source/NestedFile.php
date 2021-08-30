@@ -10,17 +10,12 @@ use DocxTemplate\Contract\Processor\Source\RelationContainer;
 /** @codeCoverageIgnore  */
 final class NestedFile implements RelationContainer
 {
-    private string $url;
-    private string $source;
-    private Relations $relations;
-    private ContentTypes $types;
-
-    public function __construct(string $url, string $source, Relations $relations, ContentTypes $types)
-    {
-        $this->url = $url;
-        $this->source = $source;
-        $this->relations = $relations;
-        $this->types = $types;
+    public function __construct(
+        private string $url,
+        private string $source,
+        private Relations $relations,
+        private ContentTypes $types
+    ) {
     }
 
     /** @inheritdoc  */

@@ -27,25 +27,19 @@ trait BindTrait
      * @param list<name, factory> $filters
      * @return BindFactory
      */
-    public static function mockBindFactory(array $valuables = [], array $images = [], array $filters = []): BindFactory
-    {
+    public static function mockBindFactory(
+        array $valuables = [],
+        array $images = [],
+        array $filters = [],
+    ): BindFactory {
         return new class($valuables, $images, $filters) implements BindFactory
         {
-            private array $valuables;
-            private array $filters;
-            private array $images;
-            private array $tables;
-
             public function __construct(
-                array $valuables = [],
-                array $images = [],
-                array $filters = [],
-                array $tables = []
+                private array $valuables = [],
+                private array $images = [],
+                private array $filters = [],
+                private array $tables = []
             ) {
-                $this->valuables = $valuables;
-                $this->filters = $filters;
-                $this->images = $images;
-                $this->tables = $tables;
             }
 
             /** @inheritdoc  */

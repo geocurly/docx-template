@@ -11,22 +11,29 @@ use DocxTemplate\Lexer\Lexer;
 
 class SimpleContentProcess implements Process
 {
-    protected string $content;
-    protected RelationContainer $container;
+    public function __construct(
+        private string $content,
+        private RelationContainer $container,
+    ) {
+    }
 
-    public function __construct(string $content, RelationContainer $container)
+    protected function getContent(): string
     {
-        $this->content = $content;
-        $this->container = $container;
+        return $this->content;
+    }
+
+    protected function getContainer(): RelationContainer
+    {
+        return $this->container;
     }
 
     /** @inheritdoc  */
     public function run(BindFactory $factory): string
     {
         $lexer = new Lexer();
-        $content = $this->content;
+        $content = $this->getContent();
+        $resolver = new Resolver($factory, $this->getContainer());
         foreach ($lexer->run($content) as $node) {
-            $resolver = new Resolver($factory, $this->container);
             $decision = $resolver->solve($node);
 
             $position = $node->getPosition();
@@ -38,7 +45,10 @@ class SimpleContentProcess implements Process
                 $position->getLength(),
             );
 
-            $position->change($position->getStart(), strlen($replaced));
+            $position->change(
+                $position->getStart(),
+                strlen($replaced),
+            );
         }
 
         return $content;

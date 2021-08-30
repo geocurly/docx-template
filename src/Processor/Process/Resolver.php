@@ -27,13 +27,10 @@ use DocxTemplate\Processor\Source\Image as ImageSource;
 
 final class Resolver
 {
-    private BindFactory $factory;
-    private RelationContainer $relations;
-
-    public function __construct(BindFactory $factory, RelationContainer $relations)
-    {
-        $this->factory = $factory;
-        $this->relations = $relations;
+    public function __construct(
+        private BindFactory $factory,
+        private  RelationContainer $relations,
+    ) {
     }
 
     public function solve(Node $node): Decision
@@ -43,34 +40,24 @@ final class Resolver
 
     private function bind(Node $node): string
     {
-        switch (true) {
-            case $node instanceof EscapedBlock:
-                return $this->escapedBlock($node);
-            case $node instanceof Block:
-                return $this->block($node);
-            case $node instanceof FilterExpression:
-                return $this->filter($node);
-            case $node instanceof Condition:
-                return $this->condition($node);
-            case $node instanceof EscapedChar:
-                return $this->escapedChar($node);
-            case $node instanceof Str:
-                return $this->str($node);
-            case $node instanceof ImageNode:
-                return $this->image($node);
-            case $node instanceof Call:
-            case $node instanceof Identity:
-                return $this->id($node);
-            default:
-                throw new NodeException("Unknown node to resolve: " . get_class($node));
-        }
+        return match (true) {
+            $node instanceof EscapedBlock => $this->escapedBlock($node),
+            $node instanceof Block => $this->block($node),
+            $node instanceof FilterExpression => $this->filter($node),
+            $node instanceof Condition => $this->condition($node),
+            $node instanceof EscapedChar => $this->escapedChar($node),
+            $node instanceof Str => $this->str($node),
+            $node instanceof ImageNode => $this->image($node),
+            $node instanceof Call, $node instanceof Identity => $this->id($node),
+            default => throw new NodeException("Unknown node to resolve: " . get_class($node)),
+        };
     }
 
     private function block(Block $block): string
     {
         $values = array_map(
             fn(Node $node) => $this->bind($node),
-            $block->getNested()
+            $block->getNested(),
         );
 
         return implode(' ', $values);

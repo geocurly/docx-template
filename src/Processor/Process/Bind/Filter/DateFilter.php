@@ -5,15 +5,12 @@ namespace DocxTemplate\Processor\Process\Bind\Filter;
 use DateTime;
 use DocxTemplate\Exception\Processor\BindException;
 use DocxTemplate\Processor\Process\Bind\FilterBind;
-use Exception;
 
 class DateFilter extends FilterBind
 {
-    private string $id;
-
-    public function __construct(string $id)
-    {
-        $this->id = $id;
+    public function __construct(
+        private string $id,
+    ) {
     }
 
     /**
@@ -30,7 +27,7 @@ class DateFilter extends FilterBind
     {
         try {
             $date = new DateTime($entity);
-        } catch (Exception $exception) {
+        } catch (\Throwable $exception) {
             throw new BindException((string) $exception->getMessage());
         }
 
@@ -39,7 +36,6 @@ class DateFilter extends FilterBind
 
     /**
      * Get format from parameters
-     * @return string
      * @throws BindException
      */
     private function getFormat(): string

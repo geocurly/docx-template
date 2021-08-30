@@ -8,14 +8,11 @@ use DocxTemplate\Ast\Node\FilterExpression;
 use DocxTemplate\Contract\Ast\Node;
 use DocxTemplate\Contract\Lexer\Reader;
 
-class ExpressionParser extends Parser
+final class ExpressionParser extends Parser
 {
-    private Node $left;
-
-    public function __construct(Reader $reader, Node $left)
+    public function __construct(Reader $reader, private Node $left)
     {
         parent::__construct($reader, $left->getPosition()->getEnd());
-        $this->left = $left;
     }
 
     /** @inheritdoc  */
