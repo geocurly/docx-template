@@ -31,13 +31,13 @@ class StrParser extends Parser
                     self::BLOCK_START_ESCAPED,
                     self::BLOCK_START,
                 ],
-                $last
+                $last,
             );
 
             if ($nestedOrClose === null) {
                 throw new EndNotFoundException(
                     "Couldn't find the end of element",
-                    $this->read($open->getEnd(), $last + 20)
+                    $this->read($open->getEnd(), $last + 20),
                 );
             }
 

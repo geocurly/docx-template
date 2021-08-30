@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DocxTemplate\Processor\Process;
 
-
 use DocxTemplate\Contract\Processor\BindFactory;
 use DocxTemplate\Lexer\Lexer;
 
@@ -14,10 +13,10 @@ final class TableContentProcess extends SimpleContentProcess
     public function run(BindFactory $factory): string
     {
         $lexer = new Lexer();
-        $content = $this->content;
+        $content = $this->getContent();
         $deferred = [];
         foreach ($lexer->run($content) as $node) {
-            $resolver = new Resolver($factory, $this->container);
+            $resolver = new Resolver($factory, $this->getContainer());
             $decision = $resolver->solve($node);
             $deferred[] = [$node->getPosition(), $decision->getValue()];
         }

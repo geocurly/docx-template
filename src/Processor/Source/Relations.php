@@ -12,11 +12,9 @@ use DOMDocument;
 final class Relations implements Source, RelationContainer
 {
     private DOMDocument $dom;
-    private string $owner;
     private array $files;
     private array $ids = [];
     private int $count;
-    private string $path;
     /** @var Image[] */
     private array $unprocessed = [];
 
@@ -27,8 +25,11 @@ final class Relations implements Source, RelationContainer
      * @param string $path
      * @param string|null $content
      */
-    public function __construct(string $owner, string $path,  string $content = null)
-    {
+    public function __construct(
+        private string $owner,
+        private string $path,
+        string $content = null
+    ) {
         $content ??= <<<XML
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>
@@ -36,8 +37,6 @@ final class Relations implements Source, RelationContainer
 
         $this->dom = new DOMDocument();
         $this->dom->loadXML($content);
-        $this->owner = $owner;
-        $this->path = $path;
 
         $this->init();
     }

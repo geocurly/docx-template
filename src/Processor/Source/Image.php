@@ -31,20 +31,15 @@ final class Image implements Relation
     private string $width;
     private string $height;
     private string $ext;
-    private string $rId;
-    private string $url;
     private string $mime;
 
     public function __construct(
-        string $rId,
-        string $url,
+        private string $rId,
+        private string $url,
         ?string $width = null,
         ?string $height = null,
         ?bool $isSaveRatio = null
     ) {
-        $this->rId = $rId;
-        $this->url = $url;
-
         if (is_numeric($width)) {
             $width .= ImageDimension::PX;
         }

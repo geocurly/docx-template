@@ -11,18 +11,10 @@ use Psr\Http\Message\StreamInterface;
 
 final class DocxProcessor
 {
-    private Source $source;
-    private BindFactory $factory;
-
-    /**
-     * TemplateProcessor constructor.
-     * @param BindFactory $factory
-     * @param Source $source
-     */
-    public function __construct(Source $source, BindFactory $factory)
-    {
-        $this->source = $source;
-        $this->factory = $factory;
+    public function __construct(
+        private Source $source,
+        private BindFactory $factory,
+    ) {
     }
 
     /**

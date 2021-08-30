@@ -22,12 +22,9 @@ class ImageSizeParser extends Parser
         'true' => true,
     ];
 
-    private IdentityInterface $identity;
-
-    public function __construct(Reader $reader, IdentityInterface $identity)
+    public function __construct(Reader $reader, private IdentityInterface $identity)
     {
         parent::__construct($reader, $identity->getPosition()->getEnd());
-        $this->identity = $identity;
     }
 
     /** @inheritdoc  */

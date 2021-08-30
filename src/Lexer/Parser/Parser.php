@@ -49,13 +49,10 @@ abstract class Parser implements ParserInterface
         self::COND_ELSE
     ];
 
-    private Reader $reader;
-    private int $offset;
-
-    public function __construct(Reader $reader, int $offset)
-    {
-        $this->reader = $reader;
-        $this->offset = $offset;
+    public function __construct(
+        private Reader $reader,
+        private int $offset,
+    ) {
     }
 
     final protected function getOffset(): int

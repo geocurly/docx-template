@@ -11,15 +11,9 @@ use ZipStream\ZipStream;
 
 class Template
 {
-    private DocxProcessor $processor;
-
-    /**
-     * Docx constructor.
-     * @param DocxProcessor $processor
-     */
-    public function __construct(DocxProcessor $processor)
-    {
-        $this->processor = $processor;
+    public function __construct(
+        private DocxProcessor $processor
+    ) {
     }
 
     public function stream(string $uri): void
